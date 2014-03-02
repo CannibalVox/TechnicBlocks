@@ -24,6 +24,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.discovery.ModDiscoverer;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.technic.technicblocks.blocks.behavior.BlockBehaviorFactory;
@@ -87,26 +88,41 @@ public class TechnicBlocks {
         for (ModContainer mod : Loader.instance().getModList()) {
             File modFile = mod.getSource();
 
-            try {
-                ZipFile zip = new ZipFile(modFile);
-                for (ZipEntry ze : Collections.list(zip.entries()))
+            examineFile(modFile);
+        }
+
+        ModDiscoverer discoverer = new ModDiscoverer();
+        discoverer.identifyMods();
+
+        for (File nonMod : discoverer.getNonModLibs()) {
+            examineFile(nonMod);
+        }
+    }
+
+    private boolean examineFile(File bloxCandidate) {
+        boolean result = false;
+        try {
+            ZipFile zip = new ZipFile(bloxCandidate);
+            for (ZipEntry ze : Collections.list(zip.entries()))
+            {
+                Matcher matcher = bloxFilePattern.matcher(ze.getName());
+                if (matcher.matches())
                 {
-                    Matcher matcher = bloxFilePattern.matcher(ze.getName());
-                    if (matcher.matches())
-                    {
-                        try {
-                            ModDataParser parser = new ModDataParser(zip.getInputStream(ze));
-                            parser.RegisterAllBlocks(creativeTabFactory, materialFactory, conventionFactory, rendererFactory, faceVisibilityFactory, blockBehaviorFactory);
-                            creativeTabFactory.verifyCreativeTabs();
-                        } catch (ParseException ex) {
-                            throw new ParseException("An error occurred while parsing blox file '"+ze.getName()+"':");
-                        }
+                    try {
+                        ModDataParser parser = new ModDataParser(zip.getInputStream(ze));
+                        parser.RegisterAllBlocks(creativeTabFactory, materialFactory, conventionFactory, rendererFactory, faceVisibilityFactory, blockBehaviorFactory);
+                        creativeTabFactory.verifyCreativeTabs();
+                        result = true;
+                    } catch (ParseException ex) {
+                        throw new ParseException("An error occurred while parsing blox file '"+ze.getName()+"':");
                     }
                 }
-            } catch (IOException ex)
-            {
-                //Just ignore this mod then
             }
+        } catch (IOException ex)
+        {
+            //Just ignore this mod then
         }
+
+        return result;
     }
 }
