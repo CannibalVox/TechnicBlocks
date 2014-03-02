@@ -1,0 +1,20 @@
+[
+{
+  "modid": "2263modyssey",
+  "name": "2263, A Space Modyssey",
+  "description": "A mod that adds lots of blocks.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+            "authors": [
+                "SMP",
+                "CannibalVox",
+                "Olloth"
+            ],
+            "credits": "By SMP, with CannibalVox and Olloth",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

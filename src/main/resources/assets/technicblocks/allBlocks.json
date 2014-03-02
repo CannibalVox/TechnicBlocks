@@ -1,0 +1,108 @@
+{
+    modId: 'modyssey2263',
+    customCreativeTabs: [
+        {
+            name: '2263.example',
+            itemName: 'technicblocks:exampleBlock',
+            displayName: 'exampleTab'
+        }
+    ],
+    customMaterials: [
+        {
+            name: '2263.exampleMat',
+            mapColorIndex: 1,   //Grass color
+            isLiquid: false,
+            isSolid: true,
+            blocksGrass: true,
+            blocksMovement: true,
+            isFlammable: true,
+            isReplaceable: false,
+            isOpaque: true,
+            requiresTool: false,
+            pistonBehavior: shove,
+            adventureModeExempt: false
+        }
+    ],
+    blocks: [
+        {
+            name: 'exampleBlock',
+            creativeTabName: '2263.example',
+            materialName: '2263.exampleMat',
+            sound: {
+                name: 'stone',
+                volume: 1.0,
+                pitch: 1.0
+            },
+            hardness: 1.5,
+            resistance: 10,
+            harvestLevel: [
+                {
+                    tool: "pickaxe",
+                    harvestLevel: 1
+                }
+            ],
+            blockTags: [ 'light', 'metal' ],
+            modelConnections: {
+                name: 'none',
+                args: [],
+                subConnections: []
+            },
+            textureConnections: {
+                name: 'none',
+                args: [],
+                subConnections: []
+            },
+            modelType: 'cube',
+            faceVisibilityType: 'normal',
+            behaviors: [],
+            subBlocks: [
+                {
+                    metadata: 0,
+                    displayName: 'exampleBlock',
+                    texture: 'exampleBlock'
+                },
+                {
+                    metadata: 1,
+                    displayName: 'exampleBlock.secret',
+                    texture: 'exampleBlock',
+                    hiddenInCreative: true
+                }
+            ]
+        },
+        {
+            name: 'exampleBlock2',
+            creativeTabName: 'blocks',
+            materialName: 'ground',
+            sound: {
+                name: 'stone',
+                volume: 1.0,
+                pitch: 1.0
+            },
+            hardness: 999,
+            resistance: 1000000,
+            lightLevel: 0.5,
+            isIndestructible: true,
+            blockTags: [ 'stairs', 'cloth' ],
+            modelConnections: {
+                name: 'none',
+                args: [],
+                subConnections: []
+            },
+            textureConnections: {
+                name: 'none',
+                args: [],
+                subConnections: []
+            },
+            modelType: 'cube',
+            faceVisibilityType: 'normal',
+            behaviors: [],
+            subBlocks: [
+                {
+                    metadata: 0,
+                    displayName: 'exampleBlock2',
+                    texture: 'cloth/exampleBlock2'
+                }
+            ]
+        }
+    ]
+}
