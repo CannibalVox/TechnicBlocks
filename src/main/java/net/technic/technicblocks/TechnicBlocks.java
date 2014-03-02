@@ -22,6 +22,7 @@ package net.technic.technicblocks;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.technic.technicblocks.blocks.behavior.BlockBehaviorFactory;
 import net.technic.technicblocks.blocks.connections.ConnectionConventionFactory;
@@ -69,8 +70,14 @@ public class TechnicBlocks {
 
         //Register behaviors
 
-        //Load blocks
-        loadJsonFile("/assets/technicblocks/allBlocks.json");
+    }
+
+    @Mod.EventHandler
+    public void processImc(FMLInterModComms.IMCEvent event) {
+        for (FMLInterModComms.IMCMessage message : event.getMessages()) {
+            if (message.key.equalsIgnoreCase("loadBlocks"))
+                loadJsonFile(message.getStringValue());
+        }
     }
 
     private void loadJsonFile(String filePath) {

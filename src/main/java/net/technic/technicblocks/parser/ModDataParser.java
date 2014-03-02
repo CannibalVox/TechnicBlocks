@@ -60,6 +60,10 @@ public class ModDataParser {
 
     public ModDataParser(InputStream stream) throws ParseException {
 
+        if (stream == null) {
+            throw new ParseException("Mod Data json file could not be found.");
+        }
+
         GsonBuilder builder = new GsonBuilder();
         builder.setPrettyPrinting();
         gson = builder.create();
