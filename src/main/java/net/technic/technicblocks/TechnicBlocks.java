@@ -24,6 +24,8 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import net.technic.technicblocks.api.IFileProcessor;
+import net.technic.technicblocks.api.TechnicBlocksApi;
 import net.technic.technicblocks.blocks.behavior.BlockBehaviorFactory;
 import net.technic.technicblocks.blocks.connections.ConnectionConventionFactory;
 import net.technic.technicblocks.blocks.connections.NoConnectionConvention;
@@ -37,10 +39,8 @@ import net.technic.technicblocks.materials.MaterialFactory;
 import net.technic.technicblocks.parser.ModDataParser;
 import net.technic.technicblocks.parser.ParseException;
 
-import java.util.logging.Level;
-
 @Mod(modid = TechnicBlocks.MODID, version = TechnicBlocks.VERSION)
-public class TechnicBlocks {
+public class TechnicBlocks implements IFileProcessor {
     public static final String MODID = "technicblocks";
     public static final String VERSION = "1.0";
 
@@ -70,17 +70,11 @@ public class TechnicBlocks {
 
         //Register behaviors
 
+        //Register to receive data
+        TechnicBlocksApi.registerFileProcessor(this);
     }
 
-    @Mod.EventHandler
-    public void processImc(FMLInterModComms.IMCEvent event) {
-        for (FMLInterModComms.IMCMessage message : event.getMessages()) {
-            if (message.key.equalsIgnoreCase("loadBlocks"))
-                loadJsonFile(message.getStringValue());
-        }
-    }
-
-    private void loadJsonFile(String filePath) {
+    public void processFile(String filePath) {
         try {
             ModDataParser parser = new ModDataParser(TechnicBlocks.class.getResourceAsStream(filePath));
             parser.RegisterAllBlocks(creativeTabFactory, materialFactory, conventionFactory, rendererFactory, faceVisibilityFactory, blockBehaviorFactory);
