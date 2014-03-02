@@ -88,6 +88,8 @@ public class ModDataParser {
         }
     }
 
+    public String getModId() { return data.getModId(); }
+
     public void RegisterAllBlocks(CreativeTabFactory creativeTabsFactory, MaterialFactory materialFactory, ConnectionConventionFactory connectionConventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockBehaviorFactory behaviorFactory) throws ParseException {
         for (CreativeTabData tab : data.getCreativeTabs()) {
             creativeTabsFactory.addCreativeTab(tab);

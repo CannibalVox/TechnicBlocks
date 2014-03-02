@@ -28,12 +28,13 @@ import java.util.LinkedList;
 
 public class ParseException extends CustomModLoadingErrorDisplayException {
     private static final long serialVersionUID = 1L;
-    private final Throwable cause;
-    private final String message;
+
+    private String thisMessage;
+    private Throwable thisCause;
 
     public ParseException(String message, Throwable cause) {
-        this.cause = cause;
-        this.message = message;
+        this.thisMessage = message;
+        this.thisCause = cause;
     }
 
     public ParseException(Throwable cause) {
@@ -55,12 +56,12 @@ public class ParseException extends CustomModLoadingErrorDisplayException {
 
     @Override
     public void drawScreen(GuiErrorScreen errorScreen, FontRenderer fontRenderer, int mouseRelX, int mouseRelY, float tickTime) {
-        int y = 50;
+        int y = 10;
         Collection<Throwable> visitedThrowables = new LinkedList<Throwable>();
 
         Throwable currentThrowable = this;
         while (currentThrowable != null && !visitedThrowables.contains(currentThrowable)) {
-            fontRenderer.drawString(currentThrowable.getMessage(), 20, y, 0xFFFFFFFF);
+            fontRenderer.drawSplitString(currentThrowable.getMessage(), 10, y, errorScreen.width - 20, 0xFFFFFFFF);
             y += 30;
 
             visitedThrowables.add(currentThrowable);
@@ -69,12 +70,12 @@ public class ParseException extends CustomModLoadingErrorDisplayException {
     }
 
     @Override
-    public synchronized Throwable getCause() {
-        return this.cause;
+    public String getMessage() {
+        return thisMessage;
     }
 
     @Override
-    public String getMessage() {
-        return message;
+    public synchronized Throwable getCause() {
+        return thisCause;
     }
 }

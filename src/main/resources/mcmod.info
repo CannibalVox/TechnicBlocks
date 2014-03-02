@@ -1,18 +1,16 @@
 [
 {
-  "modid": "2263modyssey",
-  "name": "2263, A Space Modyssey",
-  "description": "A mod that adds lots of blocks.",
+  "modid": "technicblocks",
+  "name": "Technic Blocks",
+  "description": "A mod that allows data-based mods to be loaded for cosmetic blocks.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
             "authors": [
-                "SMP",
-                "CannibalVox",
-                "Olloth"
+                "CannibalVox"
             ],
-            "credits": "By SMP, with CannibalVox and Olloth",
+            "credits": "By CannibalVox",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

@@ -19,14 +19,14 @@
 
 package net.technic.technicblocks;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.discovery.ModDiscoverer;
-import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.registry.LanguageRegistry;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.StatCollector;
 import net.technic.technicblocks.blocks.behavior.BlockBehaviorFactory;
 import net.technic.technicblocks.blocks.connections.ConnectionConventionFactory;
 import net.technic.technicblocks.blocks.connections.NoConnectionConvention;
@@ -37,12 +37,18 @@ import net.technic.technicblocks.client.renderer.DataDrivenRenderer;
 import net.technic.technicblocks.client.renderer.RendererFactory;
 import net.technic.technicblocks.creativetabs.CreativeTabFactory;
 import net.technic.technicblocks.materials.MaterialFactory;
+import net.technic.technicblocks.mods.TechnicBlockModContainer;
 import net.technic.technicblocks.parser.ModDataParser;
 import net.technic.technicblocks.parser.ParseException;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -83,25 +89,69 @@ public class TechnicBlocks {
         findBloxFiles();
     }
 
-    private static final Pattern bloxFilePattern = Pattern.compile("assets/([^/]*)/blox/(.*).blox");
     private void findBloxFiles() {
+        Collection<File> modFiles = new LinkedList<File>();
+
+        //Find blox files in existing mods, and keep track of which files are mods
         for (ModContainer mod : Loader.instance().getModList()) {
             File modFile = mod.getSource();
 
             examineFile(modFile);
+            modFiles.add(modFile);
         }
 
-        ModDiscoverer discoverer = new ModDiscoverer();
-        discoverer.identifyMods();
+        Collection<ModContainer> newMods = new LinkedList<ModContainer>();
 
-        for (File nonMod : discoverer.getNonModLibs()) {
-            examineFile(nonMod);
+        //Enumerate all files loaded into the classpath- only check out non-mod files
+        for (File file : ((ModClassLoader)Loader.instance().getModClassLoader()).getParentSources()) {
+            if (!modFiles.contains(file)) {
+                for (String modId : examineFile(file)) {
+                    //It's a non-mod file that has cool blox stuff in it!  Better check it out for lang data
+                    ModContainer container = new TechnicBlockModContainer(modId, file);
+                    LanguageRegistry.instance().loadLanguagesFor(container, FMLCommonHandler.instance().getSide());
+
+                    //If we can find a mcmod.info file that corresponds to the mod ID in the blox file,
+                    //bind the metadata from mcmod.info and hold onto the container
+                    if (tryBindMetadata(container)) {
+                        newMods.add(container);
+                    }
+                }
+            }
         }
+
+        if (!newMods.isEmpty()) {
+            try {
+                //I'm a monster.
+
+                //We're going to use black magicks to inject the mod containers generated above into
+                //the list of mods- not the active mods, so nothing should go too wrong, we just want
+                //these mods to show up in the mod list.
+                Field modsField = Loader.class.getDeclaredField("mods");
+
+                boolean requiresAccessChange = !modsField.isAccessible();
+
+                if (requiresAccessChange) modsField.setAccessible(true);
+                List<ModContainer> existingMods = (List<ModContainer>)modsField.get(Loader.instance());
+                List<ModContainer> newModList = Lists.newArrayList();
+                newModList.addAll(existingMods);
+                newModList.addAll(newMods);
+                modsField.set(Loader.instance(), ImmutableList.copyOf(newModList));
+                if (requiresAccessChange) modsField.setAccessible(false);
+
+            } catch (NoSuchFieldException ex) {
+            } catch (IllegalAccessException ex) {
+            }
+        }
+
+        //Gets the added lang entries where they belong
+        Minecraft.getMinecraft().refreshResources();
     }
 
-    private boolean examineFile(File bloxCandidate) {
-        boolean result = false;
+    private static final Pattern bloxFilePattern = Pattern.compile("assets/([^/]*)/blox/(.*).blox");
+    private Collection<String> examineFile(File bloxCandidate) {
+        Collection<String> parsedModIds = new LinkedList<String>();
         try {
+            //Attempt to locate all the properly placed .blox files in the (ostensibly) jar file
             ZipFile zip = new ZipFile(bloxCandidate);
             for (ZipEntry ze : Collections.list(zip.entries()))
             {
@@ -112,9 +162,14 @@ public class TechnicBlocks {
                         ModDataParser parser = new ModDataParser(zip.getInputStream(ze));
                         parser.RegisterAllBlocks(creativeTabFactory, materialFactory, conventionFactory, rendererFactory, faceVisibilityFactory, blockBehaviorFactory);
                         creativeTabFactory.verifyCreativeTabs();
-                        result = true;
+
+                        //If we found a valid blox file, then hold onto the mod ID
+                        String modId = parser.getModId();
+
+                        if (!parsedModIds.contains(modId))
+                            parsedModIds.add(modId);
                     } catch (ParseException ex) {
-                        throw new ParseException("An error occurred while parsing blox file '"+ze.getName()+"':");
+                        throw new ParseException("An error occurred while parsing blox file '"+ze.getName()+"':", ex);
                     }
                 }
             }
@@ -123,6 +178,28 @@ public class TechnicBlocks {
             //Just ignore this mod then
         }
 
-        return result;
+        //Return a list of all unique mod id's in all parsed blox files
+        return parsedModIds;
+    }
+
+    private boolean tryBindMetadata(ModContainer container) {
+        JarFile jar = null;
+        try
+        {
+            //Attempt to load & parse mcmod.info from jar file
+            //return true if we were successful
+            jar = new JarFile(container.getSource());
+
+            ZipEntry modInfo = jar.getEntry("mcmod.info");
+            MetadataCollection mc = null;
+            if (modInfo == null)
+                return false;
+
+            mc = MetadataCollection.from(jar.getInputStream(modInfo), container.getSource().getName());
+            container.bindMetadata(mc);
+            return (container.getMetadata() != null && !container.getMetadata().autogenerated);
+        } catch (Exception ex) {
+            return false;
+        }
     }
 }
