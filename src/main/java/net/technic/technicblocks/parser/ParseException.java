@@ -19,7 +19,14 @@
 
 package net.technic.technicblocks.parser;
 
-public class ParseException extends Exception {
+import cpw.mods.fml.client.CustomModLoadingErrorDisplayException;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiErrorScreen;
+
+import java.util.Collection;
+import java.util.LinkedList;
+
+public class ParseException extends CustomModLoadingErrorDisplayException {
     private static final long serialVersionUID = 1L;
     private final Throwable cause;
     private final String message;
@@ -39,6 +46,26 @@ public class ParseException extends Exception {
 
     public ParseException() {
         this(null, null);
+    }
+
+    @Override
+    public void initGui(GuiErrorScreen errorScreen, FontRenderer fontRenderer) {
+
+    }
+
+    @Override
+    public void drawScreen(GuiErrorScreen errorScreen, FontRenderer fontRenderer, int mouseRelX, int mouseRelY, float tickTime) {
+        int y = 50;
+        Collection<Throwable> visitedThrowables = new LinkedList<Throwable>();
+
+        Throwable currentThrowable = this;
+        while (currentThrowable != null && !visitedThrowables.contains(currentThrowable)) {
+            fontRenderer.drawString(currentThrowable.getMessage(), 20, y, 0xFFFFFFFF);
+            y += 30;
+
+            visitedThrowables.add(currentThrowable);
+            currentThrowable = currentThrowable.getCause();
+        }
     }
 
     @Override

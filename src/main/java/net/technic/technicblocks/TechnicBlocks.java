@@ -21,11 +21,11 @@ package net.technic.technicblocks;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import net.technic.technicblocks.api.IFileProcessor;
-import net.technic.technicblocks.api.TechnicBlocksApi;
 import net.technic.technicblocks.blocks.behavior.BlockBehaviorFactory;
 import net.technic.technicblocks.blocks.connections.ConnectionConventionFactory;
 import net.technic.technicblocks.blocks.connections.NoConnectionConvention;
@@ -39,8 +39,16 @@ import net.technic.technicblocks.materials.MaterialFactory;
 import net.technic.technicblocks.parser.ModDataParser;
 import net.technic.technicblocks.parser.ParseException;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 @Mod(modid = TechnicBlocks.MODID, version = TechnicBlocks.VERSION)
-public class TechnicBlocks implements IFileProcessor {
+public class TechnicBlocks {
     public static final String MODID = "technicblocks";
     public static final String VERSION = "1.0";
 
@@ -70,18 +78,35 @@ public class TechnicBlocks implements IFileProcessor {
 
         //Register behaviors
 
-        //Register to receive data
-        TechnicBlocksApi.registerFileProcessor(this);
+        //Locate blox files in other jars
+        findBloxFiles();
     }
 
-    public void processFile(String filePath) {
-        try {
-            ModDataParser parser = new ModDataParser(TechnicBlocks.class.getResourceAsStream(filePath));
-            parser.RegisterAllBlocks(creativeTabFactory, materialFactory, conventionFactory, rendererFactory, faceVisibilityFactory, blockBehaviorFactory);
-            creativeTabFactory.verifyCreativeTabs();
-        } catch (ParseException ex) {
-            FMLLog.getLogger().fatal("Error loading json file '"+filePath+"'.", ex);
-            System.exit(-1);
+    private static final Pattern bloxFilePattern = Pattern.compile("assets/([^/]*)/blox/(.*).blox");
+    private void findBloxFiles() {
+        for (ModContainer mod : Loader.instance().getModList()) {
+            File modFile = mod.getSource();
+
+            try {
+                ZipFile zip = new ZipFile(modFile);
+                for (ZipEntry ze : Collections.list(zip.entries()))
+                {
+                    Matcher matcher = bloxFilePattern.matcher(ze.getName());
+                    if (matcher.matches())
+                    {
+                        try {
+                            ModDataParser parser = new ModDataParser(zip.getInputStream(ze));
+                            parser.RegisterAllBlocks(creativeTabFactory, materialFactory, conventionFactory, rendererFactory, faceVisibilityFactory, blockBehaviorFactory);
+                            creativeTabFactory.verifyCreativeTabs();
+                        } catch (ParseException ex) {
+                            throw new ParseException("An error occurred while parsing blox file '"+ze.getName()+"':");
+                        }
+                    }
+                }
+            } catch (IOException ex)
+            {
+                //Just ignore this mod then
+            }
         }
     }
 }
