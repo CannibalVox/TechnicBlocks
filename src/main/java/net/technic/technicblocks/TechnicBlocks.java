@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.*;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import net.minecraft.client.Minecraft;
@@ -85,6 +86,10 @@ public class TechnicBlocks {
 
         //Register behaviors
 
+    }
+
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent event) {
         //Locate blox files in other jars
         findBloxFiles();
     }
