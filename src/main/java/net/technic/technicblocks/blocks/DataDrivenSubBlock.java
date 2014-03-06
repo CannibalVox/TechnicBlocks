@@ -26,16 +26,19 @@ public class DataDrivenSubBlock {
     private int metadata;
     private boolean isInCreativeMenu;
     private BlockTextureScheme textureScheme;
+    private String variantTag;
 
-    public DataDrivenSubBlock(int metadata, String displayName, boolean isInCreativeMenu, BlockTextureScheme textureScheme) {
+    public DataDrivenSubBlock(int metadata, String displayName, boolean isInCreativeMenu, String variantTag, BlockTextureScheme textureScheme) {
         this.metadata = metadata;
         this.unlocalizedName = displayName;
         this.isInCreativeMenu = isInCreativeMenu;
         this.textureScheme = textureScheme;
+        this.variantTag = variantTag;
     }
 
     public int getMetadata() { return metadata; }
     public String getUnlocalizedName() { return unlocalizedName; }
     public boolean isInCreativeMenu() { return isInCreativeMenu; }
     public BlockTextureScheme getTextureScheme() { return textureScheme; }
+    public String getVariantTag() { return variantTag; }
 }

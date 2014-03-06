@@ -21,9 +21,10 @@ package net.technic.technicblocks.blocks.connections;
 
 import net.minecraft.block.Block;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
+import net.technic.technicblocks.blocks.DataDrivenSubBlock;
 
-public class NoConnectionConvention extends ConnectionConvention {
-    public NoConnectionConvention(String[] args) {
+public class VariantTagConvention extends ConnectionConvention {
+    public VariantTagConvention(String[] args) {
         super(args);
     }
 
@@ -34,6 +35,9 @@ public class NoConnectionConvention extends ConnectionConvention {
 
     @Override
     public boolean checkConvention(DataDrivenBlock thisBlock, int thisMetadata, DataDrivenBlock otherBlock, int otherMetadata) {
-        return false;
+        DataDrivenSubBlock thisSubBlock = thisBlock.getSubBlock(thisMetadata);
+        DataDrivenSubBlock otherSubBlock = otherBlock.getSubBlock(otherMetadata);
+
+        return (thisSubBlock.getVariantTag() != null && otherSubBlock.getVariantTag() != null && thisSubBlock.getVariantTag().equalsIgnoreCase(otherSubBlock.getVariantTag()));
     }
 }

@@ -24,6 +24,7 @@ public class SubBlockData {
     private String displayName;
     private TextureSchemeData texture;
     private boolean hiddenInCreative;
+    private String variantTag;
 
     public SubBlockData() {}
 
@@ -31,4 +32,5 @@ public class SubBlockData {
     public String getDisplayName() { return displayName; }
     public TextureSchemeData getTextureScheme() { return texture; }
     public boolean isInCreativeMenu() { return !hiddenInCreative; }
+    public String getVariantTag() { return variantTag; }
 }

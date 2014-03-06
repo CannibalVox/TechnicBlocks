@@ -22,18 +22,18 @@ package net.technic.technicblocks.blocks.connections;
 import net.minecraft.block.Block;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
 
-public class NoConnectionConvention extends ConnectionConvention {
-    public NoConnectionConvention(String[] args) {
+public class LogicalOrConvention extends ConnectionConvention {
+    public LogicalOrConvention(String[] args) {
         super(args);
     }
 
     @Override
     public boolean checkConvention(DataDrivenBlock thisBlock, int thisMetadata, Block otherBlock, int otherMetadata) {
-        return false;
+        return true;
     }
 
     @Override
     public boolean checkConvention(DataDrivenBlock thisBlock, int thisMetadata, DataDrivenBlock otherBlock, int otherMetadata) {
-        return false;
+        return true;
     }
 }

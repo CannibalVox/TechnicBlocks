@@ -26,8 +26,7 @@ import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.technic.technicblocks.blocks.behavior.BlockBehaviorFactory;
-import net.technic.technicblocks.blocks.connections.ConnectionConventionFactory;
-import net.technic.technicblocks.blocks.connections.NoConnectionConvention;
+import net.technic.technicblocks.blocks.connections.*;
 import net.technic.technicblocks.client.facevisibility.FaceVisibilityFactory;
 import net.technic.technicblocks.client.facevisibility.OpaqueBlockVisibilityConvention;
 import net.technic.technicblocks.client.renderer.CubeRenderer;
@@ -79,6 +78,10 @@ public class TechnicBlocks {
     public void preInit(FMLPreInitializationEvent event) {
         //Register connection conventions
         conventionFactory.addConvention("none", NoConnectionConvention.class);
+        conventionFactory.addConvention("allTags", AllTagsConvention.class);
+        conventionFactory.addConvention("anyTags", AnyTagsConvention.class);
+        conventionFactory.addConvention("or", LogicalOrConvention.class);
+        conventionFactory.addConvention("sameVariant", VariantTagConvention.class);
 
         //Create renderers
         DataDrivenRenderer cube = new CubeRenderer(RenderingRegistry.getNextAvailableRenderId());

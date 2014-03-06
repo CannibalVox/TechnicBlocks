@@ -37,23 +37,23 @@ public abstract class ConnectionConvention {
         subConventions.add(convention);
     }
 
-    public abstract boolean checkConvention(DataDrivenBlock thisBlock, Block otherBlock);
-    public abstract boolean checkConvention(DataDrivenBlock thisBlock, DataDrivenBlock otherBlock);
+    public abstract boolean checkConvention(DataDrivenBlock thisBlock, int thisMetadata, Block otherBlock, int otherMetadata);
+    public abstract boolean checkConvention(DataDrivenBlock thisBlock, int thisMetadata, DataDrivenBlock otherBlock, int otherMetadata);
 
-    public final boolean testConnection(DataDrivenBlock thisBlock, Block otherBlock) {
+    public final boolean testConnection(DataDrivenBlock thisBlock, int thisMetadata, Block otherBlock, int otherMetadata) {
         DataDrivenBlock otherDDBlock = DataDrivenBlockRegistry.getDataDrivenBlock(otherBlock);
 
         if (otherDDBlock != null)
-            return internalTestConnection(thisBlock, otherDDBlock);
+            return internalTestConnection(thisBlock, thisMetadata, otherDDBlock, otherMetadata);
         else
-            return internalTestConnection(thisBlock, otherBlock);
+            return internalTestConnection(thisBlock, thisMetadata, otherBlock, otherMetadata);
     }
 
-    protected final <T extends Block> boolean internalTestConnection(DataDrivenBlock thisBlock, T otherBlock) {
+    protected final <T extends Block> boolean internalTestConnection(DataDrivenBlock thisBlock, int thisMetadata, T otherBlock, int otherMetadata) {
         boolean anySubConventionsSucceeded = true;
 
         for(ConnectionConvention convention : subConventions) {
-            boolean result = convention.internalTestConnection(thisBlock, otherBlock);
+            boolean result = convention.internalTestConnection(thisBlock, thisMetadata, otherBlock, otherMetadata);
 
             if (result) {
                 anySubConventionsSucceeded = true;
@@ -65,6 +65,6 @@ public abstract class ConnectionConvention {
         if (!anySubConventionsSucceeded)
             return false;
 
-        return checkConvention(thisBlock, otherBlock);
+        return checkConvention(thisBlock, thisMetadata, otherBlock, otherMetadata);
     }
 }

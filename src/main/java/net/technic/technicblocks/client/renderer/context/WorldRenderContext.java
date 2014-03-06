@@ -104,8 +104,10 @@ public class WorldRenderContext implements IRenderContext {
 
     private boolean isConnected(ConnectionConvention convention, ForgeDirection side) {
         Block adjacentBlock = world.getBlock(anchorX+side.offsetX, anchorY+side.offsetY, anchorZ+side.offsetZ);
+        int thisMetadata = world.getBlockMetadata(anchorX, anchorY, anchorZ);
+        int otherMetadata = world.getBlockMetadata(anchorX+side.offsetX, anchorY+side.offsetY, anchorZ+side.offsetZ);
 
-        return convention.testConnection(anchorBlock, adjacentBlock);
+        return convention.testConnection(anchorBlock, thisMetadata, adjacentBlock, otherMetadata);
     }
 
     @Override

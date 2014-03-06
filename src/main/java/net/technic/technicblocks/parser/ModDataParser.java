@@ -225,7 +225,7 @@ public class ModDataParser {
             BlockTextureScheme textureScheme = new BlockTextureScheme(textureConvention);
             populateTextureScheme(textureScheme, textureSelectorFactory, data.getTextureScheme());
 
-            DataDrivenSubBlock subBlock = new DataDrivenSubBlock(data.getMetadata(), "tile."+this.data.getModId()+"."+data.getDisplayName(), data.isInCreativeMenu(), textureScheme);
+            DataDrivenSubBlock subBlock = new DataDrivenSubBlock(data.getMetadata(), "tile."+this.data.getModId()+"."+data.getDisplayName(), data.isInCreativeMenu(), data.getVariantTag(), textureScheme);
             subBlocks.add(subBlock);
         }
 

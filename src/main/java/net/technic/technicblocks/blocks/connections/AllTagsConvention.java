@@ -16,15 +16,22 @@
         You should have received a copy of the GNU General Public License
         along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 package net.technic.technicblocks.blocks.connections;
 
 import net.minecraft.block.Block;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
 
-public class NoConnectionConvention extends ConnectionConvention {
-    public NoConnectionConvention(String[] args) {
+import java.util.ArrayList;
+import java.util.Collection;
+
+public class AllTagsConvention extends ConnectionConvention {
+    private Collection<String> tags = new ArrayList<String>();
+
+    public AllTagsConvention(String[] args) {
         super(args);
+
+        for (String tag : args)
+            tags.add(tag);
     }
 
     @Override
@@ -34,6 +41,11 @@ public class NoConnectionConvention extends ConnectionConvention {
 
     @Override
     public boolean checkConvention(DataDrivenBlock thisBlock, int thisMetadata, DataDrivenBlock otherBlock, int otherMetadata) {
-        return false;
+        for (String tag :tags) {
+            if (!otherBlock.hasBlockTag(tag))
+                return false;
+        }
+
+        return true;
     }
 }
