@@ -19,8 +19,6 @@
 
 package net.technic.technicblocks.parser.data;
 
-import net.minecraft.block.Block;
-
 public class SoundData {
     private String name;
     private float volume;
