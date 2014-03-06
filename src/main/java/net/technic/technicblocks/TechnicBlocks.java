@@ -44,6 +44,7 @@ import net.technic.technicblocks.materials.MaterialFactory;
 import net.technic.technicblocks.mods.TechnicBlockModContainer;
 import net.technic.technicblocks.parser.ModDataParser;
 import net.technic.technicblocks.parser.ParseException;
+import net.technic.technicblocks.sound.SoundTypeFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,6 +66,7 @@ public class TechnicBlocks {
 
     private CreativeTabFactory creativeTabFactory = new CreativeTabFactory();
     private MaterialFactory materialFactory = new MaterialFactory();
+    private SoundTypeFactory soundTypeFactory = new SoundTypeFactory();
     private ConnectionConventionFactory conventionFactory = new ConnectionConventionFactory();
     private RendererFactory rendererFactory = new RendererFactory();
     private FaceVisibilityFactory faceVisibilityFactory = new FaceVisibilityFactory();
@@ -172,7 +174,7 @@ public class TechnicBlocks {
                 {
                     try {
                         ModDataParser parser = new ModDataParser(zip.getInputStream(ze));
-                        parser.RegisterAllBlocks(creativeTabFactory, materialFactory, conventionFactory, rendererFactory, faceVisibilityFactory, blockBehaviorFactory, textureSelectorFactory);
+                        parser.RegisterAllBlocks(creativeTabFactory, materialFactory, soundTypeFactory, conventionFactory, rendererFactory, faceVisibilityFactory, blockBehaviorFactory, textureSelectorFactory);
                         creativeTabFactory.verifyCreativeTabs();
 
                         //If we found a valid blox file, then hold onto the mod ID

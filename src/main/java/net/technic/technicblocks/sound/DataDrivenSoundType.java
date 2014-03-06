@@ -17,24 +17,42 @@
         along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package net.technic.technicblocks.parser.data;
+package net.technic.technicblocks.sound;
 
 import net.minecraft.block.Block;
+import net.technic.technicblocks.parser.data.SoundData;
 
-public class SoundData {
-    private String name;
-    private float volume;
-    private float pitch;
-    private String breakSound;
-    private String stepSound;
-    private String placeSound;
+public class DataDrivenSoundType extends Block.SoundType {
+    private SoundData soundData;
 
-    public SoundData() {}
+    public DataDrivenSoundType(SoundData soundData) {
+        super("", 1.0f, 1.0f);
+        this.soundData = soundData;
+    }
 
-    public String getName() { return name; }
-    public float getVolume() { return volume; }
-    public float getPitch() { return pitch; }
-    public String getBreakSound() { return breakSound; }
-    public String getStepSound() { return stepSound; }
-    public String getPlaceSound() { return placeSound; }
+    @Override
+    public float getVolume() {
+        return soundData.getVolume();
+    }
+
+    @Override
+    public float getPitch() {
+        return soundData.getPitch();
+    }
+
+    @Override
+    public String getBreakSound() {
+        return soundData.getBreakSound();
+    }
+
+    @Override
+    public String getStepResourcePath() {
+        return soundData.getStepSound();
+    }
+
+    @Override
+    public String func_150496_b()
+    {
+        return soundData.getPlaceSound();
+    }
 }

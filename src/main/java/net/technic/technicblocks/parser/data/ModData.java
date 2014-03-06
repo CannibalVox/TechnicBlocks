@@ -27,6 +27,7 @@ public class ModData {
     private String modId;
     private Collection<CreativeTabData> customCreativeTabs = new ArrayList<CreativeTabData>();
     private Collection<MaterialData> customMaterials = new ArrayList<MaterialData>();
+    private Collection<SoundData> customSounds = new ArrayList<SoundData>();
     private Collection<BlockData> blocks = new ArrayList<BlockData>();
 
     public Collection<CreativeTabData> getCreativeTabs() {
@@ -36,6 +37,8 @@ public class ModData {
     public Collection<MaterialData> getCustomMaterials() {
         return customMaterials;
     }
+
+    public Collection<SoundData> getCustomSounds() { return customSounds; }
 
     public Collection<BlockData> getBlocks() {
         return blocks;

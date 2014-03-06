@@ -27,7 +27,7 @@ public class BlockData {
     private String name;
     private String creativeTabName;
     private String materialName;
-    private SoundData sound;
+    private String soundName;
     private float hardness;
     private float resistance;
     private float lightLevel;
@@ -44,7 +44,7 @@ public class BlockData {
     public String getBlockName() { return name; }
     public String getCreativeTabName() { return creativeTabName; }
     public String getMaterialName() { return materialName; }
-    public SoundData getSound() { return sound; }
+    public String getSoundName() { return soundName; }
     public float getHardness() { return hardness; }
     public float getResistance() { return resistance; }
     public boolean isIndestructible() { return isIndestructible; }

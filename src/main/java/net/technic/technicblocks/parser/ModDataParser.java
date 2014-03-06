@@ -46,6 +46,7 @@ import net.technic.technicblocks.creativetabs.CreativeTabFactory;
 import net.technic.technicblocks.items.DataDrivenItemBlock;
 import net.technic.technicblocks.materials.MaterialFactory;
 import net.technic.technicblocks.parser.data.*;
+import net.technic.technicblocks.sound.SoundTypeFactory;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -92,13 +93,17 @@ public class ModDataParser {
 
     public String getModId() { return data.getModId(); }
 
-    public void RegisterAllBlocks(CreativeTabFactory creativeTabsFactory, MaterialFactory materialFactory, ConnectionConventionFactory connectionConventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory) throws ParseException {
+    public void RegisterAllBlocks(CreativeTabFactory creativeTabsFactory, MaterialFactory materialFactory, SoundTypeFactory soundFactory, ConnectionConventionFactory connectionConventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory) throws ParseException {
         for (CreativeTabData tab : data.getCreativeTabs()) {
             creativeTabsFactory.addCreativeTab(tab);
         }
 
         for (MaterialData material : data.getCustomMaterials()) {
             materialFactory.addMaterial(material);
+        }
+
+        for (SoundData sound : data.getCustomSounds()) {
+            soundFactory.addSoundType(sound);
         }
 
         for (BlockData block : data.getBlocks()) {
@@ -115,11 +120,17 @@ public class ModDataParser {
                 throw new ParseException("'" + block.getCreativeTabName() + "' is not a valid creative tab name.");
             }
 
-            setupAndRegisterBlock(block, material, tab, connectionConventionFactory, rendererFactory, faceVisibilityFactory, behaviorFactory, textureSelectorFactory);
+            Block.SoundType sound = soundFactory.getSoundByName(block.getSoundName());
+
+            if (sound == null) {
+                throw new ParseException("'" + block.getSoundName() + "' is not a valid sound name.");
+            }
+
+            setupAndRegisterBlock(block, material, tab, sound, connectionConventionFactory, rendererFactory, faceVisibilityFactory, behaviorFactory, textureSelectorFactory);
         }
     }
 
-    private void setupAndRegisterBlock(BlockData block, Material material, CreativeTabs creativeTab, ConnectionConventionFactory conventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory) throws ParseException {
+    private void setupAndRegisterBlock(BlockData block, Material material, CreativeTabs creativeTab, Block.SoundType sound, ConnectionConventionFactory conventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory) throws ParseException {
         //Build blockmodel
         ConnectionConvention modelConvention = createConvention(conventionFactory, block.getModelConnections());
         FaceVisibilityConvention faceVisibility = faceVisibilityFactory.getConvention(block.getFaceVisibilityType());
@@ -138,6 +149,7 @@ public class ModDataParser {
         DataDrivenBlock blockObj = new DataDrivenBlock(material, model, block.getBlockTags(), behaviors, subBlocks);
         blockObj.setHardness(block.getHardness());
         blockObj.setCreativeTab(creativeTab);
+        blockObj.setStepSound(sound);
         blockObj.setLightLevel(block.getLightLevel());
         blockObj.setResistance(block.getResistance());
 
@@ -147,8 +159,6 @@ public class ModDataParser {
         for (HarvestLevelData harvestLevel : block.getHarvestLevel()) {
             blockObj.setHarvestLevel(harvestLevel.getTool(), harvestLevel.getHarvestLevel());
         }
-
-        blockObj.setStepSound(new Block.SoundType(block.getSound().getName(), block.getSound().getVolume(), block.getSound().getPitch()));
 
         //Register block
         GameRegistry.registerBlock(blockObj, DataDrivenItemBlock.class, block.getBlockName(), data.getModId());
