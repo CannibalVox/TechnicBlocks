@@ -120,23 +120,7 @@ public class TechnicBlocks {
                 for (String modId : examineFile(file)) {
                     //It's a non-mod file that has cool blox stuff in it!  Better read resources in!
                     ModContainer container = new TechnicBlockModContainer(modId, file);
-                    if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-                        try {
-                            Field packsField = Minecraft.class.getDeclaredField("defaultResourcePacks");
-                            boolean needsAccessChange = !packsField.isAccessible();
-                            if (needsAccessChange)
-                                packsField.setAccessible(true);
-                            List resourcePacks = (List)packsField.get(Minecraft.getMinecraft());
-                            resourcePacks.add(new FMLFileResourcePack(container));
-                            if (needsAccessChange)
-                                packsField.setAccessible(false);
-                        } catch (NoSuchFieldException ex) {
-                            continue;
-                        } catch (IllegalAccessException ex) {
-                            continue;
-                        }
-                    } else
-                        LanguageRegistry.instance().loadLanguagesFor(container, FMLCommonHandler.instance().getSide());
+                    FMLCommonHandler.instance().addModToResourcePack(container);
 
                     //If we can find a mcmod.info file that corresponds to the mod ID in the blox file,
                     //bind the metadata from mcmod.info and hold onto the container

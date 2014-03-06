@@ -21,6 +21,8 @@ package net.technic.technicblocks.mods;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
+import cpw.mods.fml.client.FMLFileResourcePack;
+import cpw.mods.fml.client.FMLFolderResourcePack;
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
@@ -162,7 +164,7 @@ public class TechnicBlockModContainer implements ModContainer {
 
     @Override
     public Class<?> getCustomResourcePackClass() {
-        return null;
+        return getSource().isDirectory() ? FMLFolderResourcePack.class : FMLFileResourcePack.class;
     }
 
     @Override
