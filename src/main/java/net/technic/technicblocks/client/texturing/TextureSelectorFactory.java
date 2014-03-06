@@ -19,8 +19,8 @@
 
 package net.technic.technicblocks.client.texturing;
 
-import net.technic.technicblocks.parser.ParseException;
-
+import net.technic.technicblocks.TechnicBlocks;
+import net.technic.technicblocks.TechnicBlocksCommonProxy;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,22 +32,24 @@ public class TextureSelectorFactory {
         selectorClasses.put(name, conventionClass);
     }
 
-    public TextureSelector createSelector(String name, String[] args) throws ParseException {
+    public TextureSelector createSelector(String name, String[] args) {
+        TechnicBlocksCommonProxy proxy = TechnicBlocks.getProxy();
+
         if (!selectorClasses.containsKey(name)) {
-            throw new ParseException("No connection convention named '"+name+"' exists.");
+            throw proxy.createParseException("No connection convention named '"+name+"' exists.");
         }
 
         Class<? extends TextureSelector> clazz = selectorClasses.get(name);
         try {
             return (clazz.getConstructor(String[].class).newInstance(new Object[] {args}));
         } catch (NoSuchMethodException ex) {
-            throw new ParseException("Class '"+clazz.getName()+"' was expected to have a constructor with a single String[] param, but did not.", ex);
+            throw proxy.createParseException("Class '"+clazz.getName()+"' was expected to have a constructor with a single String[] param, but did not.", ex);
         } catch (InstantiationException ex) {
-            throw new ParseException("An error occurred while instantiating an object of class '"+clazz.getName()+"'", ex);
+            throw proxy.createParseException("An error occurred while instantiating an object of class '"+clazz.getName()+"'", ex);
         } catch (IllegalAccessException ex) {
-            throw new ParseException("An error occurred while instantiating an object of class '"+clazz.getName()+"'", ex);
+            throw proxy.createParseException("An error occurred while instantiating an object of class '"+clazz.getName()+"'", ex);
         } catch (InvocationTargetException ex) {
-            throw new ParseException("An error occurred while instantiating an object of class '"+clazz.getName()+"'", ex);
+            throw proxy.createParseException("An error occurred while instantiating an object of class '"+clazz.getName()+"'", ex);
         }
     }
 }

@@ -21,14 +21,10 @@ package net.technic.technicblocks;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import cpw.mods.fml.client.FMLFileResourcePack;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.relauncher.Side;
-import net.minecraft.client.Minecraft;
 import net.technic.technicblocks.blocks.behavior.BlockBehaviorFactory;
 import net.technic.technicblocks.blocks.connections.ConnectionConventionFactory;
 import net.technic.technicblocks.blocks.connections.NoConnectionConvention;
@@ -43,7 +39,6 @@ import net.technic.technicblocks.creativetabs.CreativeTabFactory;
 import net.technic.technicblocks.materials.MaterialFactory;
 import net.technic.technicblocks.mods.TechnicBlockModContainer;
 import net.technic.technicblocks.parser.ModDataParser;
-import net.technic.technicblocks.parser.ParseException;
 import net.technic.technicblocks.sound.SoundTypeFactory;
 
 import java.io.File;
@@ -63,6 +58,13 @@ import java.util.zip.ZipFile;
 public class TechnicBlocks {
     public static final String MODID = "technicblocks";
     public static final String VERSION = "1.0";
+    @Mod.Instance
+    public static TechnicBlocks instance;
+
+    @SidedProxy(clientSide = "net.technic.technicblocks.TechnicBlocksClientProxy", serverSide = "net.technic.technicblocks.TechnicBlocksCommonProxy")
+    private static TechnicBlocksCommonProxy proxy;
+
+    public static TechnicBlocksCommonProxy getProxy() { return proxy; }
 
     private CreativeTabFactory creativeTabFactory = new CreativeTabFactory();
     private MaterialFactory materialFactory = new MaterialFactory();
@@ -158,7 +160,7 @@ public class TechnicBlocks {
         }
 
         //Gets the added lang entries where they belong
-        Minecraft.getMinecraft().refreshResources();
+        proxy.refreshResources();
     }
 
     private static final Pattern bloxFilePattern = Pattern.compile("assets/([^/]*)/blox/(.*).blox");
@@ -173,17 +175,17 @@ public class TechnicBlocks {
                 if (matcher.matches())
                 {
                     try {
-                        ModDataParser parser = new ModDataParser(zip.getInputStream(ze));
+                        ModDataParser parser = new ModDataParser(zip.getInputStream(ze), proxy);
                         parser.RegisterAllBlocks(creativeTabFactory, materialFactory, soundTypeFactory, conventionFactory, rendererFactory, faceVisibilityFactory, blockBehaviorFactory, textureSelectorFactory);
-                        creativeTabFactory.verifyCreativeTabs();
+                        proxy.verifyCreativeTabs(creativeTabFactory);
 
                         //If we found a valid blox file, then hold onto the mod ID
                         String modId = parser.getModId();
 
                         if (!parsedModIds.contains(modId))
                             parsedModIds.add(modId);
-                    } catch (ParseException ex) {
-                        throw new ParseException("An error occurred while parsing blox file '"+ze.getName()+"':", ex);
+                    } catch (RuntimeException ex) {
+                        throw proxy.createParseException("An error occurred while parsing blox file '" + ze.getName() + "':", ex);
                     }
                 }
             }

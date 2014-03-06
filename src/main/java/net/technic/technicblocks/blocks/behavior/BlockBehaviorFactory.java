@@ -19,7 +19,8 @@
 
 package net.technic.technicblocks.blocks.behavior;
 
-import net.technic.technicblocks.parser.ParseException;
+import net.technic.technicblocks.TechnicBlocks;
+import net.technic.technicblocks.TechnicBlocksCommonProxy;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -32,22 +33,23 @@ public class BlockBehaviorFactory {
         behaviors.put(name, behavior);
     }
 
-    public BlockBehavior createBehavior(String name, String[] args) throws ParseException {
+    public BlockBehavior createBehavior(String name, String[] args) {
+        TechnicBlocksCommonProxy proxy = TechnicBlocks.getProxy();
         if (!behaviors.containsKey(name)) {
-            throw new ParseException("Block behavior '"+name+"' does not exist.");
+            throw proxy.createParseException("Block behavior '"+name+"' does not exist.");
         }
 
         Class<? extends BlockBehavior> clazz = behaviors.get(name);
         try {
             return (clazz.getConstructor(String[].class).newInstance(new Object[] {args}));
         } catch (NoSuchMethodException ex) {
-            throw new ParseException("Class '"+clazz.getName()+"' was expected to have a constructor with a single String[] param, but did not.", ex);
+            throw proxy.createParseException("Class '"+clazz.getName()+"' was expected to have a constructor with a single String[] param, but did not.", ex);
         } catch (InstantiationException ex) {
-            throw new ParseException("An error occurred while instantiating an object of class '"+clazz.getName()+"'", ex);
+            throw proxy.createParseException("An error occurred while instantiating an object of class '"+clazz.getName()+"'", ex);
         } catch (IllegalAccessException ex) {
-            throw new ParseException("An error occurred while instantiating an object of class '"+clazz.getName()+"'", ex);
+            throw proxy.createParseException("An error occurred while instantiating an object of class '"+clazz.getName()+"'", ex);
         } catch (InvocationTargetException ex) {
-            throw new ParseException("An error occurred while instantiating an object of class '"+clazz.getName()+"'", ex);
+            throw proxy.createParseException("An error occurred while instantiating an object of class '"+clazz.getName()+"'", ex);
         }
     }
 }

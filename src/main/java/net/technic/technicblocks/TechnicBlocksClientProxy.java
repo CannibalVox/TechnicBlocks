@@ -17,24 +17,35 @@
         along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package net.technic.technicblocks.client.facevisibility;
+package net.technic.technicblocks;
 
-import net.technic.technicblocks.TechnicBlocks;
+import net.minecraft.client.Minecraft;
+import net.technic.technicblocks.creativetabs.CreativeTabFactory;
+import net.technic.technicblocks.parser.ParseException;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class FaceVisibilityFactory {
-    private Map<String, FaceVisibilityConvention> conventions = new HashMap<String, FaceVisibilityConvention>();
-
-    public void addConvention(String name, FaceVisibilityConvention convention) {
-        conventions.put(name, convention);
+public class TechnicBlocksClientProxy extends TechnicBlocksCommonProxy {
+    @Override
+    public RuntimeException createParseException() {
+        return new ParseException();
     }
 
-    public FaceVisibilityConvention getConvention(String name) {
-        if (!conventions.containsKey(name))
-            throw TechnicBlocks.getProxy().createParseException("Face Visibility type '" + name + "' does not exist.");
+    @Override
+    public RuntimeException createParseException(String message) {
+        return new ParseException(message);
+    }
 
-        return conventions.get(name);
+    @Override
+    public RuntimeException createParseException(String message, Throwable cause) {
+        return new ParseException(message, cause);
+    }
+
+    @Override
+    public void verifyCreativeTabs(CreativeTabFactory factory) {
+        factory.verifyCreativeTabs();
+    }
+
+    @Override
+    public void refreshResources() {
+        Minecraft.getMinecraft().refreshResources();
     }
 }

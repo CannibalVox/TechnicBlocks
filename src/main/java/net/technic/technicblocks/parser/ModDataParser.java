@@ -26,6 +26,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
+import net.technic.technicblocks.TechnicBlocksCommonProxy;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
 import net.technic.technicblocks.blocks.DataDrivenBlockRegistry;
 import net.technic.technicblocks.blocks.DataDrivenSubBlock;
@@ -60,11 +61,13 @@ public class ModDataParser {
 
     private ModData data;
     private Gson gson;
+    private TechnicBlocksCommonProxy proxy;
 
-    public ModDataParser(InputStream stream) throws ParseException {
+    public ModDataParser(InputStream stream, TechnicBlocksCommonProxy proxy) {
+        this.proxy = proxy;
 
         if (stream == null) {
-            throw new ParseException("Mod Data json file could not be found.");
+            throw proxy.createParseException("Mod Data json file could not be found.");
         }
 
         GsonBuilder builder = new GsonBuilder();
@@ -78,12 +81,12 @@ public class ModDataParser {
             data = gson.fromJson(dataText, ModData.class);
 
             if (data == null) {
-                throw new ParseException("Mod Data json file parsed to a null value.");
+                throw proxy.createParseException("Mod Data json file parsed to a null value.");
             }
         } catch (IOException ex) {
-            throw new ParseException("Error loading Mod Data json file.", ex);
+            throw proxy.createParseException("Error loading Mod Data json file.", ex);
         } catch (JsonSyntaxException ex) {
-            throw new ParseException("Error parsing the Mod Data json file.", ex);
+            throw proxy.createParseException("Error parsing the Mod Data json file.", ex);
         } finally {
             try {
                 stream.close();
@@ -93,7 +96,7 @@ public class ModDataParser {
 
     public String getModId() { return data.getModId(); }
 
-    public void RegisterAllBlocks(CreativeTabFactory creativeTabsFactory, MaterialFactory materialFactory, SoundTypeFactory soundFactory, ConnectionConventionFactory connectionConventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory) throws ParseException {
+    public void RegisterAllBlocks(CreativeTabFactory creativeTabsFactory, MaterialFactory materialFactory, SoundTypeFactory soundFactory, ConnectionConventionFactory connectionConventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory) {
         for (CreativeTabData tab : data.getCreativeTabs()) {
             creativeTabsFactory.addCreativeTab(tab);
         }
@@ -111,26 +114,26 @@ public class ModDataParser {
             Material material = materialFactory.getMaterialByName(block.getMaterialName());
 
             if (material == null) {
-                throw new ParseException("'"+block.getMaterialName()+"' is not a valid material name.");
+                throw proxy.createParseException("'"+block.getMaterialName()+"' is not a valid material name.");
             }
 
             CreativeTabs tab = creativeTabsFactory.getCreativeTabByName(block.getCreativeTabName());
 
             if (tab == null) {
-                throw new ParseException("'" + block.getCreativeTabName() + "' is not a valid creative tab name.");
+                throw proxy.createParseException("'" + block.getCreativeTabName() + "' is not a valid creative tab name.");
             }
 
             Block.SoundType sound = soundFactory.getSoundByName(block.getSoundName());
 
             if (sound == null) {
-                throw new ParseException("'" + block.getSoundName() + "' is not a valid sound name.");
+                throw proxy.createParseException("'" + block.getSoundName() + "' is not a valid sound name.");
             }
 
             setupAndRegisterBlock(block, material, tab, sound, connectionConventionFactory, rendererFactory, faceVisibilityFactory, behaviorFactory, textureSelectorFactory);
         }
     }
 
-    private void setupAndRegisterBlock(BlockData block, Material material, CreativeTabs creativeTab, Block.SoundType sound, ConnectionConventionFactory conventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory) throws ParseException {
+    private void setupAndRegisterBlock(BlockData block, Material material, CreativeTabs creativeTab, Block.SoundType sound, ConnectionConventionFactory conventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory) {
         //Build blockmodel
         ConnectionConvention modelConvention = createConvention(conventionFactory, block.getModelConnections());
         FaceVisibilityConvention faceVisibility = faceVisibilityFactory.getConvention(block.getFaceVisibilityType());
@@ -165,7 +168,7 @@ public class ModDataParser {
         DataDrivenBlockRegistry.registerBlock(blockObj);
     }
 
-    private int buildBlockBehaviorList(Collection<BehaviorData> behaviorData, BlockBehaviorFactory factory, String blockName, List<BlockBehavior> outList) throws ParseException {
+    private int buildBlockBehaviorList(Collection<BehaviorData> behaviorData, BlockBehaviorFactory factory, String blockName, List<BlockBehavior> outList) {
         for (BehaviorData data : behaviorData) {
             BlockBehavior behavior = factory.createBehavior(data.getName(), data.getArgs());
             outList.add(behavior);
@@ -178,7 +181,7 @@ public class ModDataParser {
             int bitSize = behavior.getMetadataBitSize();
             if (behavior.isMetadataReserved() && bitSize > 0) {
                 if (bitSize > maxUsedRootBit) {
-                    throw new ParseException("Block '"+blockName+"' has too many metadata-using behaviors.  There are not enough metadata bits to handle it all!");
+                    throw proxy.createParseException("Block '"+blockName+"' has too many metadata-using behaviors.  There are not enough metadata bits to handle it all!");
                 }
 
                 maxUsedRootBit -= bitSize;
@@ -193,7 +196,7 @@ public class ModDataParser {
             int bitSize = behavior.getMetadataBitSize();
             if (!behavior.isMetadataReserved() && bitSize > 0) {
                 if (bitSize > maxUsedRootBit) {
-                    throw new ParseException("Block '"+blockName+"' has too many metadata-using behaviors.  There are not enough metadata bits to handle it all!");
+                    throw proxy.createParseException("Block '"+blockName+"' has too many metadata-using behaviors.  There are not enough metadata bits to handle it all!");
                 }
 
                 maxUsedRootBit -= bitSize;
@@ -204,7 +207,7 @@ public class ModDataParser {
         return maxReservedRootBit;
     }
 
-    private List<DataDrivenSubBlock> buildSubBlocks(Collection<SubBlockData> subBlockData, TextureSelectorFactory textureSelectorFactory, ConnectionConvention textureConvention, int maxReservedBit, String blockName) throws ParseException {
+    private List<DataDrivenSubBlock> buildSubBlocks(Collection<SubBlockData> subBlockData, TextureSelectorFactory textureSelectorFactory, ConnectionConvention textureConvention, int maxReservedBit, String blockName) {
         int availableSubBlocks = 1;
         while (maxReservedBit > 0) {
             availableSubBlocks = (availableSubBlocks << 1) | 1;
@@ -215,9 +218,9 @@ public class ModDataParser {
 
         for (SubBlockData data : subBlockData) {
             if (data.getMetadata() >= 16)
-                throw new ParseException("Block '"+blockName+"' has a subblock with invalid metadata- metadata ID's have to be less than 16!");
+                throw proxy.createParseException("Block '"+blockName+"' has a subblock with invalid metadata- metadata ID's have to be less than 16!");
             else if (data.getMetadata() >= availableSubBlocks)
-                throw new ParseException("Block '"+blockName+"' cannot use metadata "+data.getMetadata()+" because some of those bits are being occupied by a behavior.");
+                throw proxy.createParseException("Block '"+blockName+"' cannot use metadata "+data.getMetadata()+" because some of those bits are being occupied by a behavior.");
 
             BlockTextureScheme textureScheme = new BlockTextureScheme(textureConvention);
             populateTextureScheme(textureScheme, textureSelectorFactory, data.getTextureScheme());
@@ -229,7 +232,7 @@ public class ModDataParser {
         return subBlocks;
     }
 
-    private ConnectionConvention createConvention(ConnectionConventionFactory factory, ConnectionConventionData data) throws ParseException {
+    private ConnectionConvention createConvention(ConnectionConventionFactory factory, ConnectionConventionData data) {
         String[] argsArray = new String[data.getArgs().size()];
         data.getArgs().toArray(argsArray);
         ConnectionConvention convention = factory.createConvention(data.getName(),argsArray);
@@ -242,7 +245,7 @@ public class ModDataParser {
         return convention;
     }
 
-    private void populateTextureScheme(BlockTextureScheme textureScheme, TextureSelectorFactory textureSelectorFactory, TextureSchemeData schemeData) throws ParseException {
+    private void populateTextureScheme(BlockTextureScheme textureScheme, TextureSelectorFactory textureSelectorFactory, TextureSchemeData schemeData) {
         for(TextureFaceData faceData : schemeData.getFaces()) {
             TextureSelector selector = textureSelectorFactory.createSelector(faceData.getSelector(), faceData.getArgs());
             textureScheme.addTextureSelector(faceData.getFace(), selector);

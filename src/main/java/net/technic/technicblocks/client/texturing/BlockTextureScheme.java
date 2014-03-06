@@ -23,8 +23,8 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.technic.technicblocks.TechnicBlocks;
 import net.technic.technicblocks.blocks.connections.ConnectionConvention;
-import net.technic.technicblocks.parser.ParseException;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.util.HashMap;
@@ -70,18 +70,18 @@ public class BlockTextureScheme {
 
     public ConnectionConvention getConnectionConvention() { return connectionConvention; }
 
-    public void addTextureSelector(String key, TextureSelector selector) throws ParseException {
+    public void addTextureSelector(String key, TextureSelector selector) {
         if (directionAliases.containsKey(key.toLowerCase())) {
             for(ForgeDirection dir : directionAliases.get(key.toLowerCase()))
                 textureSelectorMap.put(dir, selector);
         } else
-            throw new ParseException("Side descriptor \""+key+"\" isn't a real side descriptor.");
+            throw TechnicBlocks.getProxy().createParseException("Side descriptor \"" + key + "\" isn't a real side descriptor.");
     }
 
-    public void checkSelectorCoverage() throws ParseException {
+    public void checkSelectorCoverage() {
         for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
             if (!textureSelectorMap.containsKey(dir)) {
-                throw new ParseException("No texture selector was indicated for \""+dir.name()+"\" side.");
+                throw TechnicBlocks.getProxy().createParseException("No texture selector was indicated for \""+dir.name()+"\" side.");
             }
         }
     }

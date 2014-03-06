@@ -19,7 +19,7 @@
 
 package net.technic.technicblocks.client.renderer;
 
-import net.technic.technicblocks.parser.ParseException;
+import net.technic.technicblocks.TechnicBlocks;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,9 +31,9 @@ public class RendererFactory {
         renderers.put(name, renderer);
     }
 
-    public DataDrivenRenderer getRenderer(String name) throws ParseException {
+    public DataDrivenRenderer getRenderer(String name) {
         if (!renderers.containsKey(name)) {
-            throw new ParseException("There is no block model named '"+name+"'");
+            throw TechnicBlocks.getProxy().createParseException("There is no block model named '" + name + "'");
         }
 
         return renderers.get(name);

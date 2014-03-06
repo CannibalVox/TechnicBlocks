@@ -23,17 +23,17 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.technic.technicblocks.TechnicBlocks;
 import net.technic.technicblocks.blocks.connections.ConnectionConvention;
-import net.technic.technicblocks.parser.ParseException;
 
 public class StaticTextureSelector extends TextureSelector  {
 
     private IIcon icon;
     private String iconName;
 
-    public StaticTextureSelector(String[] args) throws ParseException {
+    public StaticTextureSelector(String[] args) {
         if(args.length < 1)
-            throw new ParseException("Texture selectors of type 'static' require at least one argument: a valid icon resource path.");
+            throw TechnicBlocks.getProxy().createParseException("Texture selectors of type 'static' require at least one argument: a valid icon resource path.");
 
         this.iconName = args[0];
     }

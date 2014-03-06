@@ -19,8 +19,10 @@
 
 package net.technic.technicblocks.creativetabs;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
-import net.technic.technicblocks.parser.ParseException;
+import net.technic.technicblocks.TechnicBlocks;
 import net.technic.technicblocks.parser.data.CreativeTabData;
 
 import java.util.HashMap;
@@ -52,10 +54,11 @@ public class CreativeTabFactory {
             return null;
     }
 
-    public void verifyCreativeTabs() throws ParseException {
+    @SideOnly(Side.CLIENT)
+    public void verifyCreativeTabs() {
         for(CreativeTabs tab : creativeTabs.values()) {
             if (tab.getTabIconItem() == null) {
-                throw new ParseException("Could not locate the specified icon item for creative tab "+tab.getTranslatedTabLabel());
+                throw TechnicBlocks.getProxy().createParseException("Could not locate the specified icon item for creative tab " + tab.getTranslatedTabLabel());
             }
         }
     }
