@@ -21,13 +21,14 @@ package net.technic.technicblocks;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import cpw.mods.fml.client.FMLFileResourcePack;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.StatCollector;
 import net.technic.technicblocks.blocks.behavior.BlockBehaviorFactory;
 import net.technic.technicblocks.blocks.connections.ConnectionConventionFactory;
 import net.technic.technicblocks.blocks.connections.NoConnectionConvention;
@@ -36,6 +37,8 @@ import net.technic.technicblocks.client.facevisibility.OpaqueBlockVisibilityConv
 import net.technic.technicblocks.client.renderer.CubeRenderer;
 import net.technic.technicblocks.client.renderer.DataDrivenRenderer;
 import net.technic.technicblocks.client.renderer.RendererFactory;
+import net.technic.technicblocks.client.texturing.StaticTextureSelector;
+import net.technic.technicblocks.client.texturing.TextureSelectorFactory;
 import net.technic.technicblocks.creativetabs.CreativeTabFactory;
 import net.technic.technicblocks.materials.MaterialFactory;
 import net.technic.technicblocks.mods.TechnicBlockModContainer;
@@ -66,6 +69,7 @@ public class TechnicBlocks {
     private RendererFactory rendererFactory = new RendererFactory();
     private FaceVisibilityFactory faceVisibilityFactory = new FaceVisibilityFactory();
     private BlockBehaviorFactory blockBehaviorFactory = new BlockBehaviorFactory();
+    private TextureSelectorFactory textureSelectorFactory = new TextureSelectorFactory();
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -83,6 +87,9 @@ public class TechnicBlocks {
 
         //Register face visibility factory
         faceVisibilityFactory.addConvention("normal", new OpaqueBlockVisibilityConvention());
+
+        //Register texture selectors
+        textureSelectorFactory.addSelector("static", StaticTextureSelector.class);
 
         //Register behaviors
 
@@ -111,9 +118,25 @@ public class TechnicBlocks {
         for (File file : ((ModClassLoader)Loader.instance().getModClassLoader()).getParentSources()) {
             if (!modFiles.contains(file)) {
                 for (String modId : examineFile(file)) {
-                    //It's a non-mod file that has cool blox stuff in it!  Better check it out for lang data
+                    //It's a non-mod file that has cool blox stuff in it!  Better read resources in!
                     ModContainer container = new TechnicBlockModContainer(modId, file);
-                    LanguageRegistry.instance().loadLanguagesFor(container, FMLCommonHandler.instance().getSide());
+                    if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+                        try {
+                            Field packsField = Minecraft.class.getDeclaredField("defaultResourcePacks");
+                            boolean needsAccessChange = !packsField.isAccessible();
+                            if (needsAccessChange)
+                                packsField.setAccessible(true);
+                            List resourcePacks = (List)packsField.get(Minecraft.getMinecraft());
+                            resourcePacks.add(new FMLFileResourcePack(container));
+                            if (needsAccessChange)
+                                packsField.setAccessible(false);
+                        } catch (NoSuchFieldException ex) {
+                            continue;
+                        } catch (IllegalAccessException ex) {
+                            continue;
+                        }
+                    } else
+                        LanguageRegistry.instance().loadLanguagesFor(container, FMLCommonHandler.instance().getSide());
 
                     //If we can find a mcmod.info file that corresponds to the mod ID in the blox file,
                     //bind the metadata from mcmod.info and hold onto the container
@@ -165,7 +188,7 @@ public class TechnicBlocks {
                 {
                     try {
                         ModDataParser parser = new ModDataParser(zip.getInputStream(ze));
-                        parser.RegisterAllBlocks(creativeTabFactory, materialFactory, conventionFactory, rendererFactory, faceVisibilityFactory, blockBehaviorFactory);
+                        parser.RegisterAllBlocks(creativeTabFactory, materialFactory, conventionFactory, rendererFactory, faceVisibilityFactory, blockBehaviorFactory, textureSelectorFactory);
                         creativeTabFactory.verifyCreativeTabs();
 
                         //If we found a valid blox file, then hold onto the mod ID

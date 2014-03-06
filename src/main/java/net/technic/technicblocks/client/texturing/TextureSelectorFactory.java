@@ -17,7 +17,7 @@
         along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package net.technic.technicblocks.blocks.behavior;
+package net.technic.technicblocks.client.texturing;
 
 import net.technic.technicblocks.parser.ParseException;
 
@@ -25,19 +25,19 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BlockBehaviorFactory {
-    private Map<String, Class<? extends BlockBehavior>> behaviors = new HashMap<String, Class<? extends BlockBehavior>>();
+public class TextureSelectorFactory {
+    private Map<String, Class<? extends TextureSelector>> selectorClasses = new HashMap<String, Class<? extends TextureSelector>>();
 
-    public void addBehavior(String name, Class<BlockBehavior> behavior) {
-        behaviors.put(name, behavior);
+    public void addSelector(String name, Class<? extends TextureSelector> conventionClass) {
+        selectorClasses.put(name, conventionClass);
     }
 
-    public BlockBehavior createBehavior(String name, String[] args) throws ParseException {
-        if (!behaviors.containsKey(name)) {
-            throw new ParseException("Block behavior '"+name+"' does not exist.");
+    public TextureSelector createSelector(String name, String[] args) throws ParseException {
+        if (!selectorClasses.containsKey(name)) {
+            throw new ParseException("No connection convention named '"+name+"' exists.");
         }
 
-        Class<? extends BlockBehavior> clazz = behaviors.get(name);
+        Class<? extends TextureSelector> clazz = selectorClasses.get(name);
         try {
             return (clazz.getConstructor(String[].class).newInstance(new Object[] {args}));
         } catch (NoSuchMethodException ex) {

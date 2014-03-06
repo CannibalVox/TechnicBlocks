@@ -40,6 +40,8 @@ import net.technic.technicblocks.client.renderer.DataDrivenRenderer;
 import net.technic.technicblocks.client.renderer.RendererFactory;
 import net.technic.technicblocks.client.texturing.BlockTextureScheme;
 import net.technic.technicblocks.client.texturing.StaticTextureSelector;
+import net.technic.technicblocks.client.texturing.TextureSelector;
+import net.technic.technicblocks.client.texturing.TextureSelectorFactory;
 import net.technic.technicblocks.creativetabs.CreativeTabFactory;
 import net.technic.technicblocks.items.DataDrivenItemBlock;
 import net.technic.technicblocks.materials.MaterialFactory;
@@ -90,7 +92,7 @@ public class ModDataParser {
 
     public String getModId() { return data.getModId(); }
 
-    public void RegisterAllBlocks(CreativeTabFactory creativeTabsFactory, MaterialFactory materialFactory, ConnectionConventionFactory connectionConventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockBehaviorFactory behaviorFactory) throws ParseException {
+    public void RegisterAllBlocks(CreativeTabFactory creativeTabsFactory, MaterialFactory materialFactory, ConnectionConventionFactory connectionConventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory) throws ParseException {
         for (CreativeTabData tab : data.getCreativeTabs()) {
             creativeTabsFactory.addCreativeTab(tab);
         }
@@ -113,11 +115,11 @@ public class ModDataParser {
                 throw new ParseException("'" + block.getCreativeTabName() + "' is not a valid creative tab name.");
             }
 
-            setupAndRegisterBlock(block, material, tab, connectionConventionFactory, rendererFactory, faceVisibilityFactory, behaviorFactory);
+            setupAndRegisterBlock(block, material, tab, connectionConventionFactory, rendererFactory, faceVisibilityFactory, behaviorFactory, textureSelectorFactory);
         }
     }
 
-    private void setupAndRegisterBlock(BlockData block, Material material, CreativeTabs creativeTab, ConnectionConventionFactory conventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockBehaviorFactory behaviorFactory) throws ParseException {
+    private void setupAndRegisterBlock(BlockData block, Material material, CreativeTabs creativeTab, ConnectionConventionFactory conventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory) throws ParseException {
         //Build blockmodel
         ConnectionConvention modelConvention = createConvention(conventionFactory, block.getModelConnections());
         FaceVisibilityConvention faceVisibility = faceVisibilityFactory.getConvention(block.getFaceVisibilityType());
@@ -130,7 +132,7 @@ public class ModDataParser {
 
         //Build subblock list
         ConnectionConvention textureConvention = createConvention(conventionFactory, block.getTextureConnections());
-        List<DataDrivenSubBlock> subBlocks = buildSubBlocks(block.getSubBlocks(), textureConvention, maxReservedBit, block.getBlockName());
+        List<DataDrivenSubBlock> subBlocks = buildSubBlocks(block.getSubBlocks(), textureSelectorFactory, textureConvention, maxReservedBit, block.getBlockName());
 
         //Build out basic minecraft block data
         DataDrivenBlock blockObj = new DataDrivenBlock(material, model, block.getBlockTags(), behaviors, subBlocks);
@@ -192,7 +194,7 @@ public class ModDataParser {
         return maxReservedRootBit;
     }
 
-    private List<DataDrivenSubBlock> buildSubBlocks(Collection<SubBlockData> subBlockData, ConnectionConvention textureConvention, int maxReservedBit, String blockName) throws ParseException {
+    private List<DataDrivenSubBlock> buildSubBlocks(Collection<SubBlockData> subBlockData, TextureSelectorFactory textureSelectorFactory, ConnectionConvention textureConvention, int maxReservedBit, String blockName) throws ParseException {
         int availableSubBlocks = 1;
         while (maxReservedBit > 0) {
             availableSubBlocks = (availableSubBlocks << 1) | 1;
@@ -208,9 +210,7 @@ public class ModDataParser {
                 throw new ParseException("Block '"+blockName+"' cannot use metadata "+data.getMetadata()+" because some of those bits are being occupied by a behavior.");
 
             BlockTextureScheme textureScheme = new BlockTextureScheme(textureConvention);
-
-            //HACK
-            textureScheme.addTextureSelector("all", new StaticTextureSelector("test"));
+            populateTextureScheme(textureScheme, textureSelectorFactory, data.getTextureScheme());
 
             DataDrivenSubBlock subBlock = new DataDrivenSubBlock(data.getMetadata(), "tile."+this.data.getModId()+"."+data.getDisplayName(), data.isInCreativeMenu(), textureScheme);
             subBlocks.add(subBlock);
@@ -230,5 +230,14 @@ public class ModDataParser {
         }
 
         return convention;
+    }
+
+    private void populateTextureScheme(BlockTextureScheme textureScheme, TextureSelectorFactory textureSelectorFactory, TextureSchemeData schemeData) throws ParseException {
+        for(TextureFaceData faceData : schemeData.getFaces()) {
+            TextureSelector selector = textureSelectorFactory.createSelector(faceData.getSelector(), faceData.getArgs());
+            textureScheme.addTextureSelector(faceData.getFace(), selector);
+        }
+
+        textureScheme.checkSelectorCoverage();
     }
 }

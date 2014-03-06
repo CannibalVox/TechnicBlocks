@@ -19,16 +19,11 @@
 
 package net.technic.technicblocks.parser.data;
 
-public class SubBlockData {
-    private int metadata;
-    private String displayName;
-    private TextureSchemeData texture;
-    private boolean hiddenInCreative;
+import java.util.Collection;
+import java.util.LinkedList;
 
-    public SubBlockData() {}
+public class TextureSchemeData {
+    private Collection<TextureFaceData> faces = new LinkedList<TextureFaceData>();
 
-    public int getMetadata() { return metadata; }
-    public String getDisplayName() { return displayName; }
-    public TextureSchemeData getTextureScheme() { return texture; }
-    public boolean isInCreativeMenu() { return !hiddenInCreative; }
+    public Collection<TextureFaceData> getFaces() { return faces; }
 }

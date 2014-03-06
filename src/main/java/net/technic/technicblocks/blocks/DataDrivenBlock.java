@@ -105,7 +105,6 @@ public class DataDrivenBlock extends Block {
         return subBlocks.get(meta).getTextureScheme().getTextureForSide(world, x, y, z, dir);
     }
 
-
     public BlockModel getBlockModel() {
         return blockModel;
     }
