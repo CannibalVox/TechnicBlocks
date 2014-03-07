@@ -78,8 +78,4 @@ public abstract class BlockBehavior {
     public boolean transformIsOnFloor(int metadata, boolean isOnFloor) {
         return isOnFloor;
     }
-
-    public boolean placeItemOnBlock(IBlockAccess world, int x, int y, int z, int side) {
-        return false;
-    }
 }

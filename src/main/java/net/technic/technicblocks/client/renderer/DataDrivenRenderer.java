@@ -120,6 +120,7 @@ public abstract class DataDrivenRenderer implements ISimpleBlockRenderingHandler
 
         DataDrivenSubBlock subBlock = ddBlock.getSubBlock(metadata);
 
+        GL11.glRotatef(180.0f, 0, 1.0f, 0);
         GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
         isInventoryMode = true;
         tesselate(ddBlock, subBlock, renderer, new InventoryRenderContext(ddBlock, subBlock.getMetadata()));

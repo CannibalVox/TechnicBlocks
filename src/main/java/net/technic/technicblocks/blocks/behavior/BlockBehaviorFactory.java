@@ -29,7 +29,7 @@ import java.util.Map;
 public class BlockBehaviorFactory {
     private Map<String, Class<? extends BlockBehavior>> behaviors = new HashMap<String, Class<? extends BlockBehavior>>();
 
-    public void addBehavior(String name, Class<BlockBehavior> behavior) {
+    public void addBehavior(String name, Class<? extends BlockBehavior> behavior) {
         behaviors.put(name, behavior);
     }
 

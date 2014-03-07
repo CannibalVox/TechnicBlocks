@@ -25,26 +25,29 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.behavior.BlockBehavior;
+import net.technic.technicblocks.blocks.behavior.IBlockPlacementBehavior;
 import net.technic.technicblocks.client.BlockModel;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DataDrivenBlock extends Block {
     private BlockModel blockModel;
     private Collection<String> blockTags;
-    private List<BlockBehavior> behaviors;
     private Map<Integer, DataDrivenSubBlock> subBlocks = new HashMap<Integer, DataDrivenSubBlock>();
 
     private byte subblockMask;
+
+    private List<BlockBehavior> behaviors;
+    private List<IBlockPlacementBehavior> blockPlacementBehaviors = new ArrayList<IBlockPlacementBehavior>();
 
     public DataDrivenBlock(Material material, BlockModel blockModel, Collection<String> blockTags, List<BlockBehavior> behaviors, List<DataDrivenSubBlock> dataDrivenSubBlocks) {
         super(material);
@@ -52,6 +55,8 @@ public class DataDrivenBlock extends Block {
         this.blockModel = blockModel;
         this.blockTags = blockTags;
         this.behaviors = behaviors;
+
+        interfaceifyBehaviors();
 
         for (DataDrivenSubBlock subBlock : dataDrivenSubBlocks) {
             subBlocks.put(subBlock.getMetadata(), subBlock);
@@ -66,6 +71,13 @@ public class DataDrivenBlock extends Block {
         }
 
         subblockMask = (byte)(subblockMask & ~nonSubblockMask);
+    }
+
+    private void interfaceifyBehaviors() {
+        for(BlockBehavior behavior : behaviors) {
+            if (behavior instanceof IBlockPlacementBehavior)
+                blockPlacementBehaviors.add((IBlockPlacementBehavior)behavior);
+        }
     }
 
     @Override
@@ -91,8 +103,8 @@ public class DataDrivenBlock extends Block {
     @SideOnly(Side.CLIENT)
     public IIcon getIcon(int side, int meta)
     {
-        ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[side];
-        return subBlocks.get(meta).getTextureScheme().getTextureForSide(dir);
+        ForgeDirection dir = transformBlockFacing(meta, ForgeDirection.VALID_DIRECTIONS[side]);
+        return getSubBlock(meta).getTextureScheme().getTextureForSide(dir);
     }
 
     @Override
@@ -100,9 +112,9 @@ public class DataDrivenBlock extends Block {
     public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side)
     {
         int meta = world.getBlockMetadata(x,y,z);
-        ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[side];
+        ForgeDirection dir = transformBlockFacing(meta, ForgeDirection.VALID_DIRECTIONS[side]);
 
-        return subBlocks.get(meta).getTextureScheme().getTextureForSide(this, world, x, y, z, dir);
+        return getSubBlock(meta).getTextureScheme().getTextureForSide(this, world, x, y, z, dir);
     }
 
     public BlockModel getBlockModel() {
@@ -113,14 +125,13 @@ public class DataDrivenBlock extends Block {
         return blockTags.contains(tag);
     }
 
-    public ForgeDirection getBlockFacing(int metadata) {
-        ForgeDirection facing = ForgeDirection.NORTH;
+    public ForgeDirection transformBlockFacing(int metadata, ForgeDirection direction) {
 
         for (BlockBehavior convention : behaviors) {
-            facing = convention.transformBlockFacing(metadata, facing);
+            direction = convention.transformBlockFacing(metadata, direction);
         }
 
-        return facing;
+        return direction;
     }
 
     public boolean isOnFloor(int metadata) {
@@ -150,4 +161,22 @@ public class DataDrivenBlock extends Block {
 
     @Override
     public int getRenderType() { return getBlockModel().getRendererId(); }
+
+    @Override
+    public int onBlockPlaced(World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
+    {
+        ForgeDirection face = ForgeDirection.VALID_DIRECTIONS[side];
+
+        for (IBlockPlacementBehavior behavior : blockPlacementBehaviors)
+            metadata = behavior.transformPlacementMetadata(world, x, y, z, face, hitX, hitY, hitZ, metadata);
+
+        return metadata;
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack item)
+    {
+        for (IBlockPlacementBehavior behavior : blockPlacementBehaviors)
+            behavior.triggerBlockPlacement(world, x, y, z, player, item);
+    }
 }
