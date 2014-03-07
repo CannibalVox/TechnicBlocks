@@ -33,7 +33,7 @@ public class FullCtmTextureSelector extends TextureSelector {
 
     public FullCtmTextureSelector(String[] args) {
         if(args.length < 1)
-            throw TechnicBlocks.getProxy().createParseException("Texture selectors of type 'full' require at least one argument: a resource path containing the full CTM icon list.");
+            throw TechnicBlocks.getProxy().createParseException("Texture selectors of type 'fullCtm' require at least one argument: a resource path containing the full CTM icon list.");
 
         this.iconPath = args[0];
     }

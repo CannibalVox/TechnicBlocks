@@ -33,9 +33,7 @@ import net.technic.technicblocks.client.facevisibility.OpaqueBlockVisibilityConv
 import net.technic.technicblocks.client.renderer.CubeRenderer;
 import net.technic.technicblocks.client.renderer.DataDrivenRenderer;
 import net.technic.technicblocks.client.renderer.RendererFactory;
-import net.technic.technicblocks.client.texturing.FullCtmTextureSelector;
-import net.technic.technicblocks.client.texturing.StaticTextureSelector;
-import net.technic.technicblocks.client.texturing.TextureSelectorFactory;
+import net.technic.technicblocks.client.texturing.*;
 import net.technic.technicblocks.creativetabs.CreativeTabFactory;
 import net.technic.technicblocks.materials.MaterialFactory;
 import net.technic.technicblocks.mods.TechnicBlockModContainer;
@@ -100,6 +98,8 @@ public class TechnicBlocks {
         //Register texture selectors
         textureSelectorFactory.addSelector("static", StaticTextureSelector.class);
         textureSelectorFactory.addSelector("fullCtm", FullCtmTextureSelector.class);
+        textureSelectorFactory.addSelector("horizontalCtm", HorizontalCtmTextureSelector.class);
+        textureSelectorFactory.addSelector("verticalCtm", VerticalCtmTextureSelector.class);
 
         //Register behaviors
         blockBehaviorFactory.addBehavior("4direction", FourDirectionPlacementBehavior.class);
