@@ -29,12 +29,12 @@ public class VariantTagConvention extends ConnectionConvention {
     }
 
     @Override
-    public boolean checkConvention(DataDrivenBlock thisBlock, int thisMetadata, Block otherBlock, int otherMetadata) {
+    protected boolean checkConvention(DataDrivenBlock thisBlock, int thisMetadata, Block otherBlock, int otherMetadata) {
         return false;
     }
 
     @Override
-    public boolean checkConvention(DataDrivenBlock thisBlock, int thisMetadata, DataDrivenBlock otherBlock, int otherMetadata) {
+    protected boolean checkConvention(DataDrivenBlock thisBlock, int thisMetadata, DataDrivenBlock otherBlock, int otherMetadata) {
         DataDrivenSubBlock thisSubBlock = thisBlock.getSubBlock(thisMetadata);
         DataDrivenSubBlock otherSubBlock = otherBlock.getSubBlock(otherMetadata);
 

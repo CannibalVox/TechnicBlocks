@@ -102,7 +102,7 @@ public class DataDrivenBlock extends Block {
         int meta = world.getBlockMetadata(x,y,z);
         ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[side];
 
-        return subBlocks.get(meta).getTextureScheme().getTextureForSide(world, x, y, z, dir);
+        return subBlocks.get(meta).getTextureScheme().getTextureForSide(this, world, x, y, z, dir);
     }
 
     public BlockModel getBlockModel() {

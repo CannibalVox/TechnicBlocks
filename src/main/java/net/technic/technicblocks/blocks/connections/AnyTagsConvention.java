@@ -38,12 +38,12 @@ public class AnyTagsConvention extends ConnectionConvention {
     }
 
     @Override
-    public boolean checkConvention(DataDrivenBlock thisBlock, int thisMetadata, Block otherBlock, int otherMetadata) {
+    protected boolean checkConvention(DataDrivenBlock thisBlock, int thisMetadata, Block otherBlock, int otherMetadata) {
         return false;
     }
 
     @Override
-    public boolean checkConvention(DataDrivenBlock thisBlock, int thisMetadata, DataDrivenBlock otherBlock, int otherMetadata) {
+    protected boolean checkConvention(DataDrivenBlock thisBlock, int thisMetadata, DataDrivenBlock otherBlock, int otherMetadata) {
         for (String tag : tags) {
             if (otherBlock.hasBlockTag(tag))
                 return true;

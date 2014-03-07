@@ -24,6 +24,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.TechnicBlocks;
+import net.technic.technicblocks.blocks.DataDrivenBlock;
 import net.technic.technicblocks.blocks.connections.ConnectionConvention;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -97,10 +98,10 @@ public class BlockTextureScheme {
         }
     }
 
-    public IIcon getTextureForSide(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+    public IIcon getTextureForSide(DataDrivenBlock block, IBlockAccess world, int x, int y, int z, ForgeDirection side) {
         TextureSelector selector = textureSelectorMap.get(side);
 
-        return selector.selectTexture(world, x, y, z, side, connectionConvention);
+        return selector.selectTexture(block, this, world, x, y, z, side, connectionConvention);
     }
 
     public IIcon getTextureForSide(ForgeDirection side) {

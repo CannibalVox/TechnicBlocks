@@ -24,6 +24,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.TechnicBlocks;
+import net.technic.technicblocks.blocks.DataDrivenBlock;
 import net.technic.technicblocks.blocks.connections.ConnectionConvention;
 
 public class StaticTextureSelector extends TextureSelector  {
@@ -44,7 +45,7 @@ public class StaticTextureSelector extends TextureSelector  {
     }
 
     @Override
-    public IIcon selectTexture(IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections) {
+    public IIcon selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections) {
         return selectDefaultTexture();
     }
 

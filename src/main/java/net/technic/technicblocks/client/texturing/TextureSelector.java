@@ -23,11 +23,12 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.technic.technicblocks.blocks.DataDrivenBlock;
 import net.technic.technicblocks.blocks.connections.ConnectionConvention;
 public abstract class TextureSelector {
 
     public abstract void registerIcons(IIconRegister register);
 
-    public abstract IIcon selectTexture(IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections);
+    public abstract IIcon selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections);
     public abstract IIcon selectDefaultTexture();
 }

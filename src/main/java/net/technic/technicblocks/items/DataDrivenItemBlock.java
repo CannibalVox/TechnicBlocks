@@ -40,11 +40,17 @@ public class DataDrivenItemBlock extends ItemBlock {
      * Returns the unlocalized name of this item. This version accepts an ItemStack so different stacks can have
      * different names based on their damage or NBT.
      */
+    @Override
     public String getUnlocalizedName(ItemStack par1ItemStack)
     {
         DataDrivenSubBlock block = ddBlock.getSubBlock(this.getMetadata(par1ItemStack.getItemDamage()));
 
         return block.getUnlocalizedName();
+    }
+
+    @Override
+    public int getMetadata(int damage) {
+        return damage;
     }
 
 }
