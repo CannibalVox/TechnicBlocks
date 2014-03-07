@@ -42,6 +42,7 @@ import java.util.*;
 public class DataDrivenBlock extends Block {
     private BlockModel blockModel;
     private Collection<String> blockTags;
+    private List<Integer> subBlockMetadatas = new ArrayList<Integer>();
     private Map<Integer, DataDrivenSubBlock> subBlocks = new HashMap<Integer, DataDrivenSubBlock>();
 
     private byte subblockMask;
@@ -59,6 +60,7 @@ public class DataDrivenBlock extends Block {
         interfaceifyBehaviors();
 
         for (DataDrivenSubBlock subBlock : dataDrivenSubBlocks) {
+            subBlockMetadatas.add(subBlock.getMetadata());
             subBlocks.put(subBlock.getMetadata(), subBlock);
         }
 
@@ -160,6 +162,18 @@ public class DataDrivenBlock extends Block {
         return getSubBlock(metadata);
     }
 
+    public int getSubBlockMask() {
+        return subblockMask;
+    }
+
+    public int getSubBlockCount() {
+        return subBlocks.size();
+    }
+
+    public int getSubBlockMetadataByIndex(int index) {
+        return subBlockMetadatas.get(index);
+    }
+
     @Override
     public int getRenderType() { return getBlockModel().getRendererId(); }
 
@@ -169,7 +183,7 @@ public class DataDrivenBlock extends Block {
         ForgeDirection face = ForgeDirection.VALID_DIRECTIONS[side];
 
         for (IBlockPlacementBehavior behavior : blockPlacementBehaviors)
-            metadata = behavior.transformPlacementMetadata(world, x, y, z, face, hitX, hitY, hitZ, metadata);
+            metadata = behavior.transformPlacementMetadata(this, world, x, y, z, face, hitX, hitY, hitZ, metadata);
 
         return metadata;
     }
@@ -178,6 +192,6 @@ public class DataDrivenBlock extends Block {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack item)
     {
         for (IBlockPlacementBehavior behavior : blockPlacementBehaviors)
-            behavior.triggerBlockPlacement(world, x, y, z, player, item);
+            behavior.triggerBlockPlacement(this, world, x, y, z, player, item);
     }
 }

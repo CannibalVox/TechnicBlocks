@@ -22,9 +22,9 @@ package net.technic.technicblocks.blocks.behavior;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.technic.technicblocks.blocks.DataDrivenBlock;
 
 public class FourDirectionPlacementBehavior extends BlockBehavior implements  IBlockPlacementBehavior {
 
@@ -55,12 +55,12 @@ public class FourDirectionPlacementBehavior extends BlockBehavior implements  IB
     }
 
     @Override
-    public int transformPlacementMetadata(IBlockAccess world, int x, int y, int z, ForgeDirection side, float hitX, float hitY, float hitZ, int metadata) {
+    public int transformPlacementMetadata(DataDrivenBlock block, World world, int x, int y, int z, ForgeDirection side, float hitX, float hitY, float hitZ, int metadata) {
         return metadata;
     }
 
     @Override
-    public void triggerBlockPlacement(World world, int x, int y, int z, EntityLivingBase player, ItemStack item) {
+    public void triggerBlockPlacement(DataDrivenBlock block, World world, int x, int y, int z, EntityLivingBase player, ItemStack item) {
         int quartile = MathHelper.floor_double((double) (player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
         int metadata = world.getBlockMetadata(x, y, z);
 

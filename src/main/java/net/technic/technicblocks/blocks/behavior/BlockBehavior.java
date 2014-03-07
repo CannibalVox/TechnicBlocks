@@ -50,8 +50,10 @@ public abstract class BlockBehavior {
     }
 
     protected int getMetadataValue(int metadata) {
-        int mask = getMetadataMask();
+        return getMetadataValueWithMask(metadata, getMetadataMask());
+    }
 
+    protected int getMetadataValueWithMask(int metadata, int mask) {
         if (mask == 0) return 0;
 
         int masked = (metadata & mask);
@@ -60,8 +62,10 @@ public abstract class BlockBehavior {
     }
 
     protected int setMetadataValue(int metadata, int value) {
-        int mask = getMetadataMask();
+        return setMetadataValueWithMask(metadata, value, getMetadataMask());
+    }
 
+    protected int setMetadataValueWithMask(int metadata, int value, int mask) {
         if (mask == 0) return metadata;
 
         int inverseMask = ~mask;
