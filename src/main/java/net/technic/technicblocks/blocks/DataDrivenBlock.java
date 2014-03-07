@@ -112,9 +112,10 @@ public class DataDrivenBlock extends Block {
     public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side)
     {
         int meta = world.getBlockMetadata(x,y,z);
-        ForgeDirection dir = transformBlockFacing(meta, ForgeDirection.VALID_DIRECTIONS[side]);
+        ForgeDirection physicalSide = ForgeDirection.VALID_DIRECTIONS[side];
+        ForgeDirection virtualSide = transformBlockFacing(meta, physicalSide);
 
-        return getSubBlock(meta).getTextureScheme().getTextureForSide(this, world, x, y, z, dir);
+        return getSubBlock(meta).getTextureScheme().getTextureForSide(this, world, x, y, z, physicalSide, virtualSide);
     }
 
     public BlockModel getBlockModel() {

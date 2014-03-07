@@ -98,10 +98,10 @@ public class BlockTextureScheme {
         }
     }
 
-    public IIcon getTextureForSide(DataDrivenBlock block, IBlockAccess world, int x, int y, int z, ForgeDirection side) {
-        TextureSelector selector = textureSelectorMap.get(side);
+    public IIcon getTextureForSide(DataDrivenBlock block, IBlockAccess world, int x, int y, int z, ForgeDirection physicalSide, ForgeDirection virtualSide) {
+        TextureSelector selector = textureSelectorMap.get(virtualSide);
 
-        return selector.selectTexture(block, this, world, x, y, z, side, connectionConvention);
+        return selector.selectTexture(block, this, world, x, y, z, physicalSide, connectionConvention);
     }
 
     public IIcon getTextureForSide(ForgeDirection side) {
