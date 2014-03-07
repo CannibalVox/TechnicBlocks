@@ -100,6 +100,7 @@ public class TechnicBlocks {
         textureSelectorFactory.addSelector("fullCtm", FullCtmTextureSelector.class);
         textureSelectorFactory.addSelector("horizontalCtm", HorizontalCtmTextureSelector.class);
         textureSelectorFactory.addSelector("verticalCtm", VerticalCtmTextureSelector.class);
+        textureSelectorFactory.addSelector("hashRandom", HashRandomTextureSelector.class);
 
         //Register behaviors
         blockBehaviorFactory.addBehavior("4direction", FourDirectionPlacementBehavior.class);
