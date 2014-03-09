@@ -64,12 +64,18 @@ public class BlockTextureScheme {
 
     private ConnectionConvention connectionConvention;
     private Map<ForgeDirection, TextureSelector> textureSelectorMap = new HashMap<ForgeDirection, TextureSelector>();
+    private Map<String, TextureSelector> decoratorMap = new HashMap<String, TextureSelector>();
+    private Map<String, IIcon> registeredIcons = new HashMap<String, IIcon>();
 
     public BlockTextureScheme(ConnectionConvention connectionConvention) {
         this.connectionConvention = connectionConvention;
     }
 
     public ConnectionConvention getConnectionConvention() { return connectionConvention; }
+
+    public void addDecorator(String key, TextureSelector selector) {
+        decoratorMap.put(key, selector);
+    }
 
     public void addTextureSelector(String key, TextureSelector selector) {
         if (directionAliases.containsKey(key.toLowerCase())) {
@@ -87,13 +93,29 @@ public class BlockTextureScheme {
         }
     }
 
+    public void registerIcon(IIconRegister register, String iconPath) {
+        if (decoratorMap.containsKey(iconPath) || registeredIcons.containsKey(iconPath))
+            return;
+
+        registeredIcons.put(iconPath, register.registerIcon(iconPath));
+    }
+
     public void registerIcons(IIconRegister register) {
         LinkedList<TextureSelector> registeredSelectors = new LinkedList<TextureSelector>();
 
         for (TextureSelector selector : textureSelectorMap.values()) {
             if (!registeredSelectors.contains(selector)) {
-                selector.registerIcons(register);
+                selector.registerIcons(this, register);
                 registeredSelectors.add(selector);
+            }
+        }
+
+        for (String texture : decoratorMap.keySet()) {
+            TextureSelector decorator = decoratorMap.get(texture);
+
+            if (!registeredSelectors.contains(decorator)) {
+                decorator.registerIcons(this, register, texture);
+                registeredSelectors.add(decorator);
             }
         }
     }
@@ -101,13 +123,27 @@ public class BlockTextureScheme {
     public IIcon getTextureForSide(DataDrivenBlock block, IBlockAccess world, int x, int y, int z, ForgeDirection physicalSide, ForgeDirection virtualSide) {
         TextureSelector selector = textureSelectorMap.get(virtualSide);
 
-        return selector.selectTexture(block, this, world, x, y, z, physicalSide, connectionConvention);
+        String resourcePath = selector.selectTexture(block, this, world, x, y, z, physicalSide, connectionConvention);
+
+        while (decoratorMap.containsKey(resourcePath)) {
+            selector = decoratorMap.get(resourcePath);
+            resourcePath = selector.selectTexture(block, this, world, x, y, z, physicalSide, connectionConvention);
+        }
+
+        return registeredIcons.get(resourcePath);
     }
 
     public IIcon getTextureForSide(ForgeDirection side) {
         TextureSelector selector = textureSelectorMap.get(side);
 
-        return selector.selectDefaultTexture();
+        String resourcePath = selector.selectDefaultTexture();
+
+        while (decoratorMap.containsKey(resourcePath)) {
+            selector = decoratorMap.get(resourcePath);
+            resourcePath = selector.selectDefaultTexture();
+        }
+
+        return registeredIcons.get(resourcePath);
     }
 
     static final ForgeDirection[] posXDirs = new ForgeDirection[] { ForgeDirection.EAST, ForgeDirection.EAST, ForgeDirection.WEST, ForgeDirection.EAST, ForgeDirection.SOUTH, ForgeDirection.NORTH };

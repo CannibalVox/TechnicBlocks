@@ -27,8 +27,9 @@ import net.technic.technicblocks.blocks.DataDrivenBlock;
 import net.technic.technicblocks.blocks.connections.ConnectionConvention;
 public abstract class TextureSelector {
 
-    public abstract void registerIcons(IIconRegister register);
+    public void registerIcons(BlockTextureScheme textureScheme, IIconRegister register) { registerIcons(textureScheme, register, null); }
+    public abstract void registerIcons(BlockTextureScheme textureScheme, IIconRegister register, String decoratorTexture);
 
-    public abstract IIcon selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections);
-    public abstract IIcon selectDefaultTexture();
+    public abstract String selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections);
+    public abstract String selectDefaultTexture();
 }

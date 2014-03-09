@@ -31,7 +31,7 @@ public class HashRandomTextureSelector extends TextureSelector {
 
     private int iconCount;
     private String iconPath;
-    private IIcon[] allIcons;
+    private String[] allIcons;
 
     public HashRandomTextureSelector(String[] args) {
         if(args.length < 2)
@@ -39,7 +39,7 @@ public class HashRandomTextureSelector extends TextureSelector {
 
         try {
             iconCount = Integer.parseInt(args[0]);
-            allIcons = new IIcon[iconCount];
+            allIcons = new String[iconCount];
         } catch (NumberFormatException ex) {
             throw TechnicBlocks.getProxy().createParseException("The first argument of 'random' texture selector was '"+args[0]+"' instead of a valid number of icons.", ex);
         }
@@ -48,14 +48,19 @@ public class HashRandomTextureSelector extends TextureSelector {
     }
 
     @Override
-    public void registerIcons(IIconRegister register) {
+    public void registerIcons(BlockTextureScheme textureScheme, IIconRegister register, String decoratorName) {
         for (int i = 0; i < iconCount; i++) {
-            allIcons[i] = register.registerIcon(iconPath+Integer.toString(i));
+            allIcons[i] = iconPath+Integer.toString(i);
+
+            if (decoratorName != null && decoratorName.equalsIgnoreCase(decoratorName))
+                throw TechnicBlocks.getProxy().createParseException("Illegal decorator: Decorator for texture '"+decoratorName+"' can select that same texture.");
+
+            textureScheme.registerIcon(register, allIcons[i]);
         }
     }
 
     @Override
-    public IIcon selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections) {
+    public String selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections) {
         int faceInt = side.ordinal();
         long n = 0x1c3764a30115L * x * (x + 0xbL) + 0x227c1adccd1dL * y * (y + 0xbL) + 0xe0d251c03ba5L * z * (z + 0xbL) + 0xa2fb1377aeb3L * faceInt * (faceInt + 0xbL);
         n = 0x5deece66dL * (n + x + y + z + faceInt) + 0xbL;
@@ -64,7 +69,7 @@ public class HashRandomTextureSelector extends TextureSelector {
     }
 
     @Override
-    public IIcon selectDefaultTexture() {
+    public String selectDefaultTexture() {
         return allIcons[0];
     }
 }

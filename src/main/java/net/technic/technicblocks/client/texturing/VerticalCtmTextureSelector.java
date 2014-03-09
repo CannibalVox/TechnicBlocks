@@ -19,6 +19,7 @@
 
 package net.technic.technicblocks.client.texturing;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
@@ -29,7 +30,7 @@ import net.technic.technicblocks.blocks.connections.ConnectionConvention;
 
 public class VerticalCtmTextureSelector extends TextureSelector {
     private String iconPath;
-    private IIcon[] allIcons = new IIcon[4];
+    private String[] allIcons = new String[4];
 
     public VerticalCtmTextureSelector(String[] args) {
         if(args.length < 1)
@@ -39,14 +40,19 @@ public class VerticalCtmTextureSelector extends TextureSelector {
     }
 
     @Override
-    public void registerIcons(IIconRegister register) {
+    public void registerIcons(BlockTextureScheme textureScheme, IIconRegister register, String decoratorName) {
         for (int i = 0; i < 4; i++) {
-            allIcons[i] = register.registerIcon(iconPath+Integer.toString(i));
+            allIcons[i] = iconPath+Integer.toString(i);
+
+            if (decoratorName != null && decoratorName.equalsIgnoreCase(allIcons[i]))
+                throw TechnicBlocks.getProxy().createParseException("Illegal decorator: Decorator for texture '"+decoratorName+"' can select that same texture.");
+
+            textureScheme.registerIcon(register, allIcons[i]);
         }
     }
 
     @Override
-    public IIcon selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections) {
+    public String selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections) {
         int thisBlockMetadata = world.getBlockMetadata(x,y,z);
 
         ForgeDirection south = textureScheme.getAxisSide(side, 0, 1);
@@ -75,7 +81,7 @@ public class VerticalCtmTextureSelector extends TextureSelector {
     }
 
     @Override
-    public IIcon selectDefaultTexture() {
+    public String selectDefaultTexture() {
         return allIcons[3];
     }
 }

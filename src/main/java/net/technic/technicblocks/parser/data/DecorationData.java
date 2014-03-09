@@ -19,13 +19,12 @@
 
 package net.technic.technicblocks.parser.data;
 
-import java.util.Collection;
-import java.util.LinkedList;
+public class DecorationData {
+    private String texture;
+    private String selector;
+    private String[] args;
 
-public class TextureSchemeData {
-    private Collection<TextureFaceData> faces = new LinkedList<TextureFaceData>();
-    private Collection<DecorationData> decorators = new LinkedList<DecorationData>();
-
-    public Collection<TextureFaceData> getFaces() { return faces; }
-    public Collection<DecorationData> getDecorators() { return decorators; }
+    public String getTextureResource() { return texture; }
+    public String getSelector() { return selector; }
+    public String[] getArgs() { return args; }
 }

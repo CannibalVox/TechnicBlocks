@@ -26,10 +26,11 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.TechnicBlocks;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
 import net.technic.technicblocks.blocks.connections.ConnectionConvention;
+import net.technic.technicblocks.parser.ParseException;
 
 public class FullCtmTextureSelector extends TextureSelector {
     private String iconPath;
-    private IIcon[] allIcons = new IIcon[48];
+    private String[] iconResources = new String[48];
 
     public FullCtmTextureSelector(String[] args) {
         if(args.length < 1)
@@ -39,14 +40,20 @@ public class FullCtmTextureSelector extends TextureSelector {
     }
 
     @Override
-    public void registerIcons(IIconRegister register) {
+    public void registerIcons(BlockTextureScheme textureScheme, IIconRegister register, String decoratorName) {
         for (int i = 0; i < 48; i++) {
-            allIcons[i] = register.registerIcon(iconPath+Integer.toString(i));
+            String texturePath = iconPath+Integer.toString(i);
+
+            if (decoratorName != null && decoratorName.equalsIgnoreCase(texturePath))
+                throw TechnicBlocks.getProxy().createParseException("Illegal decorator: Decorator for texture '"+decoratorName+"' can select that same texture.");
+
+            textureScheme.registerIcon(register, texturePath);
+            iconResources[i] = texturePath;
         }
     }
 
     @Override
-    public IIcon selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections) {
+    public String selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections) {
         int thisBlockMetadata = world.getBlockMetadata(x,y,z);
 
         ForgeDirection east = textureScheme.getAxisSide(side, 1, 0);
@@ -71,7 +78,7 @@ public class FullCtmTextureSelector extends TextureSelector {
         if ((direction & 0x0C) == 0x0C && connections.testConnection(block, thisBlockMetadata, world.getBlock(x-east.offsetX-south.offsetX, y-east.offsetY-south.offsetY, z-east.offsetZ-south.offsetZ), world.getBlockMetadata(x-east.offsetX-south.offsetX, y-east.offsetY-south.offsetY, z-east.offsetZ-south.offsetZ)))
             direction |= 0x80;
 
-        return allIcons[getIndexFromDirection(direction)];
+        return iconResources[getIndexFromDirection(direction)];
     }
 
     protected int getIndexFromDirection(short direction) {
@@ -177,7 +184,7 @@ public class FullCtmTextureSelector extends TextureSelector {
     }
 
     @Override
-    public IIcon selectDefaultTexture() {
-        return allIcons[0];
+    public String selectDefaultTexture() {
+        return iconResources[0];
     }
 }

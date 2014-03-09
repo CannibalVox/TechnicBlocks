@@ -29,7 +29,6 @@ import net.technic.technicblocks.blocks.connections.ConnectionConvention;
 
 public class StaticTextureSelector extends TextureSelector  {
 
-    private IIcon icon;
     private String iconName;
 
     public StaticTextureSelector(String[] args) {
@@ -40,17 +39,21 @@ public class StaticTextureSelector extends TextureSelector  {
     }
 
     @Override
-    public void registerIcons(IIconRegister register) {
-        this.icon = register.registerIcon(iconName);
+    public void registerIcons(BlockTextureScheme textureScheme, IIconRegister register, String decoratorTexture) {
+
+        if (decoratorTexture != null && decoratorTexture.equalsIgnoreCase(iconName))
+            throw TechnicBlocks.getProxy().createParseException("Illegal decorator: Decorator for texture '"+decoratorTexture+"' can select that same texture.");
+
+        textureScheme.registerIcon(register, iconName);
     }
 
     @Override
-    public IIcon selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections) {
+    public String selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections) {
         return selectDefaultTexture();
     }
 
     @Override
-    public IIcon selectDefaultTexture() {
-        return icon;
+    public String selectDefaultTexture() {
+        return iconName;
     }
 }
