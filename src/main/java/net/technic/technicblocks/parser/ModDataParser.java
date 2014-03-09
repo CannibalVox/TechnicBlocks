@@ -250,6 +250,11 @@ public class ModDataParser {
             textureScheme.addTextureSelector(faceData.getFace(), selector);
         }
 
+        for (DecorationData decorator : schemeData.getDecorators()) {
+            TextureSelector selector = textureSelectorFactory.createSelector(decorator.getSelector(), decorator.getArgs());
+            textureScheme.addDecorator(decorator.getTextureResource(), selector);
+        }
+
         textureScheme.checkSelectorCoverage();
     }
 }
