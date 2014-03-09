@@ -32,7 +32,7 @@ public class BlockData {
     private float resistance;
     private float lightLevel;
     private boolean isIndestructible;
-    private List<HarvestLevelData> harvestLevel = new ArrayList<HarvestLevelData>();
+    private HarvestLevelData harvestLevel;
     private Collection<String> blockTags = new ArrayList<String>();
     private ConnectionConventionData modelConnections;
     private ConnectionConventionData textureConnections;
@@ -49,7 +49,7 @@ public class BlockData {
     public float getResistance() { return resistance; }
     public boolean isIndestructible() { return isIndestructible; }
     public float getLightLevel() { return lightLevel; }
-    public List<HarvestLevelData> getHarvestLevel() { return harvestLevel; }
+    public HarvestLevelData getHarvestLevel() { return harvestLevel; }
     public Collection<String> getBlockTags() { return blockTags; }
     public ConnectionConventionData getModelConnections() { return modelConnections; }
     public ConnectionConventionData getTextureConnections() { return textureConnections; }

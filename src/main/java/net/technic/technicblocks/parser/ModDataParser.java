@@ -159,10 +159,9 @@ public class ModDataParser {
         if (block.isIndestructible())
             blockObj.setBlockUnbreakable();
 
-        for (HarvestLevelData harvestLevel : block.getHarvestLevel()) {
-            blockObj.setHarvestLevel(harvestLevel.getTool(), harvestLevel.getHarvestLevel());
+        if (block.getHarvestLevel() != null) {
+            blockObj.setHarvestLevel(block.getHarvestLevel().getTool(), block.getHarvestLevel().getHarvestLevel());
         }
-
         //Register block
         GameRegistry.registerBlock(blockObj, DataDrivenItemBlock.class, block.getBlockName(), data.getModId());
         DataDrivenBlockRegistry.registerBlock(blockObj);
