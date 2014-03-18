@@ -26,16 +26,18 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.behavior.BlockBehavior;
-import net.technic.technicblocks.blocks.behavior.IBlockPlacementBehavior;
+import net.technic.technicblocks.blocks.behavior.functions.IBlockPlacementBehavior;
+import net.technic.technicblocks.blocks.behavior.functions.IItemBlockTargetBehavior;
 import net.technic.technicblocks.client.BlockModel;
+import net.technic.technicblocks.items.DataDrivenItemBlock;
 
 import java.util.*;
 
@@ -49,6 +51,7 @@ public class DataDrivenBlock extends Block {
 
     private List<BlockBehavior> behaviors;
     private List<IBlockPlacementBehavior> blockPlacementBehaviors = new ArrayList<IBlockPlacementBehavior>();
+    private List<IItemBlockTargetBehavior> itemBlockTargetBehaviors = new ArrayList<IItemBlockTargetBehavior>();
 
     public DataDrivenBlock(Material material, BlockModel blockModel, Collection<String> blockTags, List<BlockBehavior> behaviors, List<DataDrivenSubBlock> dataDrivenSubBlocks) {
         super(material);
@@ -79,6 +82,8 @@ public class DataDrivenBlock extends Block {
         for(BlockBehavior behavior : behaviors) {
             if (behavior instanceof IBlockPlacementBehavior)
                 blockPlacementBehaviors.add((IBlockPlacementBehavior)behavior);
+            if (behavior instanceof IItemBlockTargetBehavior)
+                itemBlockTargetBehaviors.add((IItemBlockTargetBehavior)behavior);
         }
     }
 
@@ -193,5 +198,27 @@ public class DataDrivenBlock extends Block {
     {
         for (IBlockPlacementBehavior behavior : blockPlacementBehaviors)
             behavior.triggerBlockPlacement(this, world, x, y, z, player, item);
+    }
+
+    public boolean shouldPlaceBlock(EntityPlayer player, DataDrivenItemBlock item, ItemStack itemStack, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+        boolean shouldPlaceBlock = true;
+        ForgeDirection face = ForgeDirection.VALID_DIRECTIONS[side];
+
+        for (IItemBlockTargetBehavior behavior : itemBlockTargetBehaviors) {
+            shouldPlaceBlock = behavior.transformShouldPlaceBlock(player, this, item, itemStack, world, x, y, z, face, hitX, hitY, hitZ, shouldPlaceBlock);
+        }
+
+        return shouldPlaceBlock;
+    }
+
+    public boolean itemUsedOnBlock(EntityPlayer player, DataDrivenItemBlock item, ItemStack itemStack, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+        boolean shouldConsumeItem = false;
+        ForgeDirection face = ForgeDirection.VALID_DIRECTIONS[side];
+
+        for (IItemBlockTargetBehavior behavior : itemBlockTargetBehaviors) {
+            shouldConsumeItem = behavior.itemUsedOnBlock(player, this, item, itemStack, world, x, y, z, face, hitX, hitY, hitZ) || shouldConsumeItem;
+        }
+
+        return shouldConsumeItem;
     }
 }

@@ -17,15 +17,16 @@
         along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package net.technic.technicblocks.blocks.behavior;
+package net.technic.technicblocks.blocks.behavior.functions;
 
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
+import net.technic.technicblocks.items.DataDrivenItemBlock;
 
-public interface IBlockPlacementBehavior {
-    int transformPlacementMetadata(DataDrivenBlock block, World world, int x, int y, int z, ForgeDirection side, float hitX, float hitY, float hitZ, int metadata);
-    void triggerBlockPlacement(DataDrivenBlock block, World world, int x, int y, int z, EntityLivingBase player, ItemStack item);
+public interface IItemBlockTargetBehavior {
+    boolean transformShouldPlaceBlock(EntityPlayer player, DataDrivenBlock block, DataDrivenItemBlock item, ItemStack stack, World world, int x, int y, int z, ForgeDirection face, float hitX, float hitY, float hitZ, boolean shouldPlaceBlock);
+    boolean itemUsedOnBlock(EntityPlayer player, DataDrivenBlock block, DataDrivenItemBlock item, ItemStack stack, World world, int x, int y, int z, ForgeDirection face, float hitX, float hitY, float hitZ);
 }

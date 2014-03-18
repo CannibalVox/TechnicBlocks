@@ -17,40 +17,15 @@
         along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package net.technic.technicblocks.blocks.behavior;
+package net.technic.technicblocks.blocks.behavior.functions;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
-import net.technic.technicblocks.blocks.behavior.functions.IBlockPlacementBehavior;
 
-public class PlaceRandomSubBlockBehavior extends BlockBehavior implements IBlockPlacementBehavior {
-
-    public PlaceRandomSubBlockBehavior(String[] args) {
-        super(args);
-    }
-
-    @Override
-    public boolean isMetadataReserved() {
-        return false;
-    }
-
-    @Override
-    public int getMetadataBitSize() {
-        return 0;
-    }
-
-    @Override
-    public int transformPlacementMetadata(DataDrivenBlock block, World world, int x, int y, int z, ForgeDirection side, float hitX, float hitY, float hitZ, int metadata) {
-        int subBlockIndex = world.rand.nextInt(block.getSubBlockCount());
-        int subBlockMetadata = block.getSubBlockMetadataByIndex(subBlockIndex);
-        return setMetadataValueWithMask(metadata, subBlockMetadata, block.getSubBlockMask());
-    }
-
-    @Override
-    public void triggerBlockPlacement(DataDrivenBlock block, World world, int x, int y, int z, EntityLivingBase player, ItemStack item) {
-        //Do nothin'!
-    }
+public interface IBlockPlacementBehavior {
+    int transformPlacementMetadata(DataDrivenBlock block, World world, int x, int y, int z, ForgeDirection side, float hitX, float hitY, float hitZ, int metadata);
+    void triggerBlockPlacement(DataDrivenBlock block, World world, int x, int y, int z, EntityLivingBase player, ItemStack item);
 }

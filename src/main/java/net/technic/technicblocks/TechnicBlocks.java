@@ -26,10 +26,7 @@ import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.technic.technicblocks.blocks.DataDrivenSubBlock;
-import net.technic.technicblocks.blocks.behavior.BlockBehaviorFactory;
-import net.technic.technicblocks.blocks.behavior.FourDirectionPlacementBehavior;
-import net.technic.technicblocks.blocks.behavior.PlaceRandomSubBlockBehavior;
-import net.technic.technicblocks.blocks.behavior.VerticalPlacementBehavior;
+import net.technic.technicblocks.blocks.behavior.*;
 import net.technic.technicblocks.blocks.connections.*;
 import net.technic.technicblocks.client.facevisibility.FaceVisibilityFactory;
 import net.technic.technicblocks.client.facevisibility.OpaqueBlockVisibilityConvention;
@@ -113,6 +110,7 @@ public class TechnicBlocks {
         blockBehaviorFactory.addBehavior("4direction", FourDirectionPlacementBehavior.class);
         blockBehaviorFactory.addBehavior("placeRandomSubBlock", PlaceRandomSubBlockBehavior.class);
         blockBehaviorFactory.addBehavior("verticalPlacement", VerticalPlacementBehavior.class);
+        blockBehaviorFactory.addBehavior("completeSlab", CompleteSlabBehavior.class);
     }
 
     @Mod.EventHandler

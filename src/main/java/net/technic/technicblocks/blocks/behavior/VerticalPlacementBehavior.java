@@ -24,8 +24,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
+import net.technic.technicblocks.blocks.behavior.functions.IBlockPlacementBehavior;
 
-public class VerticalPlacementBehavior extends BlockBehavior implements  IBlockPlacementBehavior {
+public class VerticalPlacementBehavior extends BlockBehavior implements IBlockPlacementBehavior {
 
     public VerticalPlacementBehavior(String[] args) {
         super(args);

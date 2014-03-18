@@ -25,8 +25,9 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
+import net.technic.technicblocks.blocks.behavior.functions.IBlockPlacementBehavior;
 
-public class FourDirectionPlacementBehavior extends BlockBehavior implements  IBlockPlacementBehavior {
+public class FourDirectionPlacementBehavior extends BlockBehavior implements IBlockPlacementBehavior {
 
     public FourDirectionPlacementBehavior(String[] args) {
         super(args);
