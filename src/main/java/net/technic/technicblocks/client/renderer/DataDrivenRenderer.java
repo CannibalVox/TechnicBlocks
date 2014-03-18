@@ -45,7 +45,7 @@ public abstract class DataDrivenRenderer implements ISimpleBlockRenderingHandler
         this.rendererId = rendererId;
     }
 
-    protected abstract boolean tesselate(DataDrivenBlock block, DataDrivenSubBlock subBlock, RenderBlocks renderer, IRenderContext connectionContext);
+    protected abstract boolean tesselate(DataDrivenBlock block, int metadata, RenderBlocks renderer, IRenderContext connectionContext);
 
     protected boolean renderFaceIfVisible(ForgeDirection face, float startX, float startY, float endX, float endY, BlockTextureScheme textureScheme, IRenderContext connectionContext, RenderBlocks renderer) {
         if (connectionContext.isFaceVisible(face)) {
@@ -123,7 +123,7 @@ public abstract class DataDrivenRenderer implements ISimpleBlockRenderingHandler
         GL11.glRotatef(180.0f, 0, 1.0f, 0);
         GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
         isInventoryMode = true;
-        tesselate(ddBlock, subBlock, renderer, new InventoryRenderContext(ddBlock, subBlock.getMetadata()));
+        tesselate(ddBlock, metadata, renderer, new InventoryRenderContext(ddBlock, subBlock.getMetadata()));
         GL11.glTranslatef(0.5F, 0.5F, 0.5F);
     }
 
@@ -134,10 +134,11 @@ public abstract class DataDrivenRenderer implements ISimpleBlockRenderingHandler
         if (ddBlock == null)
             return false;
 
-        DataDrivenSubBlock subBlock = ddBlock.getSubBlock(world, x, y, z);
+        int metadata = world.getBlockMetadata(x,y,z);
+        DataDrivenSubBlock subBlock = ddBlock.getSubBlock(metadata);
 
         isInventoryMode = false;
-        return tesselate(ddBlock, subBlock, renderer, new WorldRenderContext(ddBlock, subBlock, world, x, y, z));
+        return tesselate(ddBlock, metadata, renderer, new WorldRenderContext(ddBlock, subBlock, world, x, y, z));
     }
 
     @Override

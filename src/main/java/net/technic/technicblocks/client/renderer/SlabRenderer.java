@@ -25,23 +25,38 @@ import net.technic.technicblocks.blocks.DataDrivenBlock;
 import net.technic.technicblocks.blocks.DataDrivenSubBlock;
 import net.technic.technicblocks.client.renderer.context.IRenderContext;
 
-public class CubeRenderer extends DataDrivenRenderer {
-
-    public CubeRenderer(int renderId) {
+public class SlabRenderer extends DataDrivenRenderer {
+    public SlabRenderer(int renderId) {
         super(renderId);
     }
 
     @Override
     protected boolean tesselate(DataDrivenBlock block, int metadata, RenderBlocks renderer, IRenderContext connectionContext) {
+        boolean isOnFloor = block.isOnFloor(metadata);
         DataDrivenSubBlock subBlock = block.getSubBlock(metadata);
 
-        boolean result = renderFaceIfVisible(ForgeDirection.UP, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, renderer);
-        result = renderFaceIfVisible(ForgeDirection.DOWN, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, renderer) || result;
-        result = renderFaceIfVisible(ForgeDirection.NORTH, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, renderer) || result;
-        result = renderFaceIfVisible(ForgeDirection.SOUTH, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, renderer) || result;
-        result = renderFaceIfVisible(ForgeDirection.EAST, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, renderer) || result;
-        result = renderFaceIfVisible(ForgeDirection.WEST, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, renderer) || result;
-        return result;
+        if (isOnFloor) {
+            renderFaceIfVisible(ForgeDirection.DOWN, 0, 0, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, renderer);
+            renderFace(ForgeDirection.UP, 0, 0, 1.0f, 1.0f, 0.5f, subBlock.getTextureScheme(), connectionContext, renderer);
+        } else {
+            renderFaceIfVisible(ForgeDirection.UP, 0, 0, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, renderer);
+            renderFace(ForgeDirection.DOWN.DOWN, 0, 0, 1.0f, 1.0f, 0.5f, subBlock.getTextureScheme(), connectionContext, renderer);
+        }
+
+        float startY = 0.5f;
+        float endY = 1.0f;
+
+        if (!isOnFloor) {
+            startY -= 0.5f;
+            endY -= 0.5f;
+        }
+
+        renderFaceIfVisible(ForgeDirection.NORTH, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, renderer);
+        renderFaceIfVisible(ForgeDirection.EAST, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, renderer);
+        renderFaceIfVisible(ForgeDirection.WEST, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, renderer);
+        renderFaceIfVisible(ForgeDirection.SOUTH, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, renderer);
+
+        return true;
     }
 
     @Override

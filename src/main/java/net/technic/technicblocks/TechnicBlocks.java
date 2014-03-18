@@ -25,6 +25,7 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import net.technic.technicblocks.blocks.DataDrivenSubBlock;
 import net.technic.technicblocks.blocks.behavior.BlockBehaviorFactory;
 import net.technic.technicblocks.blocks.behavior.FourDirectionPlacementBehavior;
 import net.technic.technicblocks.blocks.behavior.PlaceRandomSubBlockBehavior;
@@ -34,6 +35,7 @@ import net.technic.technicblocks.client.facevisibility.OpaqueBlockVisibilityConv
 import net.technic.technicblocks.client.renderer.CubeRenderer;
 import net.technic.technicblocks.client.renderer.DataDrivenRenderer;
 import net.technic.technicblocks.client.renderer.RendererFactory;
+import net.technic.technicblocks.client.renderer.SlabRenderer;
 import net.technic.technicblocks.client.texturing.*;
 import net.technic.technicblocks.creativetabs.CreativeTabFactory;
 import net.technic.technicblocks.materials.MaterialFactory;
@@ -86,12 +88,15 @@ public class TechnicBlocks {
 
         //Create renderers
         DataDrivenRenderer cube = new CubeRenderer(RenderingRegistry.getNextAvailableRenderId());
+        DataDrivenRenderer slab = new SlabRenderer(RenderingRegistry.getNextAvailableRenderId());
 
         //Register renderers
         RenderingRegistry.registerBlockHandler(cube);
+        RenderingRegistry.registerBlockHandler(slab);
 
         //Set up renderer factory
         rendererFactory.addRenderer("cube", cube);
+        rendererFactory.addRenderer("slab", slab);
 
         //Register face visibility factory
         faceVisibilityFactory.addConvention("normal", new OpaqueBlockVisibilityConvention());
