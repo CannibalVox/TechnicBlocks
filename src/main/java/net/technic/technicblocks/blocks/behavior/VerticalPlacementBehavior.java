@@ -54,7 +54,7 @@ public class VerticalPlacementBehavior extends BlockBehavior implements IBlockPl
         if (side == ForgeDirection.UP)
             return metadata;
 
-        if (side == ForgeDirection.DOWN || hitY <= 0.5D)
+        if (side == ForgeDirection.DOWN || hitY > 0.5D)
             return setMetadataValue(metadata, 1);
 
         return metadata;
