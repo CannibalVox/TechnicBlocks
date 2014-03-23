@@ -30,11 +30,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.behavior.BlockBehavior;
+import net.technic.technicblocks.blocks.behavior.functions.IBlockDropBehavior;
 import net.technic.technicblocks.blocks.behavior.functions.IBlockPlacementBehavior;
+import net.technic.technicblocks.blocks.behavior.functions.ICreativePickerBehavior;
 import net.technic.technicblocks.blocks.behavior.functions.IItemBlockTargetBehavior;
 import net.technic.technicblocks.client.BlockModel;
 import net.technic.technicblocks.items.DataDrivenItemBlock;
@@ -52,6 +55,8 @@ public class DataDrivenBlock extends Block {
     private List<BlockBehavior> behaviors;
     private List<IBlockPlacementBehavior> blockPlacementBehaviors = new ArrayList<IBlockPlacementBehavior>();
     private List<IItemBlockTargetBehavior> itemBlockTargetBehaviors = new ArrayList<IItemBlockTargetBehavior>();
+    private List<IBlockDropBehavior> blockDropBehaviors = new ArrayList<IBlockDropBehavior>();
+    private List<ICreativePickerBehavior> creativePickerBehaviors = new ArrayList<ICreativePickerBehavior>();
 
     public DataDrivenBlock(Material material, BlockModel blockModel, Collection<String> blockTags, List<BlockBehavior> behaviors, List<DataDrivenSubBlock> dataDrivenSubBlocks) {
         super(material);
@@ -84,6 +89,10 @@ public class DataDrivenBlock extends Block {
                 blockPlacementBehaviors.add((IBlockPlacementBehavior)behavior);
             if (behavior instanceof IItemBlockTargetBehavior)
                 itemBlockTargetBehaviors.add((IItemBlockTargetBehavior)behavior);
+            if (behavior instanceof IBlockDropBehavior)
+                blockDropBehaviors.add((IBlockDropBehavior)behavior);
+            if (behavior instanceof ICreativePickerBehavior)
+                creativePickerBehaviors.add((ICreativePickerBehavior)behavior);
         }
     }
 
@@ -198,6 +207,43 @@ public class DataDrivenBlock extends Block {
     {
         for (IBlockPlacementBehavior behavior : blockPlacementBehaviors)
             behavior.triggerBlockPlacement(this, world, x, y, z, player, item);
+    }
+
+    @Override
+    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
+        boolean dropDefaults = true;
+
+        for(IBlockDropBehavior behavior : blockDropBehaviors) {
+            dropDefaults = behavior.doesDropDefault(world, x, y, z, metadata, fortune);
+
+            if (!dropDefaults)
+                break;
+        }
+
+        ArrayList<ItemStack> returnValue;
+
+        if (dropDefaults)
+            returnValue = super.getDrops(world, x, y, z, metadata, fortune);
+        else
+            returnValue = new ArrayList<ItemStack>();
+
+        for (IBlockDropBehavior behavior : blockDropBehaviors) {
+            behavior.addExtraDrops(returnValue, world, x, y, z, metadata, fortune);
+        }
+
+        return returnValue;
+    }
+
+    @Override
+    public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z)
+    {
+        ItemStack result = super.getPickBlock(target, world, x, y, z);
+
+        for(ICreativePickerBehavior pickerBehavior : creativePickerBehaviors) {
+            result = pickerBehavior.transformPickResult(target, world, x, y, z, result);
+        }
+
+        return result;
     }
 
     public boolean shouldPlaceBlock(EntityPlayer player, DataDrivenItemBlock item, ItemStack itemStack, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {

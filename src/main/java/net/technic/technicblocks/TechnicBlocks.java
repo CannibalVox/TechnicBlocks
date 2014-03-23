@@ -111,6 +111,8 @@ public class TechnicBlocks {
         blockBehaviorFactory.addBehavior("placeRandomSubBlock", PlaceRandomSubBlockBehavior.class);
         blockBehaviorFactory.addBehavior("verticalPlacement", VerticalPlacementBehavior.class);
         blockBehaviorFactory.addBehavior("completeSlab", CompleteSlabBehavior.class);
+        blockBehaviorFactory.addBehavior("replaceDrops", ReplaceDropsBehavior.class);
+        blockBehaviorFactory.addBehavior("replacePicker", ReplacePickerBehavior.class);
     }
 
     @Mod.EventHandler
