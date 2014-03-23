@@ -47,29 +47,28 @@ public class StairRenderer extends DataDrivenRenderer {
 
         renderBasicSlab(subBlock, connectionContext, renderer, isOnFloor);
 
-        ItemStack northConnection = connectionContext.getConnectedBlock(facing);
+        ForgeDirection opposite = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[facing.ordinal()]];
+        ItemStack northConnection = connectionContext.getConnectedBlock(opposite);
         if (northConnection != null) {
             ForgeDirection connectionFacing = getConnectionFacing(northConnection, isOnFloor);
 
             if (connectionFacing == leftSide || connectionFacing == rightSide) {
-//                renderQuarterStair(subBlock, connectionContext, renderer, isOnFloor, facing, connectionFacing);
-//                return true;
+                renderQuarterStair(subBlock, connectionContext, renderer, isOnFloor, facing, connectionFacing == rightSide);
+                return true;
             }
         }
 
-        ForgeDirection opposite = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[facing.ordinal()]];
+        renderHalfStair(subBlock, connectionContext, renderer, isOnFloor, facing);
 
         ItemStack southConnection = connectionContext.getConnectedBlock(facing);
         if (southConnection != null) {
             ForgeDirection connectionFacing = getConnectionFacing(southConnection, isOnFloor);
 
             if (connectionFacing == leftSide || connectionFacing == rightSide) {
-//                renderThreeQuarterStair(subBlock, connectionContext, renderer, isOnFloor, facing, connectionFacing);
-//                return true;
+                renderQuarterStair(subBlock, connectionContext, renderer, isOnFloor, opposite, connectionFacing == leftSide);
             }
         }
 
-        renderHalfStair(subBlock, connectionContext, renderer, isOnFloor, facing);
         return true;
     }
 
@@ -93,7 +92,18 @@ public class StairRenderer extends DataDrivenRenderer {
             if (isOnFloor != ((metadata & 4) == 0))
                 return ForgeDirection.UNKNOWN;
 
-            return ForgeDirection.NORTH;
+            int dir = metadata & 3;
+
+            switch (dir) {
+                case 0:
+                    return ForgeDirection.NORTH;
+                case 1:
+                    return ForgeDirection.SOUTH;
+                case 2:
+                    return ForgeDirection.EAST;
+                default:
+                    return ForgeDirection.WEST;
+            }
         }
     }
 
@@ -118,6 +128,60 @@ public class StairRenderer extends DataDrivenRenderer {
         renderFaceIfVisible(ForgeDirection.EAST, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, renderer);
         renderFaceIfVisible(ForgeDirection.WEST, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, renderer);
         renderFaceIfVisible(ForgeDirection.SOUTH, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, renderer);
+    }
+
+    private void renderQuarterStair(DataDrivenSubBlock subBlock, IRenderContext renderContext, RenderBlocks renderer, boolean isOnFloor, ForgeDirection facing, boolean isFacingLeft) {
+        float startY = 0;
+        float endY = 0.5f;
+
+        if (!isOnFloor) {
+            startY += 0.5f;
+            endY += 0.5f;
+        }
+
+        ForgeDirection left = facing.getRotation(ForgeDirection.UP);
+        ForgeDirection right = facing.getRotation(ForgeDirection.DOWN);
+
+        renderFaceIfVisible((isFacingLeft?left:right), (isFacingLeft?0:0.5f), startY, (isFacingLeft?0.5f:1.0f), endY, subBlock.getTextureScheme(), renderContext, renderer);
+        renderFace((isFacingLeft?right:left), (isFacingLeft?0.5f:0), startY, (isFacingLeft?1.0f:0.5f), endY, 0.5f, subBlock.getTextureScheme(), renderContext, renderer);
+        renderFace(facing, (isFacingLeft?0:0.5f), startY, (isFacingLeft?0.5f:1.0f), endY, 0.5f, subBlock.getTextureScheme(), renderContext, renderer);
+
+        ForgeDirection back = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[facing.ordinal()]];
+        renderFaceIfVisible(back, (isFacingLeft?0.5f:0), startY, (isFacingLeft?1.0f:0.5f), endY, subBlock.getTextureScheme(), renderContext, renderer);
+
+        float startX = 0, endX = 0;
+        if ((facing == ForgeDirection.NORTH && isFacingLeft) || (facing == ForgeDirection.WEST && !isFacingLeft)) {
+            startX = 0.5f;
+            startY = 0.5f;
+            endX = 1.0f;
+            endY = 1.0f;
+        } else if ((facing == ForgeDirection.SOUTH && isFacingLeft) || (facing == ForgeDirection.EAST && !isFacingLeft)) {
+            startX = 0;
+            startY = 0;
+            endX = 0.5f;
+            endY = 0.5f;
+        } else if ((facing == ForgeDirection.NORTH && !isFacingLeft) || (facing == ForgeDirection.EAST && isFacingLeft)) {
+            startX = 0;
+            startY = 0.5f;
+            endX = 0.5f;
+            endY = 1.0f;
+        } else {
+            startX = 0.5f;
+            startY = 0;
+            endX = 1.0f;
+            endY = 0.5f;
+        }
+
+        ForgeDirection drawFace = ForgeDirection.UP;
+
+        if (!isOnFloor) {
+            float tempEndY = 1.0f - startY;
+            startY = 1.0f - endY;
+            endY = tempEndY;
+            drawFace = ForgeDirection.DOWN;
+        }
+
+        renderFaceIfVisible(drawFace, startX, startY, endX, endY, subBlock.getTextureScheme(), renderContext, renderer);
     }
 
     private void renderHalfStair(DataDrivenSubBlock subBlock, IRenderContext renderContext, RenderBlocks renderer, boolean isOnFloor, ForgeDirection facing) {
