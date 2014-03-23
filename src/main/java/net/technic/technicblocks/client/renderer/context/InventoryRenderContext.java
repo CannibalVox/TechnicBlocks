@@ -19,8 +19,10 @@
 
 package net.technic.technicblocks.client.renderer.context;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
@@ -39,6 +41,11 @@ public class InventoryRenderContext implements IRenderContext {
     @Override
     public boolean isModelConnected(ForgeDirection side) {
         return false;
+    }
+
+    @Override
+    public ItemStack getConnectedBlock(ForgeDirection side) {
+        return null;
     }
 
     @Override

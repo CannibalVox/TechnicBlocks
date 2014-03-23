@@ -19,14 +19,17 @@
 
 package net.technic.technicblocks.client.renderer.context;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.util.vector.Vector3f;
 
 public interface IRenderContext {
     boolean isModelConnected(ForgeDirection side);
+    ItemStack getConnectedBlock(ForgeDirection side);
     boolean isTextureConnected(ForgeDirection side, int relativeX, int relativeY);
     boolean isFaceVisible(ForgeDirection side);
     IIcon getTexture(ForgeDirection side);

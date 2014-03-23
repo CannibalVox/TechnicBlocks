@@ -24,6 +24,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -65,6 +66,18 @@ public class WorldRenderContext implements IRenderContext {
     @Override
     public boolean isModelConnected(ForgeDirection side) {
         return isConnected(modelConvention, side);
+    }
+
+    @Override
+    public ItemStack getConnectedBlock(ForgeDirection side) {
+        if (isModelConnected(side)) {
+            Block block = world.getBlock(anchorX + side.offsetX, anchorY + side.offsetY, anchorZ + side.offsetZ);
+            int meta = world.getBlockMetadata(anchorX+side.offsetX, anchorY+side.offsetY, anchorZ+side.offsetZ);
+
+            return new ItemStack(block, 1, meta);
+        }
+
+        return null;
     }
 
     @Override

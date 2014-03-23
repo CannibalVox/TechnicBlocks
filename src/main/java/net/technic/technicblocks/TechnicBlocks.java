@@ -30,10 +30,7 @@ import net.technic.technicblocks.blocks.behavior.*;
 import net.technic.technicblocks.blocks.connections.*;
 import net.technic.technicblocks.client.facevisibility.FaceVisibilityFactory;
 import net.technic.technicblocks.client.facevisibility.OpaqueBlockVisibilityConvention;
-import net.technic.technicblocks.client.renderer.CubeRenderer;
-import net.technic.technicblocks.client.renderer.DataDrivenRenderer;
-import net.technic.technicblocks.client.renderer.RendererFactory;
-import net.technic.technicblocks.client.renderer.SlabRenderer;
+import net.technic.technicblocks.client.renderer.*;
 import net.technic.technicblocks.client.texturing.*;
 import net.technic.technicblocks.creativetabs.CreativeTabFactory;
 import net.technic.technicblocks.materials.MaterialFactory;
@@ -87,14 +84,17 @@ public class TechnicBlocks {
         //Create renderers
         DataDrivenRenderer cube = new CubeRenderer(RenderingRegistry.getNextAvailableRenderId());
         DataDrivenRenderer slab = new SlabRenderer(RenderingRegistry.getNextAvailableRenderId());
+        DataDrivenRenderer stairs = new StairRenderer(RenderingRegistry.getNextAvailableRenderId());
 
         //Register renderers
         RenderingRegistry.registerBlockHandler(cube);
         RenderingRegistry.registerBlockHandler(slab);
+        RenderingRegistry.registerBlockHandler(stairs);
 
         //Set up renderer factory
         rendererFactory.addRenderer("cube", cube);
         rendererFactory.addRenderer("slab", slab);
+        rendererFactory.addRenderer("stairs", stairs);
 
         //Register face visibility factory
         faceVisibilityFactory.addConvention("normal", new OpaqueBlockVisibilityConvention());
