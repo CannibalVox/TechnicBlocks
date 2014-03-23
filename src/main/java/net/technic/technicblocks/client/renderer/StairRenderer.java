@@ -24,6 +24,7 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
 import net.technic.technicblocks.blocks.DataDrivenSubBlock;
@@ -70,6 +71,25 @@ public class StairRenderer extends DataDrivenRenderer {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
+
+    @Override
+    public boolean isSideSolid(DataDrivenBlock block, IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+        int metadata = world.getBlockMetadata(x, y, z);
+
+        if (side == ForgeDirection.UP || side == ForgeDirection.DOWN) {
+            boolean isOnFloor = block.isOnFloor(metadata);
+
+            return (isOnFloor == (side == ForgeDirection.DOWN));
+        }
+
+        ForgeDirection solidSide = block.transformBlockFacing(metadata, ForgeDirection.SOUTH);
+        return (side == solidSide);
     }
 
     private ForgeDirection getConnectionFacing(ItemStack connection, boolean isOnFloor) {

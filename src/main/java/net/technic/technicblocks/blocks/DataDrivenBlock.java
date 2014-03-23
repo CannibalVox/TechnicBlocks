@@ -81,6 +81,9 @@ public class DataDrivenBlock extends Block {
         }
 
         subblockMask = (byte)(subblockMask & ~nonSubblockMask);
+
+        this.opaque = this.isOpaqueCube();
+        this.lightOpacity = this.isOpaqueCube() ? 255 : 0;
     }
 
     private void interfaceifyBehaviors() {
@@ -190,6 +193,18 @@ public class DataDrivenBlock extends Block {
 
     @Override
     public int getRenderType() { return getBlockModel().getRendererId(); }
+
+    @Override
+    public boolean isOpaqueCube() {
+        if (getBlockModel() == null)
+            return true;
+        return getBlockModel().isOpaqueCube();
+    }
+
+    @Override
+    public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+        return getBlockModel().isSideSolid(this, world, x, y, z, side);
+    }
 
     @Override
     public int onBlockPlaced(World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)

@@ -19,6 +19,9 @@
 
 package net.technic.technicblocks.client;
 
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.technic.technicblocks.blocks.DataDrivenBlock;
 import net.technic.technicblocks.blocks.connections.ConnectionConvention;
 import net.technic.technicblocks.client.facevisibility.FaceVisibilityConvention;
 import net.technic.technicblocks.client.renderer.DataDrivenRenderer;
@@ -37,4 +40,10 @@ public class BlockModel {
     public ConnectionConvention getModelConnectionsConvention() { return modelConnectionsConvention; }
     public FaceVisibilityConvention getFaceVisibilityConvention() { return faceVisibilityConvention; }
     public int getRendererId() { return renderer.getRenderId(); }
+    public boolean isSideSolid(DataDrivenBlock block, IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+        return renderer.isSideSolid(block, world, x, y, z, side);
+    }
+    public boolean isOpaqueCube() {
+        return renderer.isOpaqueCube();
+    }
 }

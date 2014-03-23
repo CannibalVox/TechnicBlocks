@@ -20,6 +20,7 @@
 package net.technic.technicblocks.client.renderer;
 
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
 import net.technic.technicblocks.blocks.DataDrivenSubBlock;
@@ -57,6 +58,24 @@ public class SlabRenderer extends DataDrivenRenderer {
         renderFaceIfVisible(ForgeDirection.SOUTH, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, renderer);
 
         return true;
+    }
+
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
+
+    @Override
+    public boolean isSideSolid(DataDrivenBlock block, IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+        if (side != ForgeDirection.DOWN && side != ForgeDirection.UP)
+            return false;
+
+        int metadata = world.getBlockMetadata(x,y,z);
+        boolean isOnFloor = block.isOnFloor(metadata);
+
+        ForgeDirection solidSide = (isOnFloor)?ForgeDirection.DOWN:ForgeDirection.UP;
+
+        return side == solidSide;
     }
 
     @Override

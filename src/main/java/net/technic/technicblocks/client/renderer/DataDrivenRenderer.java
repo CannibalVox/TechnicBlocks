@@ -25,6 +25,7 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
 import net.technic.technicblocks.blocks.DataDrivenBlockRegistry;
@@ -43,6 +44,14 @@ public abstract class DataDrivenRenderer implements ISimpleBlockRenderingHandler
 
     public DataDrivenRenderer(int rendererId) {
         this.rendererId = rendererId;
+    }
+
+    public boolean isOpaqueCube() {
+        return true;
+    }
+
+    public boolean isSideSolid(DataDrivenBlock block, IBlockAccess world, int x, int y, int z, ForgeDirection face) {
+        return true;
     }
 
     protected abstract boolean tesselate(DataDrivenBlock block, int metadata, RenderBlocks renderer, IRenderContext connectionContext);
