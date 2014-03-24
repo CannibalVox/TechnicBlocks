@@ -61,7 +61,13 @@ public class ParseException extends CustomModLoadingErrorDisplayException {
 
         Throwable currentThrowable = this;
         while (currentThrowable != null && !visitedThrowables.contains(currentThrowable)) {
-            fontRenderer.drawSplitString(currentThrowable.getMessage(), 10, y, errorScreen.width - 20, 0xFFFFFFFF);
+            String message = currentThrowable.getMessage();
+
+            if (message == null) {
+                message = currentThrowable.toString();
+            }
+
+            fontRenderer.drawSplitString(message, 10, y, errorScreen.width - 20, 0xFFFFFFFF);
             y += 30;
 
             visitedThrowables.add(currentThrowable);

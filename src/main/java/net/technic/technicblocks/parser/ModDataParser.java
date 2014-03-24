@@ -98,18 +98,33 @@ public class ModDataParser {
 
     public void RegisterAllBlocks(CreativeTabFactory creativeTabsFactory, MaterialFactory materialFactory, SoundTypeFactory soundFactory, ConnectionConventionFactory connectionConventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory) {
         for (CreativeTabData tab : data.getCreativeTabs()) {
+
+            if (tab == null)
+                continue;
+
             creativeTabsFactory.addCreativeTab(tab);
         }
 
         for (MaterialData material : data.getCustomMaterials()) {
+
+            if (material == null)
+                continue;
+
             materialFactory.addMaterial(material);
         }
 
         for (SoundData sound : data.getCustomSounds()) {
+
+            if (sound == null)
+                continue;
+
             soundFactory.addSoundType(sound);
         }
 
         for (BlockData block : data.getBlocks()) {
+            if (block == null)
+                continue;
+
             //Pull material & creative tab before registering block
             Material material = materialFactory.getMaterialByName(block.getMaterialName());
 
@@ -169,6 +184,10 @@ public class ModDataParser {
 
     private int buildBlockBehaviorList(Collection<BehaviorData> behaviorData, BlockBehaviorFactory factory, String blockName, List<BlockBehavior> outList) {
         for (BehaviorData data : behaviorData) {
+
+            if (data == null)
+                continue;
+
             BlockBehavior behavior = factory.createBehavior(data.getName(), data.getArgs());
             outList.add(behavior);
         }
@@ -216,6 +235,9 @@ public class ModDataParser {
         List<DataDrivenSubBlock> subBlocks = new LinkedList<DataDrivenSubBlock>();
 
         for (SubBlockData data : subBlockData) {
+            if (data == null)
+                continue;
+
             if (data.getMetadata() >= 16)
                 throw proxy.createParseException("Block '"+blockName+"' has a subblock with invalid metadata- metadata ID's have to be less than 16!");
             else if (data.getMetadata() >= availableSubBlocks)
@@ -237,6 +259,9 @@ public class ModDataParser {
         ConnectionConvention convention = factory.createConvention(data.getName(),argsArray);
 
         for (ConnectionConventionData subConventionData : data.getSubConventions()) {
+            if (subConventionData == null)
+                continue;
+
             ConnectionConvention subConvention = createConvention(factory, subConventionData);
             convention.addSubConvention(subConvention);
         }
@@ -246,11 +271,17 @@ public class ModDataParser {
 
     private void populateTextureScheme(BlockTextureScheme textureScheme, TextureSelectorFactory textureSelectorFactory, TextureSchemeData schemeData) {
         for(TextureFaceData faceData : schemeData.getFaces()) {
+            if (faceData == null)
+                continue;
+
             TextureSelector selector = textureSelectorFactory.createSelector(faceData.getSelector(), faceData.getArgs());
             textureScheme.addTextureSelector(faceData.getFace(), selector);
         }
 
         for (DecorationData decorator : schemeData.getDecorators()) {
+            if (decorator == null)
+                continue;
+
             TextureSelector selector = textureSelectorFactory.createSelector(decorator.getSelector(), decorator.getArgs());
             textureScheme.addDecorator(decorator.getTextureResource(), selector);
         }
