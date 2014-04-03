@@ -41,8 +41,8 @@ public class StairRenderer extends DataDrivenRenderer {
         boolean isOnFloor = block.isOnFloor(metadata);
         ForgeDirection facing = block.reverseTransformBlockFacing(metadata, ForgeDirection.NORTH);
 
-        ForgeDirection leftSide = facing.getRotation(ForgeDirection.UP);
-        ForgeDirection rightSide = facing.getRotation(ForgeDirection.DOWN);
+        ForgeDirection leftSide = facing.getRotation(ForgeDirection.DOWN);
+        ForgeDirection rightSide = facing.getRotation(ForgeDirection.UP);
 
         DataDrivenSubBlock subBlock = block.getSubBlock(metadata);
 
@@ -93,7 +93,7 @@ public class StairRenderer extends DataDrivenRenderer {
     }
 
     @Override
-    public String getDefaultCollisionType() { return "selection"; }
+    public String getDefaultCollisionType() { return "stairs"; }
 
     @Override
     public String getDefaultSelectionType() { return "cube"; }

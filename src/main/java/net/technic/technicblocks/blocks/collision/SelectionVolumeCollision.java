@@ -42,6 +42,10 @@ public class SelectionVolumeCollision extends BlockCollision {
     @Override
     public MovingObjectPosition traceCollision(DataDrivenBlock block, World world, int x, int y, int z, Vec3 start, Vec3 end) {
         block.setBlockBoundsBasedOnState(world, x, y, z);
+        return traceCollisionForBounds(block, world, x, y, z, start, end);
+    }
+
+    public MovingObjectPosition traceCollisionForBounds(DataDrivenBlock block, World world, int x, int y, int z, Vec3 start, Vec3 end) {
         start = start.addVector((double)(-x), (double)(-y), (double)(-z));
         end = end.addVector((double)(-x), (double)(-y), (double)(-z));
         Vec3 vec32 = start.getIntermediateWithXValue(end, block.getBlockBoundsMinX());

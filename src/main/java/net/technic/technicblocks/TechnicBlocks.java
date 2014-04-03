@@ -29,6 +29,7 @@ import net.technic.technicblocks.blocks.DataDrivenSubBlock;
 import net.technic.technicblocks.blocks.behavior.*;
 import net.technic.technicblocks.blocks.collision.BlockCollisionFactory;
 import net.technic.technicblocks.blocks.collision.SelectionVolumeCollision;
+import net.technic.technicblocks.blocks.collision.StairsCollision;
 import net.technic.technicblocks.blocks.connections.*;
 import net.technic.technicblocks.blocks.selection.BlockSelectionFactory;
 import net.technic.technicblocks.blocks.selection.CubeSelection;
@@ -122,7 +123,9 @@ public class TechnicBlocks {
         blockBehaviorFactory.addBehavior("replacePicker", ReplacePickerBehavior.class);
 
         //Register collision
-        collisionFactory.addCollision("selection", new SelectionVolumeCollision());
+        SelectionVolumeCollision selection = new SelectionVolumeCollision();
+        collisionFactory.addCollision("selection", selection);
+        collisionFactory.addCollision("stairs", new StairsCollision(selection));
 
         //Register selection
         selectionFactory.addSelection("cube", new CubeSelection());
