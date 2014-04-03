@@ -252,7 +252,7 @@ public class DataDrivenBlock extends Block {
     @Override
     public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z)
     {
-        ItemStack result = new ItemStack(this, 1, world.getBlockMetadata(x,y,z));
+        ItemStack result = new ItemStack(this, 1, this.getSubBlock(world,x,y,z).getMetadata());
 
         for(ICreativePickerBehavior pickerBehavior : creativePickerBehaviors) {
             result = pickerBehavior.transformPickResult(target, world, x, y, z, result);
