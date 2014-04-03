@@ -70,9 +70,9 @@ public class VerticalCtmTextureSelector extends TextureSelector {
         switch (direction)
         {
             case 0x00:
-                return 3;
-            case 0x01:
                 return 2;
+            case 0x01:
+                return 3;
             case 0x02:
                 return 0;
             default:
