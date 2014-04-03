@@ -48,4 +48,10 @@ public class CubeRenderer extends DataDrivenRenderer {
     public boolean shouldRender3DInInventory(int modelId) {
         return true;
     }
+
+    @Override
+    public String getDefaultCollisionType() { return "cube"; }
+
+    @Override
+    public String getDefaultSelectionType() { return "cube"; }
 }

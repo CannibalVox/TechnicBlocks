@@ -22,7 +22,9 @@ package net.technic.technicblocks.client;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
+import net.technic.technicblocks.blocks.collision.BlockCollision;
 import net.technic.technicblocks.blocks.connections.ConnectionConvention;
+import net.technic.technicblocks.blocks.selection.BlockSelection;
 import net.technic.technicblocks.client.facevisibility.FaceVisibilityConvention;
 import net.technic.technicblocks.client.renderer.DataDrivenRenderer;
 
@@ -30,11 +32,15 @@ public class BlockModel {
     private ConnectionConvention modelConnectionsConvention;
     private FaceVisibilityConvention faceVisibilityConvention;
     private DataDrivenRenderer renderer;
+    private BlockCollision collision;
+    private BlockSelection selection;
 
-    public BlockModel(DataDrivenRenderer renderer, ConnectionConvention modelConnectionsConvention, FaceVisibilityConvention faceVisibilityConvention) {
+    public BlockModel(DataDrivenRenderer renderer, ConnectionConvention modelConnectionsConvention, FaceVisibilityConvention faceVisibilityConvention, BlockCollision collision, BlockSelection selection) {
         this.modelConnectionsConvention = modelConnectionsConvention;
         this.faceVisibilityConvention = faceVisibilityConvention;
         this.renderer = renderer;
+        this.collision = collision;
+        this.selection = selection;
     }
 
     public ConnectionConvention getModelConnectionsConvention() { return modelConnectionsConvention; }

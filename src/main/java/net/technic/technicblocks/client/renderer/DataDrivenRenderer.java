@@ -54,6 +54,9 @@ public abstract class DataDrivenRenderer implements ISimpleBlockRenderingHandler
         return true;
     }
 
+    public abstract String getDefaultCollisionType();
+    public abstract String getDefaultSelectionType();
+
     protected abstract boolean tesselate(DataDrivenBlock block, int metadata, RenderBlocks renderer, IRenderContext connectionContext);
 
     protected boolean renderFaceIfVisible(ForgeDirection face, float startX, float startY, float endX, float endY, BlockTextureScheme textureScheme, IRenderContext connectionContext, RenderBlocks renderer) {

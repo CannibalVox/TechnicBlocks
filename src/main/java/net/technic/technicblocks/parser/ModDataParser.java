@@ -32,8 +32,12 @@ import net.technic.technicblocks.blocks.DataDrivenBlockRegistry;
 import net.technic.technicblocks.blocks.DataDrivenSubBlock;
 import net.technic.technicblocks.blocks.behavior.BlockBehavior;
 import net.technic.technicblocks.blocks.behavior.BlockBehaviorFactory;
+import net.technic.technicblocks.blocks.collision.BlockCollision;
+import net.technic.technicblocks.blocks.collision.BlockCollisionFactory;
 import net.technic.technicblocks.blocks.connections.ConnectionConvention;
 import net.technic.technicblocks.blocks.connections.ConnectionConventionFactory;
+import net.technic.technicblocks.blocks.selection.BlockSelection;
+import net.technic.technicblocks.blocks.selection.BlockSelectionFactory;
 import net.technic.technicblocks.client.BlockModel;
 import net.technic.technicblocks.client.facevisibility.FaceVisibilityConvention;
 import net.technic.technicblocks.client.facevisibility.FaceVisibilityFactory;
@@ -96,7 +100,7 @@ public class ModDataParser {
 
     public String getModId() { return data.getModId(); }
 
-    public void RegisterAllBlocks(CreativeTabFactory creativeTabsFactory, MaterialFactory materialFactory, SoundTypeFactory soundFactory, ConnectionConventionFactory connectionConventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory) {
+    public void RegisterAllBlocks(CreativeTabFactory creativeTabsFactory, MaterialFactory materialFactory, SoundTypeFactory soundFactory, ConnectionConventionFactory connectionConventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockCollisionFactory collisionFactory, BlockSelectionFactory selectionFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory) {
         for (CreativeTabData tab : data.getCreativeTabs()) {
 
             if (tab == null)
@@ -144,16 +148,28 @@ public class ModDataParser {
                 throw proxy.createParseException("'" + block.getSoundName() + "' is not a valid sound name.");
             }
 
-            setupAndRegisterBlock(block, material, tab, sound, connectionConventionFactory, rendererFactory, faceVisibilityFactory, behaviorFactory, textureSelectorFactory);
+            setupAndRegisterBlock(block, material, tab, sound, connectionConventionFactory, rendererFactory, faceVisibilityFactory, collisionFactory, selectionFactory, behaviorFactory, textureSelectorFactory);
         }
     }
 
-    private void setupAndRegisterBlock(BlockData block, Material material, CreativeTabs creativeTab, Block.SoundType sound, ConnectionConventionFactory conventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory) {
+    private void setupAndRegisterBlock(BlockData block, Material material, CreativeTabs creativeTab, Block.SoundType sound, ConnectionConventionFactory conventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockCollisionFactory collisionFactory, BlockSelectionFactory selectionFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory) {
         //Build blockmodel
         ConnectionConvention modelConvention = createConvention(conventionFactory, block.getModelConnections());
         FaceVisibilityConvention faceVisibility = faceVisibilityFactory.getConvention(block.getFaceVisibilityType());
         DataDrivenRenderer renderer = rendererFactory.getRenderer(block.getModelType());
-        BlockModel model = new BlockModel(renderer, modelConvention, faceVisibility);
+
+        String collisionType = block.getCollisionType();
+        String selectionType = block.getSelectionType();
+
+        if (collisionType == null)
+            collisionType = renderer.getDefaultCollisionType();
+        if (selectionType == null)
+            selectionType = renderer.getDefaultSelectionType();
+
+        BlockCollision collision = collisionFactory.getCollision(collisionType);
+        BlockSelection selection = selectionFactory.getSelection(selectionType);
+
+        BlockModel model = new BlockModel(renderer, modelConvention, faceVisibility, collision, selection);
 
         //Get block behaviors & get the bit index where subblock data starts
         List<BlockBehavior> behaviors = new LinkedList<BlockBehavior>();

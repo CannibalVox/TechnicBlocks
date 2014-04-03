@@ -92,6 +92,12 @@ public class StairRenderer extends DataDrivenRenderer {
         return (side == solidSide);
     }
 
+    @Override
+    public String getDefaultCollisionType() { return "stairs"; }
+
+    @Override
+    public String getDefaultSelectionType() { return "cube"; }
+
     private ForgeDirection getConnectionFacing(ItemStack connection, boolean isOnFloor) {
         Item item = connection.getItem();
         int metadata = connection.getItemDamage();

@@ -38,6 +38,8 @@ public class BlockData {
     private ConnectionConventionData textureConnections;
     private String modelType;
     private String faceVisibilityType;
+    private String collisionType;
+    private String selectionType;
     private List<BehaviorData> behaviors = new ArrayList<BehaviorData>();
     private List<SubBlockData> subBlocks = new ArrayList<SubBlockData>();
 
@@ -55,6 +57,8 @@ public class BlockData {
     public ConnectionConventionData getTextureConnections() { return textureConnections; }
     public String getModelType() { return modelType; }
     public String getFaceVisibilityType() { return faceVisibilityType; }
+    public String getCollisionType() { return collisionType; }
+    public String getSelectionType() { return selectionType; }
     public List<BehaviorData> getBehaviors() { return behaviors; }
     public List<SubBlockData> getSubBlocks() { return subBlocks; }
 }

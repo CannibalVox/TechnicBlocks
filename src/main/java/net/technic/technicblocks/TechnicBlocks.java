@@ -27,7 +27,9 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.technic.technicblocks.blocks.DataDrivenSubBlock;
 import net.technic.technicblocks.blocks.behavior.*;
+import net.technic.technicblocks.blocks.collision.BlockCollisionFactory;
 import net.technic.technicblocks.blocks.connections.*;
+import net.technic.technicblocks.blocks.selection.BlockSelectionFactory;
 import net.technic.technicblocks.client.facevisibility.FaceVisibilityFactory;
 import net.technic.technicblocks.client.facevisibility.OpaqueBlockVisibilityConvention;
 import net.technic.technicblocks.client.renderer.*;
@@ -71,6 +73,8 @@ public class TechnicBlocks {
     private FaceVisibilityFactory faceVisibilityFactory = new FaceVisibilityFactory();
     private BlockBehaviorFactory blockBehaviorFactory = new BlockBehaviorFactory();
     private TextureSelectorFactory textureSelectorFactory = new TextureSelectorFactory();
+    private BlockCollisionFactory collisionFactory = new BlockCollisionFactory();
+    private BlockSelectionFactory selectionFactory = new BlockSelectionFactory();
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -192,7 +196,7 @@ public class TechnicBlocks {
                 {
                     try {
                         ModDataParser parser = new ModDataParser(zip.getInputStream(ze), proxy);
-                        parser.RegisterAllBlocks(creativeTabFactory, materialFactory, soundTypeFactory, conventionFactory, rendererFactory, faceVisibilityFactory, blockBehaviorFactory, textureSelectorFactory);
+                        parser.RegisterAllBlocks(creativeTabFactory, materialFactory, soundTypeFactory, conventionFactory, rendererFactory, faceVisibilityFactory, collisionFactory, selectionFactory, blockBehaviorFactory, textureSelectorFactory);
                         proxy.verifyCreativeTabs(creativeTabFactory);
 
                         //If we found a valid blox file, then hold onto the mod ID
