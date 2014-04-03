@@ -48,6 +48,18 @@ public class FourDirectionPlacementBehavior extends BlockBehavior implements IBl
         int value = getMetadataValue(metadata);
 
         while (value > 0) {
+            currentFacing = currentFacing.getRotation(ForgeDirection.UP);
+            value--;
+        }
+
+        return currentFacing;
+    }
+
+    @Override
+    public ForgeDirection reverseTransformBlockFacing(int metadata, ForgeDirection currentFacing) {
+        int value = getMetadataValue(metadata);
+
+        while (value > 0) {
             currentFacing = currentFacing.getRotation(ForgeDirection.DOWN);
             value--;
         }

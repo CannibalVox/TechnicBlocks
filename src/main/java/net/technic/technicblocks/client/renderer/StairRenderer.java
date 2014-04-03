@@ -39,7 +39,7 @@ public class StairRenderer extends DataDrivenRenderer {
     @Override
     protected boolean tesselate(DataDrivenBlock block, int metadata, RenderBlocks renderer, IRenderContext connectionContext) {
         boolean isOnFloor = block.isOnFloor(metadata);
-        ForgeDirection facing = block.transformBlockFacing(metadata, ForgeDirection.NORTH);
+        ForgeDirection facing = block.reverseTransformBlockFacing(metadata, ForgeDirection.NORTH);
 
         ForgeDirection leftSide = facing.getRotation(ForgeDirection.UP);
         ForgeDirection rightSide = facing.getRotation(ForgeDirection.DOWN);

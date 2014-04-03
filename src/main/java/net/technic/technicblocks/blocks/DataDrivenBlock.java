@@ -145,6 +145,14 @@ public class DataDrivenBlock extends Block {
         return blockTags.contains(tag);
     }
 
+    public ForgeDirection reverseTransformBlockFacing(int metadata, ForgeDirection direction) {
+        for (BlockBehavior convention : behaviors) {
+            direction = convention.reverseTransformBlockFacing(metadata, direction);
+        }
+
+        return direction;
+    }
+
     public ForgeDirection transformBlockFacing(int metadata, ForgeDirection direction) {
 
         for (BlockBehavior convention : behaviors) {

@@ -79,6 +79,10 @@ public abstract class BlockBehavior {
         return currentFacing;
     }
 
+    public ForgeDirection reverseTransformBlockFacing(int metadata, ForgeDirection currentFacing) {
+        return currentFacing;
+    }
+
     public boolean transformIsOnFloor(int metadata, boolean isOnFloor) {
         return isOnFloor;
     }
