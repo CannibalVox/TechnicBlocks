@@ -25,12 +25,15 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -212,6 +215,65 @@ public class DataDrivenBlock extends Block {
     @Override
     public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
         return getBlockModel().isSideSolid(this, world, x, y, z, side);
+    }
+
+    /**
+     * Updates the blocks bounds based on its current state. Args: world, x, y, z
+     */
+    @Override
+    public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z)
+    {
+        getBlockModel().setBlockBounds(this, world, x, y, z);
+    }
+
+    @Override
+    public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z)
+    {
+        return getBlockModel().getCentralCollisionBox(this, world, x, y, z);
+    }
+
+    /**
+     * Ray traces through the blocks collision from start vector to end vector returning a ray trace hit. Args: world,
+     * x, y, z, startVec, endVec
+     */
+    @Override
+    public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 start, Vec3 end)
+    {
+        return getBlockModel().traceCollision(this, world, x, y, z, start, end);
+    }
+
+    /**
+     * Checks if a vector is within the Y and Z bounds of the block.
+     */
+    public boolean isVecYZContained(Vec3 p_149654_1_)
+    {
+        return p_149654_1_ == null ? false : p_149654_1_.yCoord >= this.minY && p_149654_1_.yCoord <= this.maxY && p_149654_1_.zCoord >= this.minZ && p_149654_1_.zCoord <= this.maxZ;
+    }
+
+    /**
+     * Checks if a vector is within the X and Z bounds of the block.
+     */
+    public boolean isVecXZContained(Vec3 p_149687_1_)
+    {
+        return p_149687_1_ == null ? false : p_149687_1_.xCoord >= this.minX && p_149687_1_.xCoord <= this.maxX && p_149687_1_.zCoord >= this.minZ && p_149687_1_.zCoord <= this.maxZ;
+    }
+
+    /**
+     * Checks if a vector is within the X and Y bounds of the block.
+     */
+    public boolean isVecXYContained(Vec3 p_149661_1_)
+    {
+        return p_149661_1_ == null ? false : p_149661_1_.xCoord >= this.minX && p_149661_1_.xCoord <= this.maxX && p_149661_1_.yCoord >= this.minY && p_149661_1_.yCoord <= this.maxY;
+    }
+
+    /**
+     * Adds all intersecting collision boxes to a list. (Be sure to only add boxes to the list if they intersect the
+     * mask.) Parameters: World, X, Y, Z, mask, list, colliding entity
+     */
+    @Override
+    public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB mask, List list, Entity entity)
+    {
+        getBlockModel().collectCollisionBoxes(this, world, x, y, z, mask, list, entity);
     }
 
     @Override

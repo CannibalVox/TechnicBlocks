@@ -84,7 +84,7 @@ public class SlabRenderer extends DataDrivenRenderer {
     }
 
     @Override
-    public String getDefaultCollisionType() { return "slab"; }
+    public String getDefaultCollisionType() { return "selection"; }
 
     @Override
     public String getDefaultSelectionType() { return "slab"; }

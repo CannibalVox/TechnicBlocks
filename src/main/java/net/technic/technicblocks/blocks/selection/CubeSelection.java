@@ -22,6 +22,9 @@ package net.technic.technicblocks.blocks.selection;
 import net.minecraft.world.IBlockAccess;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
 
-public abstract class BlockSelection {
-    public abstract void setBlockBounds(DataDrivenBlock block, IBlockAccess world, int x, int y, int z);
+public class CubeSelection extends BlockSelection {
+    @Override
+    public void setBlockBounds(DataDrivenBlock block, IBlockAccess world, int x, int y, int z) {
+        block.setBlockBounds(0, 0, 0, 1, 1, 1);
+    }
 }

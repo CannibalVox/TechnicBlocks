@@ -31,7 +31,7 @@ public class BlockSelectionFactory {
 
     }
 
-    public void addCollision(String key, BlockSelection collision) {
+    public void addSelection(String key, BlockSelection collision) {
         selectionMap.put(key, collision);
     }
 

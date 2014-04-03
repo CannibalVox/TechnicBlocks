@@ -50,7 +50,7 @@ public class CubeRenderer extends DataDrivenRenderer {
     }
 
     @Override
-    public String getDefaultCollisionType() { return "cube"; }
+    public String getDefaultCollisionType() { return "selection"; }
 
     @Override
     public String getDefaultSelectionType() { return "cube"; }

@@ -93,7 +93,7 @@ public class StairRenderer extends DataDrivenRenderer {
     }
 
     @Override
-    public String getDefaultCollisionType() { return "stairs"; }
+    public String getDefaultCollisionType() { return "selection"; }
 
     @Override
     public String getDefaultSelectionType() { return "cube"; }

@@ -22,6 +22,15 @@ package net.technic.technicblocks.blocks.selection;
 import net.minecraft.world.IBlockAccess;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
 
-public abstract class BlockSelection {
-    public abstract void setBlockBounds(DataDrivenBlock block, IBlockAccess world, int x, int y, int z);
+public class SlabSelection extends BlockSelection {
+    @Override
+    public void setBlockBounds(DataDrivenBlock block, IBlockAccess world, int x, int y, int z) {
+        int metadata = world.getBlockMetadata(x,y,z);
+        boolean isOnFloor = block.isOnFloor(metadata);
+
+        if (isOnFloor)
+            block.setBlockBounds(0, 0, 0, 1, 0.5f, 1);
+        else
+            block.setBlockBounds(0, 0.5f, 0, 1, 1, 1);
+    }
 }

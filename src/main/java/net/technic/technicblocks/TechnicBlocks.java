@@ -28,8 +28,11 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.technic.technicblocks.blocks.DataDrivenSubBlock;
 import net.technic.technicblocks.blocks.behavior.*;
 import net.technic.technicblocks.blocks.collision.BlockCollisionFactory;
+import net.technic.technicblocks.blocks.collision.SelectionVolumeCollision;
 import net.technic.technicblocks.blocks.connections.*;
 import net.technic.technicblocks.blocks.selection.BlockSelectionFactory;
+import net.technic.technicblocks.blocks.selection.CubeSelection;
+import net.technic.technicblocks.blocks.selection.SlabSelection;
 import net.technic.technicblocks.client.facevisibility.FaceVisibilityFactory;
 import net.technic.technicblocks.client.facevisibility.OpaqueBlockVisibilityConvention;
 import net.technic.technicblocks.client.renderer.*;
@@ -117,6 +120,13 @@ public class TechnicBlocks {
         blockBehaviorFactory.addBehavior("completeSlab", CompleteSlabBehavior.class);
         blockBehaviorFactory.addBehavior("replaceDrops", ReplaceDropsBehavior.class);
         blockBehaviorFactory.addBehavior("replacePicker", ReplacePickerBehavior.class);
+
+        //Register collision
+        collisionFactory.addCollision("selection", new SelectionVolumeCollision());
+
+        //Register selection
+        selectionFactory.addSelection("cube", new CubeSelection());
+        selectionFactory.addSelection("slab", new SlabSelection());
     }
 
     @Mod.EventHandler

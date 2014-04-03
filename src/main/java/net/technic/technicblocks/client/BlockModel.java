@@ -19,7 +19,12 @@
 
 package net.technic.technicblocks.client;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
 import net.technic.technicblocks.blocks.collision.BlockCollision;
@@ -27,6 +32,8 @@ import net.technic.technicblocks.blocks.connections.ConnectionConvention;
 import net.technic.technicblocks.blocks.selection.BlockSelection;
 import net.technic.technicblocks.client.facevisibility.FaceVisibilityConvention;
 import net.technic.technicblocks.client.renderer.DataDrivenRenderer;
+
+import java.util.List;
 
 public class BlockModel {
     private ConnectionConvention modelConnectionsConvention;
@@ -51,5 +58,21 @@ public class BlockModel {
     }
     public boolean isOpaqueCube() {
         return renderer.isOpaqueCube();
+    }
+
+    public void setBlockBounds(DataDrivenBlock block, IBlockAccess world, int x, int y, int z) {
+        selection.setBlockBounds(block, world, x, y, z);
+    }
+
+    public AxisAlignedBB getCentralCollisionBox(DataDrivenBlock block, World world, int x, int y, int z) {
+        return collision.getCentralCollisionBox(block, world, x, y, z);
+    }
+
+    public MovingObjectPosition traceCollision(DataDrivenBlock block, World world, int x, int y, int z, Vec3 start, Vec3 end) {
+        return collision.traceCollision(block, world, x, y, z, start, end);
+    }
+
+    public void collectCollisionBoxes(DataDrivenBlock block, World world, int x, int y, int z, AxisAlignedBB mask, List list, Entity entity) {
+        collision.collectCollisionBoxes(block, world, x, y, z, mask, list, entity);
     }
 }
