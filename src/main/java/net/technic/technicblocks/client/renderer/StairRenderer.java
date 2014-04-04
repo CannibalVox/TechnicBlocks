@@ -41,8 +41,8 @@ public class StairRenderer extends DataDrivenRenderer {
         boolean isOnFloor = block.isOnFloor(metadata);
         ForgeDirection facing = block.reverseTransformBlockFacing(metadata, ForgeDirection.NORTH);
 
-        ForgeDirection leftSide = facing.getRotation(ForgeDirection.DOWN);
-        ForgeDirection rightSide = facing.getRotation(ForgeDirection.UP);
+        ForgeDirection leftSide = facing.getRotation(ForgeDirection.UP);
+        ForgeDirection rightSide = facing.getRotation(ForgeDirection.DOWN);
 
         DataDrivenSubBlock subBlock = block.getSubBlock(metadata);
 
@@ -112,7 +112,7 @@ public class StairRenderer extends DataDrivenRenderer {
             if (isOnFloor != ((DataDrivenBlock)block).isOnFloor(metadata))
                 return ForgeDirection.UNKNOWN;
 
-            return ((DataDrivenBlock) block).transformBlockFacing(metadata, ForgeDirection.NORTH);
+            return ((DataDrivenBlock) block).reverseTransformBlockFacing(metadata, ForgeDirection.NORTH);
         } else {
             //Assume it's a regular staircase?
             if (isOnFloor != ((metadata & 4) == 0))
@@ -139,7 +139,7 @@ public class StairRenderer extends DataDrivenRenderer {
             renderFace(ForgeDirection.UP, 0, 0, 1.0f, 1.0f, 0.5f, subBlock.getTextureScheme(), connectionContext, renderer);
         } else {
             renderFaceIfVisible(ForgeDirection.UP, 0, 0, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, renderer);
-            renderFace(ForgeDirection.DOWN.DOWN, 0, 0, 1.0f, 1.0f, 0.5f, subBlock.getTextureScheme(), connectionContext, renderer);
+            renderFace(ForgeDirection.DOWN, 0, 0, 1.0f, 1.0f, 0.5f, subBlock.getTextureScheme(), connectionContext, renderer);
         }
 
         float startY = 0.5f;
