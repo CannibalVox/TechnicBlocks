@@ -123,7 +123,7 @@ public class StairsCollision extends BlockCollision {
             if (isOnFloor != ((DataDrivenBlock)block).isOnFloor(metadata))
                 return ForgeDirection.UNKNOWN;
 
-            return ((DataDrivenBlock) block).transformBlockFacing(metadata, ForgeDirection.NORTH);
+            return ((DataDrivenBlock) block).reverseTransformBlockFacing(metadata, ForgeDirection.NORTH);
         } else {
             //Assume it's a regular staircase?
             if (isOnFloor != ((metadata & 4) == 0))
@@ -209,16 +209,16 @@ public class StairsCollision extends BlockCollision {
         double endZ = block.getBlockBoundsMaxZ();
 
         switch(connectionDirection) {
-            case NORTH:
+            case SOUTH:
                 endZ -= 0.5f;
                 break;
-            case SOUTH:
+            case NORTH:
                 startZ += 0.5f;
                 break;
-            case EAST:
+            case WEST:
                 startX += 0.5f;
                 break;
-            case WEST:
+            case EAST:
                 endX -= 0.5f;
                 break;
         }
