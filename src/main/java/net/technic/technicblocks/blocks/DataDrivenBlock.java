@@ -219,6 +219,13 @@ public class DataDrivenBlock extends Block {
     }
 
     @Override
+    public boolean renderAsNormalBlock() {
+        if (getBlockModel() == null)
+            return true;
+        return getBlockModel().isOpaqueCube();
+    }
+
+    @Override
     public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
         return getBlockModel().isSideSolid(this, world, x, y, z, side);
     }
