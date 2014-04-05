@@ -235,7 +235,7 @@ public class DataDrivenBlock extends Block {
     @Override
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z)
     {
-        return getBlockModel().getCentralCollisionBox(this, world, x, y, z);
+        return AxisAlignedBB.getAABBPool().getAABB((double)x + this.getBlockBoundsMinX(), (double)y + this.getBlockBoundsMinY(), (double)z + this.getBlockBoundsMinZ(), (double)x + this.getBlockBoundsMaxX(), (double)y + this.getBlockBoundsMaxY(), (double)z + this.getBlockBoundsMaxZ());
     }
 
     /**

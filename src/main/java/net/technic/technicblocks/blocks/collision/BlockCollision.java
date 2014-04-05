@@ -29,7 +29,6 @@ import net.technic.technicblocks.blocks.DataDrivenBlock;
 import java.util.List;
 
 public abstract class BlockCollision {
-    public abstract AxisAlignedBB getCentralCollisionBox(DataDrivenBlock block, World world, int x, int y, int z);
     public abstract MovingObjectPosition traceCollision(DataDrivenBlock block, World world, int x, int y, int z, Vec3 start, Vec3 end);
     public abstract void collectCollisionBoxes(DataDrivenBlock block, World world, int x, int y, int z, AxisAlignedBB mask, List list, Entity entity);
 }

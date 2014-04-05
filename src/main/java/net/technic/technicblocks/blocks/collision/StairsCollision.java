@@ -45,11 +45,6 @@ public class StairsCollision extends BlockCollision {
         this.selectionCollision = selectionCollision;
     }
 
-    @Override
-    public AxisAlignedBB getCentralCollisionBox(DataDrivenBlock block, World world, int x, int y, int z) {
-        return selectionCollision.getCentralCollisionBox(block, world, x, y, z);
-    }
-
     private int getRotationFrom(ForgeDirection side) {
         switch (side) {
             case EAST:

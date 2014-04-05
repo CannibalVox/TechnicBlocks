@@ -27,6 +27,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.technic.technicblocks.blocks.behavior.*;
 import net.technic.technicblocks.blocks.collision.BlockCollisionFactory;
+import net.technic.technicblocks.blocks.collision.FenceCollision;
 import net.technic.technicblocks.blocks.collision.SelectionVolumeCollision;
 import net.technic.technicblocks.blocks.collision.StairsCollision;
 import net.technic.technicblocks.blocks.connections.*;
@@ -135,6 +136,7 @@ public class TechnicBlocks {
         SelectionVolumeCollision selection = new SelectionVolumeCollision();
         collisionFactory.addCollision("selection", selection);
         collisionFactory.addCollision("stairs", new StairsCollision(selection));
+        collisionFactory.addCollision("fence", new FenceCollision());
 
         //Register selection
         selectionFactory.addSelection("cube", new CubeSelection());

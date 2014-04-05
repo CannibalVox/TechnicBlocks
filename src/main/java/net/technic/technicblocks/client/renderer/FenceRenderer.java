@@ -37,7 +37,7 @@ public class FenceRenderer extends DataDrivenRenderer {
 
     @Override
     public String getDefaultCollisionType() {
-        return "selection";
+        return "fence";
     }
 
     @Override

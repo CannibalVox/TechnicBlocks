@@ -35,11 +35,6 @@ public class SelectionVolumeCollision extends BlockCollision {
     }
 
     @Override
-    public AxisAlignedBB getCentralCollisionBox(DataDrivenBlock block, World world, int x, int y, int z) {
-        return AxisAlignedBB.getAABBPool().getAABB((double)x + block.getBlockBoundsMinX(), (double)y + block.getBlockBoundsMinY(), (double)z + block.getBlockBoundsMinZ(), (double)x + block.getBlockBoundsMaxX(), (double)y + block.getBlockBoundsMaxY(), (double)z + block.getBlockBoundsMaxZ());
-    }
-
-    @Override
     public MovingObjectPosition traceCollision(DataDrivenBlock block, World world, int x, int y, int z, Vec3 start, Vec3 end) {
         block.setBlockBoundsBasedOnState(world, x, y, z);
         return traceCollisionForBounds(block, world, x, y, z, start, end);

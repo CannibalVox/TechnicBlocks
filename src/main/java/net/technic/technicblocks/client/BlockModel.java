@@ -64,10 +64,6 @@ public class BlockModel {
         selection.setBlockBounds(block, world, x, y, z);
     }
 
-    public AxisAlignedBB getCentralCollisionBox(DataDrivenBlock block, World world, int x, int y, int z) {
-        return collision.getCentralCollisionBox(block, world, x, y, z);
-    }
-
     public MovingObjectPosition traceCollision(DataDrivenBlock block, World world, int x, int y, int z, Vec3 start, Vec3 end) {
         return collision.traceCollision(block, world, x, y, z, start, end);
     }
