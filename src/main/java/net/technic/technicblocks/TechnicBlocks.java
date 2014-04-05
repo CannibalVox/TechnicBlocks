@@ -93,16 +93,19 @@ public class TechnicBlocks {
         DataDrivenRenderer cube = new CubeRenderer(RenderingRegistry.getNextAvailableRenderId());
         DataDrivenRenderer slab = new SlabRenderer(RenderingRegistry.getNextAvailableRenderId());
         DataDrivenRenderer stairs = new StairRenderer(RenderingRegistry.getNextAvailableRenderId());
+        DataDrivenRenderer pillar = new PillarRenderer(RenderingRegistry.getNextAvailableRenderId());
 
         //Register renderers
         RenderingRegistry.registerBlockHandler(cube);
         RenderingRegistry.registerBlockHandler(slab);
         RenderingRegistry.registerBlockHandler(stairs);
+        RenderingRegistry.registerBlockHandler(pillar);
 
         //Set up renderer factory
         rendererFactory.addRenderer("cube", cube);
         rendererFactory.addRenderer("slab", slab);
         rendererFactory.addRenderer("stairs", stairs);
+        rendererFactory.addRenderer("pillar", pillar);
 
         //Register face visibility factory
         faceVisibilityFactory.addConvention("normal", new OpaqueBlockVisibilityConvention());
