@@ -38,10 +38,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.behavior.BlockBehavior;
-import net.technic.technicblocks.blocks.behavior.functions.IBlockDropBehavior;
-import net.technic.technicblocks.blocks.behavior.functions.IBlockPlacementBehavior;
-import net.technic.technicblocks.blocks.behavior.functions.ICreativePickerBehavior;
-import net.technic.technicblocks.blocks.behavior.functions.IItemBlockTargetBehavior;
+import net.technic.technicblocks.blocks.behavior.functions.*;
 import net.technic.technicblocks.client.BlockModel;
 import net.technic.technicblocks.items.DataDrivenItemBlock;
 
@@ -60,6 +57,8 @@ public class DataDrivenBlock extends Block {
     private List<IItemBlockTargetBehavior> itemBlockTargetBehaviors = new ArrayList<IItemBlockTargetBehavior>();
     private List<IBlockDropBehavior> blockDropBehaviors = new ArrayList<IBlockDropBehavior>();
     private List<ICreativePickerBehavior> creativePickerBehaviors = new ArrayList<ICreativePickerBehavior>();
+    private List<INeighborUpdateBehavior> neighborUpdateBehaviors = new ArrayList<INeighborUpdateBehavior>();
+    private List<IBlockTickBehavior> blockTickBehaviors = new ArrayList<IBlockTickBehavior>();
 
     public DataDrivenBlock(Material material, BlockModel blockModel, Collection<String> blockTags, List<BlockBehavior> behaviors, List<DataDrivenSubBlock> dataDrivenSubBlocks) {
         super(material);
@@ -99,6 +98,13 @@ public class DataDrivenBlock extends Block {
                 blockDropBehaviors.add((IBlockDropBehavior)behavior);
             if (behavior instanceof ICreativePickerBehavior)
                 creativePickerBehaviors.add((ICreativePickerBehavior)behavior);
+            if (behavior instanceof INeighborUpdateBehavior)
+                neighborUpdateBehaviors.add((INeighborUpdateBehavior)behavior);
+            if (behavior instanceof IBlockTickBehavior) {
+                if (((IBlockTickBehavior)behavior).shouldTickRandomly())
+                    this.setTickRandomly(true);
+                blockTickBehaviors.add((IBlockTickBehavior)behavior);
+            }
         }
     }
 

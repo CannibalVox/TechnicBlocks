@@ -25,7 +25,6 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import net.technic.technicblocks.blocks.DataDrivenSubBlock;
 import net.technic.technicblocks.blocks.behavior.*;
 import net.technic.technicblocks.blocks.collision.BlockCollisionFactory;
 import net.technic.technicblocks.blocks.collision.SelectionVolumeCollision;
@@ -125,6 +124,8 @@ public class TechnicBlocks {
         blockBehaviorFactory.addBehavior("replaceDrops", ReplaceDropsBehavior.class);
         blockBehaviorFactory.addBehavior("replacePicker", ReplacePickerBehavior.class);
         blockBehaviorFactory.addBehavior("6direction", SixDirectionPlacementBehavior.class);
+        blockBehaviorFactory.addBehavior("redstoneOn", RedstoneActivationBehavior.class);
+        blockBehaviorFactory.addBehavior("redstoneOff", RedstoneDeactivationBehavior.class);
 
         //Register collision
         SelectionVolumeCollision selection = new SelectionVolumeCollision();
