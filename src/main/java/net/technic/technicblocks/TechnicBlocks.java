@@ -32,6 +32,7 @@ import net.technic.technicblocks.blocks.collision.StairsCollision;
 import net.technic.technicblocks.blocks.connections.*;
 import net.technic.technicblocks.blocks.selection.BlockSelectionFactory;
 import net.technic.technicblocks.blocks.selection.CubeSelection;
+import net.technic.technicblocks.blocks.selection.FenceSelection;
 import net.technic.technicblocks.blocks.selection.SlabSelection;
 import net.technic.technicblocks.client.facevisibility.FaceVisibilityFactory;
 import net.technic.technicblocks.client.facevisibility.OpaqueBlockVisibilityConvention;
@@ -138,6 +139,7 @@ public class TechnicBlocks {
         //Register selection
         selectionFactory.addSelection("cube", new CubeSelection());
         selectionFactory.addSelection("slab", new SlabSelection());
+        selectionFactory.addSelection("fence", new FenceSelection());
     }
 
     @Mod.EventHandler

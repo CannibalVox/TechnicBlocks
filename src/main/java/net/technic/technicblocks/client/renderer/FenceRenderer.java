@@ -42,7 +42,7 @@ public class FenceRenderer extends DataDrivenRenderer {
 
     @Override
     public String getDefaultSelectionType() {
-        return "cube";
+        return "fence";
     }
 
     @Override
