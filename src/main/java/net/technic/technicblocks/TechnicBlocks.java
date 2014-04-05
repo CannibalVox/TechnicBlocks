@@ -121,6 +121,7 @@ public class TechnicBlocks {
         blockBehaviorFactory.addBehavior("completeSlab", CompleteSlabBehavior.class);
         blockBehaviorFactory.addBehavior("replaceDrops", ReplaceDropsBehavior.class);
         blockBehaviorFactory.addBehavior("replacePicker", ReplacePickerBehavior.class);
+        blockBehaviorFactory.addBehavior("6direction", SixDirectionPlacementBehavior.class);
 
         //Register collision
         SelectionVolumeCollision selection = new SelectionVolumeCollision();
