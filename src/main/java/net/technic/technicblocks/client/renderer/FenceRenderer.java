@@ -71,14 +71,15 @@ public class FenceRenderer extends DataDrivenRenderer {
     private boolean tesselateInventory(DataDrivenBlock block, int metadata, RenderBlocks renderer, IRenderContext connectionContext) {
         DataDrivenSubBlock subBlock = block.getSubBlock(metadata);
 
-        GL11.glTranslatef(0, 0, -0.375f);
+        GL11.glTranslatef(0, 0, -0.4375f);
         renderPost(subBlock.getTextureScheme(), connectionContext, renderer);
         renderFencing(ForgeDirection.SOUTH, subBlock.getTextureScheme(), connectionContext, renderer);
 
-        GL11.glTranslatef(0, 0, 0.75f);
+        GL11.glTranslatef(0, 0, 1);
         renderPost(subBlock.getTextureScheme(), connectionContext, renderer);
+        renderFencing(ForgeDirection.NORTH, subBlock.getTextureScheme(), connectionContext, renderer);
 
-        GL11.glTranslatef(0, 0, -0.375f);
+        GL11.glTranslatef(0, 0, -0.5625f);
 
         return true;
     }
