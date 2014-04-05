@@ -358,4 +358,31 @@ public class DataDrivenBlock extends Block {
 
         return shouldConsumeItem;
     }
+
+    /**
+     * Ticks the block if it's been scheduled
+     */
+    @Override
+    public void updateTick(World world, int x, int y, int z, Random random)
+    {
+        super.updateTick(world, x, y, z, random);
+
+        for(IBlockTickBehavior behavior : blockTickBehaviors) {
+            behavior.blockUpdateTick(this, world, x, y, z, random);
+        }
+    }
+
+    /**
+     * Lets the block know when one of its neighbor changes. Doesn't know which neighbor changed (coordinates passed are
+     * their own) Args: x, y, z, neighbor Block
+     */
+    @Override
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block neighbor)
+    {
+        super.onNeighborBlockChange(world, x, y, z, neighbor);
+
+        for(INeighborUpdateBehavior behavior : neighborUpdateBehaviors) {
+            behavior.neighborUpdated(this, world, x, y, z, neighbor);
+        }
+    }
 }
