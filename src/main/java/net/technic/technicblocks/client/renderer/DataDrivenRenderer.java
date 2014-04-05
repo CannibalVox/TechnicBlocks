@@ -96,10 +96,10 @@ public abstract class DataDrivenRenderer implements ISimpleBlockRenderingHandler
         Vector3f zVec = new Vector3f(intoDir.offsetX, intoDir.offsetY, intoDir.offsetZ);
 
         List<Vector2f> uvList = new ArrayList<Vector2f>(4);
-        uvList.add(new Vector2f(16.0f * icon.getInterpolatedU(startX), 16.0f * icon.getInterpolatedV(startY)));
-        uvList.add(new Vector2f(16.0f * icon.getInterpolatedU(startX), 16.0f * icon.getInterpolatedV(endY)));
-        uvList.add(new Vector2f(16.0f * icon.getInterpolatedU(endX), 16.0f * icon.getInterpolatedV(endY)));
-        uvList.add(new Vector2f(16.0f * icon.getInterpolatedU(endX), 16.0f * icon.getInterpolatedV(startY)));
+        uvList.add(new Vector2f(icon.getInterpolatedU(16.0f * startX), icon.getInterpolatedV(16.0f * startY)));
+        uvList.add(new Vector2f(icon.getInterpolatedU(16.0f * startX), icon.getInterpolatedV(16.0f * endY)));
+        uvList.add(new Vector2f(icon.getInterpolatedU(16.0f * endX), icon.getInterpolatedV(16.0f * endY)));
+        uvList.add(new Vector2f(icon.getInterpolatedU(16.0f * endX), icon.getInterpolatedV(16.0f * startY)));
 
         ForgeDirection realUpDir = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[yDir.ordinal()]];
 
