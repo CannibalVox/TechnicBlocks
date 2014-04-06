@@ -54,6 +54,19 @@ public abstract class DataDrivenRenderer implements ISimpleBlockRenderingHandler
         return true;
     }
 
+    public int getOpacity() {
+        return this.isOpaqueCube() ? 255 : 0;
+    }
+
+    public int getMixedBrightnessForBlock(IBlockAccess world, int x, int y, int z) {
+        Block block = world.getBlock(x, y, z);
+        return world.getLightBrightnessForSkyBlocks(x, y, z, block.getLightValue(world, x, y, z));
+    }
+
+    public boolean shouldForceUseNeighborBrightness() {
+        return false;
+    }
+
     public boolean isSideSolid(DataDrivenBlock block, IBlockAccess world, int x, int y, int z, ForgeDirection face) {
         return true;
     }

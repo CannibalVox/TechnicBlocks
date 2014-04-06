@@ -84,8 +84,8 @@ public class DataDrivenBlock extends Block {
 
         subblockMask = (byte)(subblockMask & ~nonSubblockMask);
 
-        this.opaque = this.isOpaqueCube();
-        this.lightOpacity = this.isOpaqueCube() ? 255 : 0;
+        this.opaque = getBlockModel().isOpaqueCube();
+        this.setLightOpacity(getBlockModel().getOpacity());
     }
 
     private void interfaceifyBehaviors() {
@@ -223,6 +223,20 @@ public class DataDrivenBlock extends Block {
         if (getBlockModel() == null)
             return true;
         return getBlockModel().isOpaqueCube();
+    }
+
+    /**
+     * How bright to render this block based on the light its receiving. Args: iBlockAccess, x, y, z
+     */
+    @SideOnly(Side.CLIENT)
+    public int getMixedBrightnessForBlock(IBlockAccess world, int x, int y, int z)
+    {
+        return getBlockModel().getMixedBrightnessForBlock(world, x, y, z);
+    }
+
+    @Override
+    public boolean getUseNeighborBrightness() {
+        return getBlockModel().shouldForceUseNeighborBrightness() || super.getUseNeighborBrightness();
     }
 
     @Override

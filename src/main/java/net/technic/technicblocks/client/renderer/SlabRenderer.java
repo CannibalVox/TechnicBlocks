@@ -19,6 +19,7 @@
 
 package net.technic.technicblocks.client.renderer;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -63,6 +64,27 @@ public class SlabRenderer extends DataDrivenRenderer {
     @Override
     public boolean isOpaqueCube() {
         return false;
+    }
+
+    @Override
+    public int getOpacity() {
+        return 255;
+    }
+
+    @Override
+    public int getMixedBrightnessForBlock(IBlockAccess world, int x, int y, int z) {
+        int brightness = super.getMixedBrightnessForBlock(world, x, y, z);
+
+        if (brightness == 0) {
+            brightness = super.getMixedBrightnessForBlock(world, x, y-1, z);
+        }
+
+        return brightness;
+    }
+
+    @Override
+    public boolean shouldForceUseNeighborBrightness() {
+        return true;
     }
 
     @Override

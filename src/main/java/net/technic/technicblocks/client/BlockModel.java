@@ -60,6 +60,9 @@ public class BlockModel {
         return renderer.isOpaqueCube();
     }
 
+    public int getOpacity() {
+        return renderer.getOpacity();
+    }
     public void setBlockBounds(DataDrivenBlock block, IBlockAccess world, int x, int y, int z) {
         selection.setBlockBounds(block, world, x, y, z);
     }
@@ -70,5 +73,13 @@ public class BlockModel {
 
     public void collectCollisionBoxes(DataDrivenBlock block, World world, int x, int y, int z, AxisAlignedBB mask, List list, Entity entity) {
         collision.collectCollisionBoxes(block, world, x, y, z, mask, list, entity);
+    }
+
+    public int getMixedBrightnessForBlock(IBlockAccess world, int x, int y, int z) {
+        return renderer.getMixedBrightnessForBlock(world, x, y, z);
+    }
+
+    public boolean shouldForceUseNeighborBrightness() {
+        return renderer.shouldForceUseNeighborBrightness();
     }
 }
