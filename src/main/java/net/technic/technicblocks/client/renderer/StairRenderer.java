@@ -88,7 +88,7 @@ public class StairRenderer extends DataDrivenRenderer {
             return (isOnFloor == (side == ForgeDirection.DOWN));
         }
 
-        ForgeDirection solidSide = block.transformBlockFacing(metadata, ForgeDirection.SOUTH);
+        ForgeDirection solidSide = block.reverseTransformBlockFacing(metadata, ForgeDirection.SOUTH);
         return (side == solidSide);
     }
 
