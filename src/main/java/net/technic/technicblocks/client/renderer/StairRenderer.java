@@ -79,6 +79,16 @@ public class StairRenderer extends DataDrivenRenderer {
     }
 
     @Override
+    public int getOpacity() {
+        return 255;
+    }
+
+    @Override
+    public boolean shouldForceUseNeighborBrightness() {
+        return true;
+    }
+
+    @Override
     public boolean isSideSolid(DataDrivenBlock block, IBlockAccess world, int x, int y, int z, ForgeDirection side) {
         int metadata = world.getBlockMetadata(x, y, z);
 
