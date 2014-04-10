@@ -156,6 +156,7 @@ public class SelectionVolumeCollision extends BlockCollision {
 
     @Override
     public void collectCollisionBoxes(DataDrivenBlock block, World world, int x, int y, int z, AxisAlignedBB mask, List list, Entity entity) {
+        block.setBlockBoundsBasedOnState(world, x, y, z);
         AxisAlignedBB axisalignedbb1 = block.getCollisionBoundingBoxFromPool(world, x, y, z);
 
         if (axisalignedbb1 != null && mask.intersectsWith(axisalignedbb1))
