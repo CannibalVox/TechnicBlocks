@@ -26,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
+import net.technic.technicblocks.client.texturing.BlockTextureScheme;
 import org.lwjgl.util.vector.Vector3f;
 
 public class InventoryRenderContext implements IRenderContext {
@@ -69,14 +70,77 @@ public class InventoryRenderContext implements IRenderContext {
     }
 
     @Override
-    public void preDrawFace(ForgeDirection dir, boolean internal, float startX, float startY, float endX, float endY, RenderBlocks renderer, Tessellator tessellator) {
-        tessellator.startDrawingQuads();
-        tessellator.setNormal(dir.offsetX, dir.offsetY, dir.offsetZ);
-        renderer.enableAO = false;
+    public BlockTextureScheme getTextureScheme() {
+        return null;
     }
 
     @Override
-    public void postDrawFace(RenderBlocks renderer, Tessellator tessellator) {
-        tessellator.draw();
+    public int getColorMultiplier() {
+        return 0xFFFFFF;
+    }
+
+    @Override
+    public int getLightValue() {
+        return block.getLightValue();
+    }
+
+    @Override
+    public int getMixedBrightness() {
+        return 0;
+    }
+
+    @Override
+    public int getAdjacentMixedBrightness(ForgeDirection... adjacencies) {
+        return 0;
+    }
+
+    @Override
+    public int getAdjacentMixedBrightness(int manualOffsetX, int manualOffsetY, int manualOffsetZ, ForgeDirection... adjacencies) {
+        return 0;
+    }
+
+    @Override
+    public float getAmbientLightValue() {
+        return block.getAmbientOcclusionLightValue();
+    }
+
+    @Override
+    public float getAdjacentAmbientLightValue(ForgeDirection... adjacencies) {
+        return 0;
+    }
+
+    @Override
+    public float getAdjacentAmbientLightValue(int manualOffsetX, int manualOffsetY, int manualOffsetZ, ForgeDirection... adjacencies) {
+        return 0;
+    }
+
+    @Override
+    public boolean canTransmitLight() {
+        return block.getCanBlockGrass();
+    }
+
+    @Override
+    public boolean canAdjacentTransmitLight(ForgeDirection... adjacencies) {
+        return false;
+    }
+
+    @Override
+    public boolean canAdjacentTransmitLight(int manualOffsetX, int manualOffsetY, int manualOffsetZ, ForgeDirection... adjacencies) {
+        return false;
+    }
+
+    @Override
+    public boolean isOpaque() {
+        return block.isOpaqueCube();
+    }
+
+    @Override
+    public boolean isAdjacentOpaque(ForgeDirection... adjacencies) {
+        return false;
+    }
+
+    @Override
+    public boolean isAdjacentOpaque(int manualOffsetX, int manualOffsetY, int manualOffsetZ, ForgeDirection... adjacencies) {
+        return false;
     }
 }

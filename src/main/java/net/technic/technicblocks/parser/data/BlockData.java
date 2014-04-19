@@ -40,6 +40,7 @@ public class BlockData {
     private String faceVisibilityType;
     private String collisionType;
     private String selectionType;
+    private String tessellator;
     private List<BehaviorData> behaviors = new ArrayList<BehaviorData>();
     private List<SubBlockData> subBlocks = new ArrayList<SubBlockData>();
 
@@ -59,6 +60,7 @@ public class BlockData {
     public String getFaceVisibilityType() { return faceVisibilityType; }
     public String getCollisionType() { return collisionType; }
     public String getSelectionType() { return selectionType; }
+    public String getTessellator() { return tessellator; }
     public List<BehaviorData> getBehaviors() { return behaviors; }
     public List<SubBlockData> getSubBlocks() { return subBlocks; }
 }

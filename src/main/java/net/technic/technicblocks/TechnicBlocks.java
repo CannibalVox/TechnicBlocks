@@ -38,6 +38,9 @@ import net.technic.technicblocks.blocks.selection.SlabSelection;
 import net.technic.technicblocks.client.facevisibility.FaceVisibilityFactory;
 import net.technic.technicblocks.client.facevisibility.OpaqueBlockVisibilityConvention;
 import net.technic.technicblocks.client.renderer.*;
+import net.technic.technicblocks.client.renderer.tessellator.Tessellator;
+import net.technic.technicblocks.client.renderer.tessellator.TessellatorFactory;
+import net.technic.technicblocks.client.renderer.tessellator.preposthandlers.WorldLightingHandler;
 import net.technic.technicblocks.client.texturing.*;
 import net.technic.technicblocks.creativetabs.CreativeTabFactory;
 import net.technic.technicblocks.materials.MaterialFactory;
@@ -80,6 +83,7 @@ public class TechnicBlocks {
     private TextureSelectorFactory textureSelectorFactory = new TextureSelectorFactory();
     private BlockCollisionFactory collisionFactory = new BlockCollisionFactory();
     private BlockSelectionFactory selectionFactory = new BlockSelectionFactory();
+    private TessellatorFactory tessellatorFactory = new TessellatorFactory();
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -142,6 +146,9 @@ public class TechnicBlocks {
         selectionFactory.addSelection("cube", new CubeSelection());
         selectionFactory.addSelection("slab", new SlabSelection());
         selectionFactory.addSelection("fence", new FenceSelection());
+
+        //Register tessellators
+        tessellatorFactory.addTessellator("basic", new Tessellator(new WorldLightingHandler()));
     }
 
     @Mod.EventHandler
@@ -221,7 +228,7 @@ public class TechnicBlocks {
                 {
                     try {
                         ModDataParser parser = new ModDataParser(zip.getInputStream(ze), proxy);
-                        parser.RegisterAllBlocks(creativeTabFactory, materialFactory, soundTypeFactory, conventionFactory, rendererFactory, faceVisibilityFactory, collisionFactory, selectionFactory, blockBehaviorFactory, textureSelectorFactory);
+                        parser.RegisterAllBlocks(creativeTabFactory, materialFactory, soundTypeFactory, conventionFactory, rendererFactory, faceVisibilityFactory, collisionFactory, selectionFactory, blockBehaviorFactory, textureSelectorFactory, tessellatorFactory);
                         proxy.verifyCreativeTabs(creativeTabFactory);
 
                         //If we found a valid blox file, then hold onto the mod ID

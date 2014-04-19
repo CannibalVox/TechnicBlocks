@@ -29,6 +29,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
 import net.technic.technicblocks.blocks.DataDrivenSubBlock;
 import net.technic.technicblocks.client.renderer.context.IRenderContext;
+import net.technic.technicblocks.client.renderer.tessellator.TessellatorInstance;
 
 public class StairRenderer extends DataDrivenRenderer {
 
@@ -37,7 +38,7 @@ public class StairRenderer extends DataDrivenRenderer {
     }
 
     @Override
-    protected boolean tesselate(DataDrivenBlock block, int metadata, RenderBlocks renderer, IRenderContext connectionContext) {
+    protected boolean tesselate(DataDrivenBlock block, int metadata, TessellatorInstance tessellatorInstance, IRenderContext connectionContext) {
         boolean isOnFloor = block.isOnFloor(metadata);
         ForgeDirection facing = block.reverseTransformBlockFacing(metadata, ForgeDirection.NORTH);
 
@@ -46,7 +47,7 @@ public class StairRenderer extends DataDrivenRenderer {
 
         DataDrivenSubBlock subBlock = block.getSubBlock(metadata);
 
-        renderBasicSlab(subBlock, connectionContext, renderer, isOnFloor);
+        renderBasicSlab(subBlock, connectionContext, tessellatorInstance, isOnFloor);
 
         ForgeDirection opposite = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[facing.ordinal()]];
         ItemStack northConnection = connectionContext.getConnectedBlock(opposite);
@@ -54,19 +55,19 @@ public class StairRenderer extends DataDrivenRenderer {
             ForgeDirection connectionFacing = getConnectionFacing(northConnection, isOnFloor);
 
             if (connectionFacing == leftSide || connectionFacing == rightSide) {
-                renderQuarterStair(subBlock, connectionContext, renderer, isOnFloor, facing, connectionFacing == rightSide);
+                renderQuarterStair(subBlock, connectionContext, tessellatorInstance, isOnFloor, facing, connectionFacing == rightSide);
                 return true;
             }
         }
 
-        renderHalfStair(subBlock, connectionContext, renderer, isOnFloor, facing);
+        renderHalfStair(subBlock, connectionContext, tessellatorInstance, isOnFloor, facing);
 
         ItemStack southConnection = connectionContext.getConnectedBlock(facing);
         if (southConnection != null) {
             ForgeDirection connectionFacing = getConnectionFacing(southConnection, isOnFloor);
 
             if (connectionFacing == leftSide || connectionFacing == rightSide) {
-                renderQuarterStair(subBlock, connectionContext, renderer, isOnFloor, opposite, connectionFacing == leftSide);
+                renderQuarterStair(subBlock, connectionContext, tessellatorInstance, isOnFloor, opposite, connectionFacing == leftSide);
             }
         }
 
@@ -143,13 +144,13 @@ public class StairRenderer extends DataDrivenRenderer {
         }
     }
 
-    private void renderBasicSlab(DataDrivenSubBlock subBlock, IRenderContext connectionContext, RenderBlocks renderer, boolean isOnFloor) {
+    private void renderBasicSlab(DataDrivenSubBlock subBlock, IRenderContext connectionContext, TessellatorInstance tessellatorInstance, boolean isOnFloor) {
         if (isOnFloor) {
-            renderFaceIfVisible(ForgeDirection.DOWN, 0, 0, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, renderer);
-            renderFace(ForgeDirection.UP, 0, 0, 1.0f, 1.0f, 0.5f, subBlock.getTextureScheme(), connectionContext, renderer);
+            renderFaceIfVisible(ForgeDirection.DOWN, 0, 0, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
+            renderFace(ForgeDirection.UP, 0, 0, 1.0f, 1.0f, 0.5f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
         } else {
-            renderFaceIfVisible(ForgeDirection.UP, 0, 0, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, renderer);
-            renderFace(ForgeDirection.DOWN, 0, 0, 1.0f, 1.0f, 0.5f, subBlock.getTextureScheme(), connectionContext, renderer);
+            renderFaceIfVisible(ForgeDirection.UP, 0, 0, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
+            renderFace(ForgeDirection.DOWN, 0, 0, 1.0f, 1.0f, 0.5f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
         }
 
         float startY = 0.5f;
@@ -160,13 +161,13 @@ public class StairRenderer extends DataDrivenRenderer {
             endY -= 0.5f;
         }
 
-        renderFaceIfVisible(ForgeDirection.NORTH, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, renderer);
-        renderFaceIfVisible(ForgeDirection.EAST, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, renderer);
-        renderFaceIfVisible(ForgeDirection.WEST, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, renderer);
-        renderFaceIfVisible(ForgeDirection.SOUTH, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, renderer);
+        renderFaceIfVisible(ForgeDirection.NORTH, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
+        renderFaceIfVisible(ForgeDirection.EAST, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
+        renderFaceIfVisible(ForgeDirection.WEST, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
+        renderFaceIfVisible(ForgeDirection.SOUTH, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
     }
 
-    private void renderQuarterStair(DataDrivenSubBlock subBlock, IRenderContext renderContext, RenderBlocks renderer, boolean isOnFloor, ForgeDirection facing, boolean isFacingLeft) {
+    private void renderQuarterStair(DataDrivenSubBlock subBlock, IRenderContext renderContext, TessellatorInstance tessellatorInstance, boolean isOnFloor, ForgeDirection facing, boolean isFacingLeft) {
         float startY = 0;
         float endY = 0.5f;
 
@@ -178,12 +179,12 @@ public class StairRenderer extends DataDrivenRenderer {
         ForgeDirection left = facing.getRotation(ForgeDirection.UP);
         ForgeDirection right = facing.getRotation(ForgeDirection.DOWN);
 
-        renderFaceIfVisible((isFacingLeft?left:right), (isFacingLeft?0:0.5f), startY, (isFacingLeft?0.5f:1.0f), endY, subBlock.getTextureScheme(), renderContext, renderer);
-        renderFace((isFacingLeft?right:left), (isFacingLeft?0.5f:0), startY, (isFacingLeft?1.0f:0.5f), endY, 0.5f, subBlock.getTextureScheme(), renderContext, renderer);
-        renderFace(facing, (isFacingLeft?0:0.5f), startY, (isFacingLeft?0.5f:1.0f), endY, 0.5f, subBlock.getTextureScheme(), renderContext, renderer);
+        renderFaceIfVisible((isFacingLeft?left:right), (isFacingLeft?0:0.5f), startY, (isFacingLeft?0.5f:1.0f), endY, subBlock.getTextureScheme(), renderContext, tessellatorInstance);
+        renderFace((isFacingLeft?right:left), (isFacingLeft?0.5f:0), startY, (isFacingLeft?1.0f:0.5f), endY, 0.5f, subBlock.getTextureScheme(), renderContext, tessellatorInstance);
+        renderFace(facing, (isFacingLeft?0:0.5f), startY, (isFacingLeft?0.5f:1.0f), endY, 0.5f, subBlock.getTextureScheme(), renderContext, tessellatorInstance);
 
         ForgeDirection back = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[facing.ordinal()]];
-        renderFaceIfVisible(back, (isFacingLeft?0.5f:0), startY, (isFacingLeft?1.0f:0.5f), endY, subBlock.getTextureScheme(), renderContext, renderer);
+        renderFaceIfVisible(back, (isFacingLeft?0.5f:0), startY, (isFacingLeft?1.0f:0.5f), endY, subBlock.getTextureScheme(), renderContext, tessellatorInstance);
 
         float startX = 0, endX = 0;
         if ((facing == ForgeDirection.NORTH && isFacingLeft) || (facing == ForgeDirection.WEST && !isFacingLeft)) {
@@ -217,10 +218,10 @@ public class StairRenderer extends DataDrivenRenderer {
             drawFace = ForgeDirection.DOWN;
         }
 
-        renderFaceIfVisible(drawFace, startX, startY, endX, endY, subBlock.getTextureScheme(), renderContext, renderer);
+        renderFaceIfVisible(drawFace, startX, startY, endX, endY, subBlock.getTextureScheme(), renderContext, tessellatorInstance);
     }
 
-    private void renderHalfStair(DataDrivenSubBlock subBlock, IRenderContext renderContext, RenderBlocks renderer, boolean isOnFloor, ForgeDirection facing) {
+    private void renderHalfStair(DataDrivenSubBlock subBlock, IRenderContext renderContext, TessellatorInstance tessellatorInstance, boolean isOnFloor, ForgeDirection facing) {
         //Render the front and back of the stair
         ForgeDirection backSide = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[facing.ordinal()]];
         float startY = 0;
@@ -231,14 +232,14 @@ public class StairRenderer extends DataDrivenRenderer {
             endY += 0.5f;
         }
 
-        renderFace(facing, 0, startY, 1.0f, endY, 0.5f, subBlock.getTextureScheme(), renderContext, renderer);
-        renderFaceIfVisible(backSide, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), renderContext, renderer);
+        renderFace(facing, 0, startY, 1.0f, endY, 0.5f, subBlock.getTextureScheme(), renderContext, tessellatorInstance);
+        renderFaceIfVisible(backSide, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), renderContext, tessellatorInstance);
 
         ForgeDirection leftSide = facing.getRotation(ForgeDirection.UP);
         ForgeDirection rightSide = facing.getRotation(ForgeDirection.DOWN);
 
-        renderFaceIfVisible(rightSide, 0.5f, startY, 1.0f, endY, subBlock.getTextureScheme(), renderContext, renderer);
-        renderFaceIfVisible(leftSide, 0.0f, startY, 0.5f, endY, subBlock.getTextureScheme(), renderContext, renderer); 
+        renderFaceIfVisible(rightSide, 0.5f, startY, 1.0f, endY, subBlock.getTextureScheme(), renderContext, tessellatorInstance);
+        renderFaceIfVisible(leftSide, 0.0f, startY, 0.5f, endY, subBlock.getTextureScheme(), renderContext, tessellatorInstance);
         float startX = 0, endX = 0;
         switch (facing) {
             case NORTH:
@@ -275,7 +276,7 @@ public class StairRenderer extends DataDrivenRenderer {
             drawFace = ForgeDirection.DOWN;
         }
 
-        renderFaceIfVisible(drawFace, startX, startY, endX, endY, subBlock.getTextureScheme(), renderContext, renderer);
+        renderFaceIfVisible(drawFace, startX, startY, endX, endY, subBlock.getTextureScheme(), renderContext, tessellatorInstance);
     }
 
     @Override

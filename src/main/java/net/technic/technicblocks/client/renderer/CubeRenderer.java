@@ -19,11 +19,11 @@
 
 package net.technic.technicblocks.client.renderer;
 
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
 import net.technic.technicblocks.blocks.DataDrivenSubBlock;
 import net.technic.technicblocks.client.renderer.context.IRenderContext;
+import net.technic.technicblocks.client.renderer.tessellator.TessellatorInstance;
 
 public class CubeRenderer extends DataDrivenRenderer {
 
@@ -32,15 +32,15 @@ public class CubeRenderer extends DataDrivenRenderer {
     }
 
     @Override
-    protected boolean tesselate(DataDrivenBlock block, int metadata, RenderBlocks renderer, IRenderContext connectionContext) {
+    protected boolean tesselate(DataDrivenBlock block, int metadata, TessellatorInstance tessellatorInstance, IRenderContext connectionContext) {
         DataDrivenSubBlock subBlock = block.getSubBlock(metadata);
 
-        boolean result = renderFaceIfVisible(ForgeDirection.UP, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, renderer);
-        result = renderFaceIfVisible(ForgeDirection.DOWN, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, renderer) || result;
-        result = renderFaceIfVisible(ForgeDirection.NORTH, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, renderer) || result;
-        result = renderFaceIfVisible(ForgeDirection.SOUTH, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, renderer) || result;
-        result = renderFaceIfVisible(ForgeDirection.EAST, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, renderer) || result;
-        result = renderFaceIfVisible(ForgeDirection.WEST, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, renderer) || result;
+        boolean result = renderFaceIfVisible(ForgeDirection.UP, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
+        result = renderFaceIfVisible(ForgeDirection.DOWN, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance) || result;
+        result = renderFaceIfVisible(ForgeDirection.NORTH, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance) || result;
+        result = renderFaceIfVisible(ForgeDirection.SOUTH, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance) || result;
+        result = renderFaceIfVisible(ForgeDirection.EAST, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance) || result;
+        result = renderFaceIfVisible(ForgeDirection.WEST, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance) || result;
         return result;
     }
 

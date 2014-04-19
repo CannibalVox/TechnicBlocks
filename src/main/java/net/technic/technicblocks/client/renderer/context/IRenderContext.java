@@ -25,6 +25,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.technic.technicblocks.client.texturing.BlockTextureScheme;
 import org.lwjgl.util.vector.Vector3f;
 
 public interface IRenderContext {
@@ -34,6 +35,24 @@ public interface IRenderContext {
     boolean isFaceVisible(ForgeDirection side);
     IIcon getTexture(ForgeDirection side);
     Vector3f getTopLeft(ForgeDirection side);
-    void preDrawFace(ForgeDirection dir, boolean internal, float startX, float startY, float endX, float endY, RenderBlocks blocks, Tessellator tesselator);
-    void postDrawFace(RenderBlocks blocks, Tessellator tesselator);
+    BlockTextureScheme getTextureScheme();
+
+    int getColorMultiplier();
+    int getLightValue();
+
+    int getMixedBrightness();
+    int getAdjacentMixedBrightness(ForgeDirection... adjacencies);
+    int getAdjacentMixedBrightness(int manualOffsetX, int manualOffsetY, int manualOffsetZ, ForgeDirection... adjacencies);
+
+    float getAmbientLightValue();
+    float getAdjacentAmbientLightValue(ForgeDirection... adjacencies);
+    float getAdjacentAmbientLightValue(int manualOffsetX, int manualOffsetY, int manualOffsetZ, ForgeDirection... adjacencies);
+
+    boolean canTransmitLight();
+    boolean canAdjacentTransmitLight(ForgeDirection... adjacencies);
+    boolean canAdjacentTransmitLight(int manualOffsetX, int manualOffsetY, int manualOffsetZ, ForgeDirection... adjacencies);
+
+    boolean isOpaque();
+    boolean isAdjacentOpaque(ForgeDirection... adjacencies);
+    boolean isAdjacentOpaque(int manualOffsetX, int manualOffsetY, int manualOffsetZ, ForgeDirection... adjacencies);
 }

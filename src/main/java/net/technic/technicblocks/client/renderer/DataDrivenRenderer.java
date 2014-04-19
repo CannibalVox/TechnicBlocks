@@ -22,10 +22,7 @@ package net.technic.technicblocks.client.renderer;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
 import net.technic.technicblocks.blocks.DataDrivenBlockRegistry;
@@ -33,13 +30,11 @@ import net.technic.technicblocks.blocks.DataDrivenSubBlock;
 import net.technic.technicblocks.client.renderer.context.IRenderContext;
 import net.technic.technicblocks.client.renderer.context.InventoryRenderContext;
 import net.technic.technicblocks.client.renderer.context.WorldRenderContext;
+import net.technic.technicblocks.client.renderer.tessellator.Tessellator;
+import net.technic.technicblocks.client.renderer.tessellator.TessellatorInstance;
+import net.technic.technicblocks.client.renderer.tessellator.preposthandlers.InventoryLightingHandler;
 import net.technic.technicblocks.client.texturing.BlockTextureScheme;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector3f;
-
-import javax.vecmath.Vector2f;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class DataDrivenRenderer implements ISimpleBlockRenderingHandler {
 
@@ -74,98 +69,29 @@ public abstract class DataDrivenRenderer implements ISimpleBlockRenderingHandler
     public abstract String getDefaultCollisionType();
     public abstract String getDefaultSelectionType();
 
-    protected abstract boolean tesselate(DataDrivenBlock block, int metadata, RenderBlocks renderer, IRenderContext connectionContext);
+    protected abstract boolean tesselate(DataDrivenBlock block, int metadata, TessellatorInstance tessellatorInstance, IRenderContext connectionContext);
 
-    protected boolean renderFaceIfVisible(ForgeDirection face, float startX, float startY, float endX, float endY, BlockTextureScheme textureScheme, IRenderContext connectionContext, RenderBlocks renderer) {
+    protected boolean renderFaceIfVisible(ForgeDirection face, float startX, float startY, float endX, float endY, BlockTextureScheme textureScheme, IRenderContext connectionContext, TessellatorInstance tessellatorInstance) {
         ForgeDirection upDir = textureScheme.getAxisSide(face, 0, -1);
-        return renderFaceIfVisible(face, startX, startY, endX, endY, textureScheme, connectionContext, renderer, upDir);
+        return renderFaceIfVisible(face, startX, startY, endX, endY, textureScheme, connectionContext, tessellatorInstance, upDir);
     }
 
-    protected boolean renderFaceIfVisible(ForgeDirection face, float startX, float startY, float endX, float endY, BlockTextureScheme textureScheme, IRenderContext connectionContext, RenderBlocks renderer, ForgeDirection upDir) {
+    protected boolean renderFaceIfVisible(ForgeDirection face, float startX, float startY, float endX, float endY, BlockTextureScheme textureScheme, IRenderContext connectionContext, TessellatorInstance tessellatorInstance, ForgeDirection upDir) {
         if (connectionContext.isFaceVisible(face)) {
-            renderFace(face, startX, startY, endX, endY, 0.0f, textureScheme, connectionContext, renderer, upDir);
+            renderFace(face, startX, startY, endX, endY, 0.0f, textureScheme, connectionContext, tessellatorInstance, upDir);
             return true;
         }
 
         return false;
     }
 
-    protected void renderFace(ForgeDirection face, float startX, float startY, float endX, float endY, float depth, BlockTextureScheme textureScheme, IRenderContext posContext, RenderBlocks renderer) {
+    protected void renderFace(ForgeDirection face, float startX, float startY, float endX, float endY, float depth, BlockTextureScheme textureScheme, IRenderContext posContext, TessellatorInstance tessellatorInstance) {
         ForgeDirection upDir = textureScheme.getAxisSide(face, 0, -1);
-        renderFace(face, startX, startY, endX, endY, depth, textureScheme, posContext, renderer, upDir);
+        renderFace(face, startX, startY, endX, endY, depth, textureScheme, posContext, tessellatorInstance, upDir);
     }
 
-    protected void renderFace(ForgeDirection face, float startX, float startY, float endX, float endY, float depth, BlockTextureScheme textureScheme, IRenderContext posContext, RenderBlocks renderer, ForgeDirection upDir) {
-        IIcon icon = posContext.getTexture(face);
-
-        Vector3f topLeft = posContext.getTopLeft(face);
-
-        ForgeDirection xDir = textureScheme.getAxisSide(face, 1, 0);
-        ForgeDirection yDir = textureScheme.getAxisSide(face, 0, 1);
-        Vector3f xVec = new Vector3f(xDir.offsetX, xDir.offsetY, xDir.offsetZ);
-        Vector3f yVec = new Vector3f(yDir.offsetX, yDir.offsetY, yDir.offsetZ);
-
-        ForgeDirection intoDir = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[face.ordinal()]];
-        Vector3f zVec = new Vector3f(intoDir.offsetX, intoDir.offsetY, intoDir.offsetZ);
-
-        List<Vector2f> uvList = new ArrayList<Vector2f>(4);
-        uvList.add(new Vector2f(icon.getInterpolatedU(16.0f * startX), icon.getInterpolatedV(16.0f * startY)));
-        uvList.add(new Vector2f(icon.getInterpolatedU(16.0f * startX), icon.getInterpolatedV(16.0f * endY)));
-        uvList.add(new Vector2f(icon.getInterpolatedU(16.0f * endX), icon.getInterpolatedV(16.0f * endY)));
-        uvList.add(new Vector2f(icon.getInterpolatedU(16.0f * endX), icon.getInterpolatedV(16.0f * startY)));
-
-        ForgeDirection realUpDir = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[yDir.ordinal()]];
-
-        while (realUpDir != upDir) {
-            rotateUvs(uvList);
-            realUpDir = realUpDir.getRotation(face);
-        }
-
-        posContext.preDrawFace(face, depth > 0.0001f, startX, startY, endX, endY, renderer, Tessellator.instance);
-        tesselateFace(icon, renderer, Tessellator.instance, topLeft, xVec, yVec, zVec, startX, startY, endX, endY, depth, uvList);
-        posContext.postDrawFace(renderer, Tessellator.instance);
-    }
-
-    private void tesselateFace(IIcon icon, RenderBlocks renderer, Tessellator tessellator, Vector3f topLeft, Vector3f xVec, Vector3f yVec, Vector3f zVec, float startX, float startY, float endX, float endY, float depth, List<Vector2f> uvList) {
-        if (renderer.enableAO) {
-            tessellator.setColorOpaque_F(renderer.colorRedTopLeft, renderer.colorGreenTopLeft, renderer.colorBlueTopLeft);
-            tessellator.setBrightness(renderer.brightnessTopLeft);
-        }
-        addVertex(icon, tessellator, topLeft, xVec, yVec, zVec, startX, startY, depth, uvList.get(0).x, uvList.get(0).y);
-
-        if (renderer.enableAO) {
-            tessellator.setColorOpaque_F(renderer.colorRedBottomLeft, renderer.colorGreenBottomLeft, renderer.colorBlueBottomLeft);
-            tessellator.setBrightness(renderer.brightnessBottomLeft);
-        }
-        addVertex(icon, tessellator, topLeft, xVec, yVec, zVec, startX, endY, depth, uvList.get(1).x, uvList.get(1).y);
-
-        if (renderer.enableAO) {
-            tessellator.setColorOpaque_F(renderer.colorRedBottomRight, renderer.colorGreenBottomRight, renderer.colorBlueBottomRight);
-            tessellator.setBrightness(renderer.brightnessBottomRight);
-        }
-        addVertex(icon, tessellator, topLeft, xVec, yVec, zVec, endX, endY, depth, uvList.get(2).x, uvList.get(2).y);
-
-        if (renderer.enableAO) {
-            tessellator.setColorOpaque_F(renderer.colorRedTopRight, renderer.colorGreenTopRight, renderer.colorBlueTopRight);
-            tessellator.setBrightness(renderer.brightnessTopRight);
-        }
-        addVertex(icon, tessellator, topLeft, xVec, yVec, zVec, endX, startY, depth, uvList.get(3).x, uvList.get(3).y);
-     }
-
-    private void addVertex(IIcon icon, Tessellator tessellator, Vector3f topLeft, Vector3f xVec, Vector3f yVec, Vector3f zVec, float x, float y, float z, float u, float v) {
-        double vertX = topLeft.x + (xVec.x * x) + (yVec.x * y) + (zVec.x * z);
-        double vertY = topLeft.y + (xVec.y * x) + (yVec.y * y) + (zVec.y * z);
-        double vertZ = topLeft.z + (xVec.z * x) + (yVec.z * y) + (zVec.z * z);
-
-        tessellator.addVertexWithUV(vertX, vertY, vertZ, u, v);
-    }
-
-    private void rotateUvs(List<Vector2f> uvList) {
-        Vector2f temp = uvList.get(0);
-        uvList.set(0, uvList.get(3));
-        uvList.set(3, uvList.get(2));
-        uvList.set(2, uvList.get(1));
-        uvList.set(1, temp);
+    protected void renderFace(ForgeDirection face, float startX, float startY, float endX, float endY, float depth, BlockTextureScheme textureScheme, IRenderContext posContext, TessellatorInstance tessellatorInstance, ForgeDirection upDir) {
+        tessellatorInstance.renderFace(face, startX, startY, endX, endY, depth, textureScheme, posContext, upDir);
     }
 
     @Override
@@ -180,7 +106,9 @@ public abstract class DataDrivenRenderer implements ISimpleBlockRenderingHandler
         GL11.glRotatef(180.0f, 0, 1.0f, 0);
         GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
         isInventoryMode = true;
-        tesselate(ddBlock, metadata, renderer, new InventoryRenderContext(ddBlock, subBlock.getMetadata()));
+        Tessellator blockTess = ddBlock.getBlockModel().getTessellator();
+        Tessellator tess = new Tessellator(new InventoryLightingHandler());
+        tesselate(ddBlock, metadata, tess.getInstance(renderer), new InventoryRenderContext(ddBlock, subBlock.getMetadata()));
         GL11.glTranslatef(0.5F, 0.5F, 0.5F);
     }
 
@@ -195,7 +123,7 @@ public abstract class DataDrivenRenderer implements ISimpleBlockRenderingHandler
         DataDrivenSubBlock subBlock = ddBlock.getSubBlock(metadata);
 
         isInventoryMode = false;
-        return tesselate(ddBlock, metadata, renderer, new WorldRenderContext(ddBlock, subBlock, world, x, y, z));
+        return tesselate(ddBlock, metadata, ddBlock.getBlockModel().getTessellatorInstance(renderer), new WorldRenderContext(ddBlock, subBlock, world, x, y, z));
     }
 
     @Override

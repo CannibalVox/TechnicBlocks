@@ -26,6 +26,7 @@ import net.technic.technicblocks.blocks.DataDrivenBlock;
 import net.technic.technicblocks.blocks.DataDrivenSubBlock;
 import net.technic.technicblocks.client.renderer.context.IRenderContext;
 import net.technic.technicblocks.client.renderer.context.InventoryRenderContext;
+import net.technic.technicblocks.client.renderer.tessellator.TessellatorInstance;
 import net.technic.technicblocks.client.texturing.BlockTextureScheme;
 import org.lwjgl.opengl.GL11;
 
@@ -46,54 +47,54 @@ public class FenceRenderer extends DataDrivenRenderer {
     }
 
     @Override
-    protected boolean tesselate(DataDrivenBlock block, int metadata, RenderBlocks renderer, IRenderContext connectionContext) {
+    protected boolean tesselate(DataDrivenBlock block, int metadata, TessellatorInstance tessellatorInstance, IRenderContext connectionContext) {
         if (connectionContext instanceof InventoryRenderContext)
-            return tesselateInventory(block, metadata, renderer, connectionContext);
+            return tesselateInventory(block, metadata, tessellatorInstance, connectionContext);
 
         DataDrivenSubBlock subBlock = block.getSubBlock(metadata);
-        renderPost(subBlock.getTextureScheme(), connectionContext, renderer);
+        renderPost(subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
 
         if (connectionContext.isModelConnected(ForgeDirection.NORTH))
-            renderFencing(ForgeDirection.NORTH, subBlock.getTextureScheme(), connectionContext, renderer);
+            renderFencing(ForgeDirection.NORTH, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
 
         if (connectionContext.isModelConnected(ForgeDirection.SOUTH))
-            renderFencing(ForgeDirection.SOUTH, subBlock.getTextureScheme(), connectionContext, renderer);
+            renderFencing(ForgeDirection.SOUTH, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
 
         if (connectionContext.isModelConnected(ForgeDirection.EAST))
-            renderFencing(ForgeDirection.EAST, subBlock.getTextureScheme(), connectionContext, renderer);
+            renderFencing(ForgeDirection.EAST, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
 
         if (connectionContext.isModelConnected(ForgeDirection.WEST))
-            renderFencing(ForgeDirection.WEST, subBlock.getTextureScheme(), connectionContext, renderer);
+            renderFencing(ForgeDirection.WEST, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
 
         return true;
     }
 
-    private boolean tesselateInventory(DataDrivenBlock block, int metadata, RenderBlocks renderer, IRenderContext connectionContext) {
+    private boolean tesselateInventory(DataDrivenBlock block, int metadata, TessellatorInstance tessellatorInstance, IRenderContext connectionContext) {
         DataDrivenSubBlock subBlock = block.getSubBlock(metadata);
 
         GL11.glTranslatef(0, 0, -0.4375f);
-        renderPost(subBlock.getTextureScheme(), connectionContext, renderer);
-        renderFencing(ForgeDirection.SOUTH, subBlock.getTextureScheme(), connectionContext, renderer);
+        renderPost(subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
+        renderFencing(ForgeDirection.SOUTH, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
 
         GL11.glTranslatef(0, 0, 1);
-        renderPost(subBlock.getTextureScheme(), connectionContext, renderer);
-        renderFencing(ForgeDirection.NORTH, subBlock.getTextureScheme(), connectionContext, renderer);
+        renderPost(subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
+        renderFencing(ForgeDirection.NORTH, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
 
         GL11.glTranslatef(0, 0, -0.5625f);
 
         return true;
     }
 
-    private void renderPost(BlockTextureScheme textureScheme, IRenderContext renderContext, RenderBlocks renderer) {
-        renderFaceIfVisible(ForgeDirection.UP, 0.375f, 0.375f, 0.625f, 0.625f, textureScheme, renderContext, renderer);
-        renderFaceIfVisible(ForgeDirection.DOWN, 0.375f ,0.375f, 0.625f, 0.625f, textureScheme, renderContext, renderer);
-        renderFace(ForgeDirection.NORTH, 0.375f, 0, 0.625f, 1, 0.375f, textureScheme, renderContext, renderer);
-        renderFace(ForgeDirection.SOUTH, 0.375f, 0, 0.625f, 1, 0.375f, textureScheme, renderContext, renderer);
-        renderFace(ForgeDirection.WEST, 0.375f, 0, 0.625f, 1, 0.375f, textureScheme, renderContext, renderer);
-        renderFace(ForgeDirection.EAST, 0.375f, 0, 0.625f, 1, 0.375f, textureScheme, renderContext, renderer);
+    private void renderPost(BlockTextureScheme textureScheme, IRenderContext renderContext, TessellatorInstance tessellatorInstance) {
+        renderFaceIfVisible(ForgeDirection.UP, 0.375f, 0.375f, 0.625f, 0.625f, textureScheme, renderContext, tessellatorInstance);
+        renderFaceIfVisible(ForgeDirection.DOWN, 0.375f ,0.375f, 0.625f, 0.625f, textureScheme, renderContext, tessellatorInstance);
+        renderFace(ForgeDirection.NORTH, 0.375f, 0, 0.625f, 1, 0.375f, textureScheme, renderContext, tessellatorInstance);
+        renderFace(ForgeDirection.SOUTH, 0.375f, 0, 0.625f, 1, 0.375f, textureScheme, renderContext, tessellatorInstance);
+        renderFace(ForgeDirection.WEST, 0.375f, 0, 0.625f, 1, 0.375f, textureScheme, renderContext, tessellatorInstance);
+        renderFace(ForgeDirection.EAST, 0.375f, 0, 0.625f, 1, 0.375f, textureScheme, renderContext, tessellatorInstance);
     }
 
-    private void renderFencing(ForgeDirection runningDirection, BlockTextureScheme textureScheme, IRenderContext renderContext, RenderBlocks renderer) {
+    private void renderFencing(ForgeDirection runningDirection, BlockTextureScheme textureScheme, IRenderContext renderContext, TessellatorInstance tessellatorInstance) {
 
         float startX;
         float topStartY;
@@ -135,17 +136,17 @@ public class FenceRenderer extends DataDrivenRenderer {
         float bottomStartY = 1.0f - topEndY;
         float bottomEndY = 1.0f - topStartY;
 
-        renderFaceIfVisible(runningDirection, 0.4375f, 0.0625f, 0.5625f, 0.25f, textureScheme, renderContext, renderer);
-        renderFace(runningDirection.getRotation(ForgeDirection.UP), 0.625f, 0.0625f, 1.0f, 0.25f, 0.4375f, textureScheme, renderContext, renderer);
-        renderFace(runningDirection.getRotation(ForgeDirection.DOWN), 0, 0.0625f, 0.4375f, 0.25f, 0.4375f, textureScheme, renderContext, renderer);
-        renderFace(ForgeDirection.UP, startX, topStartY, endX, topEndY, 0.0625f, textureScheme, renderContext, renderer);
-        renderFace(ForgeDirection.DOWN, startX, bottomStartY, endX, bottomEndY, 0.75f, textureScheme, renderContext, renderer);
+        renderFaceIfVisible(runningDirection, 0.4375f, 0.0625f, 0.5625f, 0.25f, textureScheme, renderContext, tessellatorInstance);
+        renderFace(runningDirection.getRotation(ForgeDirection.UP), 0.625f, 0.0625f, 1.0f, 0.25f, 0.4375f, textureScheme, renderContext, tessellatorInstance);
+        renderFace(runningDirection.getRotation(ForgeDirection.DOWN), 0, 0.0625f, 0.4375f, 0.25f, 0.4375f, textureScheme, renderContext, tessellatorInstance);
+        renderFace(ForgeDirection.UP, startX, topStartY, endX, topEndY, 0.0625f, textureScheme, renderContext, tessellatorInstance);
+        renderFace(ForgeDirection.DOWN, startX, bottomStartY, endX, bottomEndY, 0.75f, textureScheme, renderContext, tessellatorInstance);
 
-        renderFaceIfVisible(runningDirection, 0.4375f, 0.4375f, 0.5625f, 0.625f, textureScheme, renderContext, renderer);
-        renderFace(runningDirection.getRotation(ForgeDirection.UP), 0.625f, 0.4375f, 1.0f, 0.625f, 0.4375f, textureScheme, renderContext, renderer);
-        renderFace(runningDirection.getRotation(ForgeDirection.DOWN), 0, 0.4375f, 0.4375f, 0.625f, 0.4375f, textureScheme, renderContext, renderer);
-        renderFace(ForgeDirection.UP, startX, topStartY, endX, topEndY, 0.4375f, textureScheme, renderContext, renderer);
-        renderFace(ForgeDirection.DOWN, startX, bottomStartY, endX, bottomEndY, 0.375f, textureScheme, renderContext, renderer);
+        renderFaceIfVisible(runningDirection, 0.4375f, 0.4375f, 0.5625f, 0.625f, textureScheme, renderContext, tessellatorInstance);
+        renderFace(runningDirection.getRotation(ForgeDirection.UP), 0.625f, 0.4375f, 1.0f, 0.625f, 0.4375f, textureScheme, renderContext, tessellatorInstance);
+        renderFace(runningDirection.getRotation(ForgeDirection.DOWN), 0, 0.4375f, 0.4375f, 0.625f, 0.4375f, textureScheme, renderContext, tessellatorInstance);
+        renderFace(ForgeDirection.UP, startX, topStartY, endX, topEndY, 0.4375f, textureScheme, renderContext, tessellatorInstance);
+        renderFace(ForgeDirection.DOWN, startX, bottomStartY, endX, bottomEndY, 0.375f, textureScheme, renderContext, tessellatorInstance);
     }
 
     @Override

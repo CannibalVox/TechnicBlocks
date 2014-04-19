@@ -19,6 +19,8 @@
 
 package net.technic.technicblocks.client;
 
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
@@ -32,6 +34,8 @@ import net.technic.technicblocks.blocks.connections.ConnectionConvention;
 import net.technic.technicblocks.blocks.selection.BlockSelection;
 import net.technic.technicblocks.client.facevisibility.FaceVisibilityConvention;
 import net.technic.technicblocks.client.renderer.DataDrivenRenderer;
+import net.technic.technicblocks.client.renderer.tessellator.Tessellator;
+import net.technic.technicblocks.client.renderer.tessellator.TessellatorInstance;
 
 import java.util.List;
 
@@ -41,13 +45,15 @@ public class BlockModel {
     private DataDrivenRenderer renderer;
     private BlockCollision collision;
     private BlockSelection selection;
+    private Tessellator tessellator;
 
-    public BlockModel(DataDrivenRenderer renderer, ConnectionConvention modelConnectionsConvention, FaceVisibilityConvention faceVisibilityConvention, BlockCollision collision, BlockSelection selection) {
+    public BlockModel(DataDrivenRenderer renderer, ConnectionConvention modelConnectionsConvention, FaceVisibilityConvention faceVisibilityConvention, BlockCollision collision, BlockSelection selection, Tessellator tessellator) {
         this.modelConnectionsConvention = modelConnectionsConvention;
         this.faceVisibilityConvention = faceVisibilityConvention;
         this.renderer = renderer;
         this.collision = collision;
         this.selection = selection;
+        this.tessellator = tessellator;
     }
 
     public ConnectionConvention getModelConnectionsConvention() { return modelConnectionsConvention; }
@@ -81,5 +87,13 @@ public class BlockModel {
 
     public boolean shouldForceUseNeighborBrightness() {
         return renderer.shouldForceUseNeighborBrightness();
+    }
+
+    public Tessellator getTessellator() {
+        return tessellator;
+    }
+
+    public TessellatorInstance getTessellatorInstance(RenderBlocks renderer) {
+        return tessellator.getInstance(renderer);
     }
 }

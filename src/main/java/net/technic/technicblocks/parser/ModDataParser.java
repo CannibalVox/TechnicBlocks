@@ -43,6 +43,8 @@ import net.technic.technicblocks.client.facevisibility.FaceVisibilityConvention;
 import net.technic.technicblocks.client.facevisibility.FaceVisibilityFactory;
 import net.technic.technicblocks.client.renderer.DataDrivenRenderer;
 import net.technic.technicblocks.client.renderer.RendererFactory;
+import net.technic.technicblocks.client.renderer.tessellator.Tessellator;
+import net.technic.technicblocks.client.renderer.tessellator.TessellatorFactory;
 import net.technic.technicblocks.client.texturing.BlockTextureScheme;
 import net.technic.technicblocks.client.texturing.StaticTextureSelector;
 import net.technic.technicblocks.client.texturing.TextureSelector;
@@ -100,7 +102,7 @@ public class ModDataParser {
 
     public String getModId() { return data.getModId(); }
 
-    public void RegisterAllBlocks(CreativeTabFactory creativeTabsFactory, MaterialFactory materialFactory, SoundTypeFactory soundFactory, ConnectionConventionFactory connectionConventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockCollisionFactory collisionFactory, BlockSelectionFactory selectionFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory) {
+    public void RegisterAllBlocks(CreativeTabFactory creativeTabsFactory, MaterialFactory materialFactory, SoundTypeFactory soundFactory, ConnectionConventionFactory connectionConventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockCollisionFactory collisionFactory, BlockSelectionFactory selectionFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory, TessellatorFactory tessellatorFactory) {
         for (CreativeTabData tab : data.getCreativeTabs()) {
 
             if (tab == null)
@@ -148,11 +150,11 @@ public class ModDataParser {
                 throw proxy.createParseException("'" + block.getSoundName() + "' is not a valid sound name.");
             }
 
-            setupAndRegisterBlock(block, material, tab, sound, connectionConventionFactory, rendererFactory, faceVisibilityFactory, collisionFactory, selectionFactory, behaviorFactory, textureSelectorFactory);
+            setupAndRegisterBlock(block, material, tab, sound, connectionConventionFactory, rendererFactory, faceVisibilityFactory, collisionFactory, selectionFactory, behaviorFactory, textureSelectorFactory, tessellatorFactory);
         }
     }
 
-    private void setupAndRegisterBlock(BlockData block, Material material, CreativeTabs creativeTab, Block.SoundType sound, ConnectionConventionFactory conventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockCollisionFactory collisionFactory, BlockSelectionFactory selectionFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory) {
+    private void setupAndRegisterBlock(BlockData block, Material material, CreativeTabs creativeTab, Block.SoundType sound, ConnectionConventionFactory conventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockCollisionFactory collisionFactory, BlockSelectionFactory selectionFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory, TessellatorFactory tessellatorFactory) {
         //Build blockmodel
         ConnectionConvention modelConvention = createConvention(conventionFactory, block.getModelConnections());
         FaceVisibilityConvention faceVisibility = faceVisibilityFactory.getConvention(block.getFaceVisibilityType());
@@ -160,16 +162,20 @@ public class ModDataParser {
 
         String collisionType = block.getCollisionType();
         String selectionType = block.getSelectionType();
+        String tessellatorType = block.getTessellator();
 
         if (collisionType == null)
             collisionType = renderer.getDefaultCollisionType();
         if (selectionType == null)
             selectionType = renderer.getDefaultSelectionType();
+        if (tessellatorType == null)
+            tessellatorType = "basic";
 
         BlockCollision collision = collisionFactory.getCollision(collisionType);
         BlockSelection selection = selectionFactory.getSelection(selectionType);
+        Tessellator tessellator = tessellatorFactory.getTessellatorByName(tessellatorType);
 
-        BlockModel model = new BlockModel(renderer, modelConvention, faceVisibility, collision, selection);
+        BlockModel model = new BlockModel(renderer, modelConvention, faceVisibility, collision, selection, tessellator);
 
         //Get block behaviors & get the bit index where subblock data starts
         List<BlockBehavior> behaviors = new LinkedList<BlockBehavior>();
