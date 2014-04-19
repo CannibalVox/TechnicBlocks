@@ -32,6 +32,7 @@ import net.technic.technicblocks.client.renderer.context.InventoryRenderContext;
 import net.technic.technicblocks.client.renderer.context.WorldRenderContext;
 import net.technic.technicblocks.client.renderer.tessellator.Tessellator;
 import net.technic.technicblocks.client.renderer.tessellator.TessellatorInstance;
+import net.technic.technicblocks.client.renderer.tessellator.facehandlers.SingleSidedHandler;
 import net.technic.technicblocks.client.renderer.tessellator.preposthandlers.InventoryLightingHandler;
 import net.technic.technicblocks.client.texturing.BlockTextureScheme;
 import org.lwjgl.opengl.GL11;
@@ -107,7 +108,7 @@ public abstract class DataDrivenRenderer implements ISimpleBlockRenderingHandler
         GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
         isInventoryMode = true;
         Tessellator blockTess = ddBlock.getBlockModel().getTessellator();
-        Tessellator tess = new Tessellator(new InventoryLightingHandler());
+        Tessellator tess = new Tessellator(new InventoryLightingHandler(), blockTess.getFaceHandler());
         tesselate(ddBlock, metadata, tess.getInstance(renderer), new InventoryRenderContext(ddBlock, subBlock.getMetadata()));
         GL11.glTranslatef(0.5F, 0.5F, 0.5F);
     }

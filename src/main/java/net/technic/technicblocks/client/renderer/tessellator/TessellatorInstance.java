@@ -80,36 +80,11 @@ public class TessellatorInstance {
     }
 
     private void tesselateFace(IIcon icon, Vector3f topLeft, Vector3f xVec, Vector3f yVec, Vector3f zVec, float startX, float startY, float endX, float endY, float depth, List<Vector2f> uvList) {
-        if (renderer.enableAO) {
-            minecraftTessellator.setColorOpaque_F(renderer.colorRedTopLeft, renderer.colorGreenTopLeft, renderer.colorBlueTopLeft);
-            minecraftTessellator.setBrightness(renderer.brightnessTopLeft);
-        }
-        addVertex(icon, topLeft, xVec, yVec, zVec, startX, startY, depth, uvList.get(0).x, uvList.get(0).y);
+        float[] redWeights = { renderer.colorRedTopLeft, renderer.colorRedBottomLeft, renderer.colorRedBottomRight, renderer.colorRedTopRight };
+        float[] greenWeights = { renderer.colorGreenTopLeft, renderer.colorGreenBottomLeft, renderer.colorGreenBottomRight, renderer.colorGreenTopRight };
+        float[] blueWeights = { renderer.colorBlueTopLeft, renderer.colorBlueBottomLeft, renderer.colorBlueBottomRight, renderer.colorBlueTopRight };
+        int[] brightnesses = { renderer.brightnessTopLeft, renderer.brightnessBottomLeft, renderer.brightnessBottomRight, renderer.brightnessTopRight };
 
-        if (renderer.enableAO) {
-            minecraftTessellator.setColorOpaque_F(renderer.colorRedBottomLeft, renderer.colorGreenBottomLeft, renderer.colorBlueBottomLeft);
-            minecraftTessellator.setBrightness(renderer.brightnessBottomLeft);
-        }
-        addVertex(icon, topLeft, xVec, yVec, zVec, startX, endY, depth, uvList.get(1).x, uvList.get(1).y);
-
-        if (renderer.enableAO) {
-            minecraftTessellator.setColorOpaque_F(renderer.colorRedBottomRight, renderer.colorGreenBottomRight, renderer.colorBlueBottomRight);
-            minecraftTessellator.setBrightness(renderer.brightnessBottomRight);
-        }
-        addVertex(icon, topLeft, xVec, yVec, zVec, endX, endY, depth, uvList.get(2).x, uvList.get(2).y);
-
-        if (renderer.enableAO) {
-            minecraftTessellator.setColorOpaque_F(renderer.colorRedTopRight, renderer.colorGreenTopRight, renderer.colorBlueTopRight);
-            minecraftTessellator.setBrightness(renderer.brightnessTopRight);
-        }
-        addVertex(icon, topLeft, xVec, yVec, zVec, endX, startY, depth, uvList.get(3).x, uvList.get(3).y);
-    }
-
-    private void addVertex(IIcon icon, Vector3f topLeft, Vector3f xVec, Vector3f yVec, Vector3f zVec, float x, float y, float z, float u, float v) {
-        double vertX = topLeft.x + (xVec.x * x) + (yVec.x * y) + (zVec.x * z);
-        double vertY = topLeft.y + (xVec.y * x) + (yVec.y * y) + (zVec.y * z);
-        double vertZ = topLeft.z + (xVec.z * x) + (yVec.z * y) + (zVec.z * z);
-
-        minecraftTessellator.addVertexWithUV(vertX, vertY, vertZ, u, v);
+        tessellator.getFaceHandler().renderFace(minecraftTessellator, icon, topLeft, xVec, yVec, zVec, startX, startY, endX, endY, depth, uvList, renderer.enableAO, redWeights, greenWeights, blueWeights, brightnesses);
     }
 }

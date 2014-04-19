@@ -40,6 +40,8 @@ import net.technic.technicblocks.client.facevisibility.OpaqueBlockVisibilityConv
 import net.technic.technicblocks.client.renderer.*;
 import net.technic.technicblocks.client.renderer.tessellator.Tessellator;
 import net.technic.technicblocks.client.renderer.tessellator.TessellatorFactory;
+import net.technic.technicblocks.client.renderer.tessellator.facehandlers.DoubleSidedHandler;
+import net.technic.technicblocks.client.renderer.tessellator.facehandlers.SingleSidedHandler;
 import net.technic.technicblocks.client.renderer.tessellator.preposthandlers.GlowLightingHandler;
 import net.technic.technicblocks.client.renderer.tessellator.preposthandlers.WorldLightingHandler;
 import net.technic.technicblocks.client.texturing.*;
@@ -149,8 +151,10 @@ public class TechnicBlocks {
         selectionFactory.addSelection("fence", new FenceSelection());
 
         //Register tessellators
-        tessellatorFactory.addTessellator("basic", new Tessellator(new WorldLightingHandler()));
-        tessellatorFactory.addTessellator("glow", new Tessellator(new GlowLightingHandler()));
+        tessellatorFactory.addTessellator("basic", new Tessellator(new WorldLightingHandler(), new SingleSidedHandler()));
+        tessellatorFactory.addTessellator("glow", new Tessellator(new GlowLightingHandler(), new SingleSidedHandler()));
+        tessellatorFactory.addTessellator("doubleSided", new Tessellator(new WorldLightingHandler(), new DoubleSidedHandler()));
+        tessellatorFactory.addTessellator("glowDoubleSided", new Tessellator(new GlowLightingHandler(), new DoubleSidedHandler()));
     }
 
     @Mod.EventHandler

@@ -20,13 +20,16 @@
 package net.technic.technicblocks.client.renderer.tessellator;
 
 import net.minecraft.client.renderer.RenderBlocks;
+import net.technic.technicblocks.client.renderer.tessellator.facehandlers.FaceHandler;
 import net.technic.technicblocks.client.renderer.tessellator.preposthandlers.IPrePostFaceHandler;
 
 public class Tessellator {
     private IPrePostFaceHandler prePostHandler;
+    private FaceHandler faceHandler;
 
-    public Tessellator(IPrePostFaceHandler prePostHandler) {
+    public Tessellator(IPrePostFaceHandler prePostHandler, FaceHandler faceHandler) {
         this.prePostHandler = prePostHandler;
+        this.faceHandler = faceHandler;
     }
 
     public TessellatorInstance getInstance(RenderBlocks renderer) {
@@ -36,4 +39,5 @@ public class Tessellator {
     public IPrePostFaceHandler getPrePostHandler() {
         return prePostHandler;
     }
+    public FaceHandler getFaceHandler() { return faceHandler; }
 }

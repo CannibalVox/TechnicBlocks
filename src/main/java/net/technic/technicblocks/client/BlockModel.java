@@ -60,14 +60,14 @@ public class BlockModel {
     public FaceVisibilityConvention getFaceVisibilityConvention() { return faceVisibilityConvention; }
     public int getRendererId() { return renderer.getRenderId(); }
     public boolean isSideSolid(DataDrivenBlock block, IBlockAccess world, int x, int y, int z, ForgeDirection side) {
-        return renderer.isSideSolid(block, world, x, y, z, side);
+        return tessellator.getFaceHandler().isOpaqueCube() && (renderer.isOpaqueCube() || renderer.isSideSolid(block, world, x, y, z, side));
     }
     public boolean isOpaqueCube() {
-        return renderer.isOpaqueCube();
+        return tessellator.getFaceHandler().isOpaqueCube() && renderer.isOpaqueCube();
     }
 
     public int getOpacity() {
-        return renderer.getOpacity();
+        return (tessellator.getFaceHandler().isOpaqueCube())?renderer.getOpacity():0;
     }
     public void setBlockBounds(DataDrivenBlock block, IBlockAccess world, int x, int y, int z) {
         selection.setBlockBounds(block, world, x, y, z);
