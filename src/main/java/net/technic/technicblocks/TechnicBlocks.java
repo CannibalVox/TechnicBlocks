@@ -40,6 +40,7 @@ import net.technic.technicblocks.client.facevisibility.OpaqueBlockVisibilityConv
 import net.technic.technicblocks.client.renderer.*;
 import net.technic.technicblocks.client.renderer.tessellator.Tessellator;
 import net.technic.technicblocks.client.renderer.tessellator.TessellatorFactory;
+import net.technic.technicblocks.client.renderer.tessellator.preposthandlers.GlowLightingHandler;
 import net.technic.technicblocks.client.renderer.tessellator.preposthandlers.WorldLightingHandler;
 import net.technic.technicblocks.client.texturing.*;
 import net.technic.technicblocks.creativetabs.CreativeTabFactory;
@@ -149,6 +150,7 @@ public class TechnicBlocks {
 
         //Register tessellators
         tessellatorFactory.addTessellator("basic", new Tessellator(new WorldLightingHandler()));
+        tessellatorFactory.addTessellator("glow", new Tessellator(new GlowLightingHandler()));
     }
 
     @Mod.EventHandler
