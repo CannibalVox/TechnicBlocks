@@ -42,6 +42,7 @@ import net.technic.technicblocks.client.renderer.tessellator.Tessellator;
 import net.technic.technicblocks.client.renderer.tessellator.TessellatorFactory;
 import net.technic.technicblocks.client.renderer.tessellator.facehandlers.DoubleSidedHandler;
 import net.technic.technicblocks.client.renderer.tessellator.facehandlers.SingleSidedHandler;
+import net.technic.technicblocks.client.renderer.tessellator.facehandlers.TransparentHandler;
 import net.technic.technicblocks.client.renderer.tessellator.preposthandlers.GlowLightingHandler;
 import net.technic.technicblocks.client.renderer.tessellator.preposthandlers.WorldLightingHandler;
 import net.technic.technicblocks.client.texturing.*;
@@ -155,6 +156,7 @@ public class TechnicBlocks {
         tessellatorFactory.addTessellator("glow", new Tessellator(new GlowLightingHandler(), new SingleSidedHandler()));
         tessellatorFactory.addTessellator("doubleSided", new Tessellator(new WorldLightingHandler(), new DoubleSidedHandler()));
         tessellatorFactory.addTessellator("glowDoubleSided", new Tessellator(new GlowLightingHandler(), new DoubleSidedHandler()));
+        tessellatorFactory.addTessellator("transparent", new Tessellator(new WorldLightingHandler(), new TransparentHandler()));
     }
 
     @Mod.EventHandler
