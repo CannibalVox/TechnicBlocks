@@ -72,11 +72,6 @@ public abstract class DataDrivenRenderer implements ISimpleBlockRenderingHandler
 
     protected abstract boolean tesselate(DataDrivenBlock block, int metadata, TessellatorInstance tessellatorInstance, IRenderContext connectionContext);
 
-    protected boolean renderFaceIfVisible(ForgeDirection face, float startX, float startY, float endX, float endY, BlockTextureScheme textureScheme, IRenderContext connectionContext, TessellatorInstance tessellatorInstance) {
-        ForgeDirection upDir = textureScheme.getAxisSide(face, 0, -1);
-        return renderFaceIfVisible(face, startX, startY, endX, endY, textureScheme, connectionContext, tessellatorInstance, upDir);
-    }
-
     protected boolean renderFaceIfVisible(ForgeDirection face, float startX, float startY, float endX, float endY, BlockTextureScheme textureScheme, IRenderContext connectionContext, TessellatorInstance tessellatorInstance, ForgeDirection upDir) {
         if (connectionContext.isFaceVisible(face)) {
             renderFace(face, startX, startY, endX, endY, 0.0f, textureScheme, connectionContext, tessellatorInstance, upDir);
@@ -84,11 +79,6 @@ public abstract class DataDrivenRenderer implements ISimpleBlockRenderingHandler
         }
 
         return false;
-    }
-
-    protected void renderFace(ForgeDirection face, float startX, float startY, float endX, float endY, float depth, BlockTextureScheme textureScheme, IRenderContext posContext, TessellatorInstance tessellatorInstance) {
-        ForgeDirection upDir = textureScheme.getAxisSide(face, 0, -1);
-        renderFace(face, startX, startY, endX, endY, depth, textureScheme, posContext, tessellatorInstance, upDir);
     }
 
     protected void renderFace(ForgeDirection face, float startX, float startY, float endX, float endY, float depth, BlockTextureScheme textureScheme, IRenderContext posContext, TessellatorInstance tessellatorInstance, ForgeDirection upDir) {

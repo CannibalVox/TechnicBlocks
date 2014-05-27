@@ -171,16 +171,6 @@ public class DataDrivenBlock extends Block {
         return direction;
     }
 
-    public boolean isOnFloor(int metadata) {
-        boolean isOnFloor = true;
-
-        for (BlockBehavior convention : behaviors) {
-            isOnFloor = convention.transformIsOnFloor(metadata, isOnFloor);
-        }
-
-        return isOnFloor;
-    }
-
     public DataDrivenSubBlock getSubBlock(int metadata) {
         metadata &= subblockMask;
 

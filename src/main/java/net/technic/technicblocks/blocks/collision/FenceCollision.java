@@ -38,28 +38,36 @@ public class FenceCollision extends SelectionVolumeCollision {
         WorldRenderContext context = new WorldRenderContext(block, block.getSubBlock(metadata), world, x, y, z);
 
         block.setBlockBounds(0.375f, 0, 0.375f, 0.625f, 1.5f, 0.625f);
-        super.collectCollisionBoxes(block, world, x, y, z, mask, list, entity);
+        addCollisionBox(block, mask, world, x, y, z, list);
 
         if (context.isModelConnected(ForgeDirection.NORTH)) {
             block.setBlockBounds(0.375f, 0, 0, 0.625f, 1.5f, 0.375f);
-            super.collectCollisionBoxes(block, world, x, y, z, mask, list, entity);
+            addCollisionBox(block, mask, world, x, y, z, list);
         }
 
         if (context.isModelConnected(ForgeDirection.SOUTH)) {
             block.setBlockBounds(0.375f, 0, 0.625f, 0.625f, 1.5f, 1.0f);
-            super.collectCollisionBoxes(block, world, x, y, z, mask, list, entity);
+            addCollisionBox(block, mask, world, x, y, z, list);
         }
 
         if (context.isModelConnected(ForgeDirection.EAST)) {
             block.setBlockBounds(0.625f, 0, 0.375f, 1.0f, 1.5f, 0.625f);
-            super.collectCollisionBoxes(block, world, x, y, z, mask, list, entity);
+            addCollisionBox(block, mask, world, x, y, z, list);
         }
 
         if (context.isModelConnected(ForgeDirection.WEST)) {
             block.setBlockBounds(0, 0, 0.375f, 0.375f, 1.5f, 0.625f);
-            super.collectCollisionBoxes(block, world, x, y, z, mask, list, entity);
+            addCollisionBox(block, mask, world, x, y, z, list);
         }
 
         block.setBlockBoundsBasedOnState(world, x, y, z);
+    }
+
+    private void addCollisionBox(DataDrivenBlock block, AxisAlignedBB mask, World world, int x, int y, int z, List list) {
+        AxisAlignedBB axisalignedbb1 = block.getCollisionBoundingBoxFromPool(world, x, y, z);
+
+        if (axisalignedbb1 != null && mask.intersectsWith(axisalignedbb1)) {
+            list.add(axisalignedbb1);
+        }
     }
 }

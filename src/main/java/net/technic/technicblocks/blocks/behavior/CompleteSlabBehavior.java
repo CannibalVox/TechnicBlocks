@@ -58,9 +58,9 @@ public class CompleteSlabBehavior extends BlockBehavior implements IItemBlockTar
             return shouldPlaceBlock;
 
         int metadata = world.getBlockMetadata(x-face.offsetX,y-face.offsetY,z-face.offsetZ);
-        boolean isOnFloor = block.isOnFloor(metadata);
+        ForgeDirection actualTopFace = block.reverseTransformBlockFacing(metadata, ForgeDirection.UP);
 
-        if ((isOnFloor && face == ForgeDirection.UP) || (!isOnFloor && face == ForgeDirection.DOWN))
+        if (face == actualTopFace)
             return false;
 
         return shouldPlaceBlock;
@@ -70,11 +70,11 @@ public class CompleteSlabBehavior extends BlockBehavior implements IItemBlockTar
     public boolean itemUsedOnBlock(EntityPlayer player, DataDrivenBlock block, DataDrivenItemBlock item, ItemStack stack, World world, int x, int y, int z, ForgeDirection face, float hitX, float hitY, float hitZ) {
         if (item.field_150939_a != block)
             return false;
-
+    
         int metadata = world.getBlockMetadata(x-face.offsetX,y-face.offsetY,z-face.offsetZ);
-        boolean isOnFloor = block.isOnFloor(metadata);
+        ForgeDirection actualTopFace = block.reverseTransformBlockFacing(metadata, ForgeDirection.UP);
 
-        if ((isOnFloor && face == ForgeDirection.UP) || (!isOnFloor && face == ForgeDirection.DOWN)) {
+        if (face == actualTopFace) {
             int newMetadata = (block.getSubBlockMask() & metadata);
             Block newBlock = (Block)Block.blockRegistry.getObject(targetBlock);
 

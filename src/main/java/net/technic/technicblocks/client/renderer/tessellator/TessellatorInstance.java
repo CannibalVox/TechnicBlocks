@@ -53,30 +53,34 @@ public class TessellatorInstance {
         ForgeDirection intoDir = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[face.ordinal()]];
         Vector3f zVec = new Vector3f(intoDir.offsetX, intoDir.offsetY, intoDir.offsetZ);
 
+        ForgeDirection realUpDir = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[yDir.ordinal()]];
+
         List<Vector2f> uvList = new ArrayList<Vector2f>(4);
         uvList.add(new Vector2f(icon.getInterpolatedU(16.0f * startX), icon.getInterpolatedV(16.0f * startY)));
         uvList.add(new Vector2f(icon.getInterpolatedU(16.0f * startX), icon.getInterpolatedV(16.0f * endY)));
         uvList.add(new Vector2f(icon.getInterpolatedU(16.0f * endX), icon.getInterpolatedV(16.0f * endY)));
         uvList.add(new Vector2f(icon.getInterpolatedU(16.0f * endX), icon.getInterpolatedV(16.0f * startY)));
 
-        ForgeDirection realUpDir = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[yDir.ordinal()]];
-
         while (realUpDir != upDir) {
+
+            float sX = 1.0f - endY;
+            float sY = startX;
+            float eX = 1.0f - startY;
+            float eY = endX;
+
+            startX = sX;
+            startY = sY;
+            endX = eX;
+            endY = eY;
+
             rotateUvs(uvList);
+
             realUpDir = realUpDir.getRotation(face);
         }
 
         tessellator.getPrePostHandler().preDrawFace(posContext, face, depth > 0.0001f, startX, startY, endX, endY, renderer, minecraftTessellator);
         tesselateFace(icon, topLeft, xVec, yVec, zVec, startX, startY, endX, endY, depth, uvList);
         tessellator.getPrePostHandler().postDrawFace(renderer, minecraftTessellator);
-    }
-
-    private void rotateUvs(List<Vector2f> uvList) {
-        Vector2f temp = uvList.get(0);
-        uvList.set(0, uvList.get(3));
-        uvList.set(3, uvList.get(2));
-        uvList.set(2, uvList.get(1));
-        uvList.set(1, temp);
     }
 
     private void tesselateFace(IIcon icon, Vector3f topLeft, Vector3f xVec, Vector3f yVec, Vector3f zVec, float startX, float startY, float endX, float endY, float depth, List<Vector2f> uvList) {
@@ -86,5 +90,13 @@ public class TessellatorInstance {
         int[] brightnesses = { renderer.brightnessTopLeft, renderer.brightnessBottomLeft, renderer.brightnessBottomRight, renderer.brightnessTopRight };
 
         tessellator.getFaceHandler().renderFace(minecraftTessellator, icon, topLeft, xVec, yVec, zVec, startX, startY, endX, endY, depth, uvList, renderer.enableAO, redWeights, greenWeights, blueWeights, brightnesses);
+    }
+
+    private void rotateUvs(List<Vector2f> uvList) {
+        Vector2f temp = uvList.get(0);
+        uvList.set(0, uvList.get(1));
+        uvList.set(1, uvList.get(2));
+        uvList.set(2, uvList.get(3));
+        uvList.set(3, temp);
     }
 }

@@ -22,6 +22,6 @@ package net.technic.technicblocks.blocks.selection;
 import net.minecraft.world.IBlockAccess;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
 
-public abstract class BlockSelection {
+public abstract class BlockSelection extends SelectionUtils {
     public abstract void setBlockBounds(DataDrivenBlock block, IBlockAccess world, int x, int y, int z);
 }

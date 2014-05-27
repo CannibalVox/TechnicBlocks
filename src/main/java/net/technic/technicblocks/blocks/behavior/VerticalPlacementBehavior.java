@@ -42,11 +42,18 @@ public class VerticalPlacementBehavior extends BlockBehavior implements IBlockPl
         return 1;
     }
 
-    public boolean transformIsOnFloor(int metadata, boolean isOnFloor) {
-        if (getMetadataValue(metadata) == 0)
-            return isOnFloor;
-        else
-            return false;
+    @Override
+    public ForgeDirection transformBlockFacing(int metadata, ForgeDirection currentFacing) {
+        if (getMetadataValue(metadata) != 0 && (currentFacing == ForgeDirection.DOWN || currentFacing == ForgeDirection.UP)) {
+            currentFacing = currentFacing.getRotation(ForgeDirection.NORTH).getRotation(ForgeDirection.NORTH);
+        }
+
+        return currentFacing;
+    }
+
+    @Override
+    public ForgeDirection reverseTransformBlockFacing(int metadata, ForgeDirection currentFacing) {
+        return transformBlockFacing(metadata, currentFacing);
     }
 
     @Override

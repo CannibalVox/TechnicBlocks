@@ -37,34 +37,19 @@ import net.technic.technicblocks.client.renderer.context.WorldRenderContext;
 import java.util.List;
 
 public class StairsCollision extends BlockCollision {
-    private static final int[][] traceValues = new int[][] {{2, 6}, {3, 7}, {2, 3}, {6, 7}, {0, 4}, {1, 5}, {0, 1}, {4, 5}};
-
     private SelectionVolumeCollision selectionCollision;
 
     public StairsCollision(SelectionVolumeCollision selectionCollision) {
         this.selectionCollision = selectionCollision;
     }
 
-    private int getRotationFrom(ForgeDirection side) {
-        switch (side) {
-            case EAST:
-                return 0;
-            case NORTH:
-                return 1;
-            case WEST:
-                return 2;
-            default:
-                return 3;
-        }
-    }
-
     @Override
     public MovingObjectPosition traceCollision(DataDrivenBlock block, World world, int x, int y, int z, Vec3 start, Vec3 end) {
         MovingObjectPosition[] amovingobjectposition = new MovingObjectPosition[8];
         int metadata = world.getBlockMetadata(x, y,z);
-        int rotation = getRotationFrom(block.transformBlockFacing(metadata, ForgeDirection.NORTH));
-        boolean isOnCeiling = !block.isOnFloor(metadata);
-        int[] aint = traceValues[rotation + (isOnCeiling?4:0)];
+        ForgeDirection bottom = block.reverseTransformBlockFacing(metadata, ForgeDirection.DOWN);
+        ForgeDirection front = block.reverseTransformBlockFacing(metadata, ForgeDirection.NORTH);
+        boolean[] validOctals = { false, false, false, false, false, false, false, false };
 
         for (int j1 = 0; j1 < 8; ++j1)
         {
@@ -72,39 +57,73 @@ public class StairsCollision extends BlockCollision {
             amovingobjectposition[j1] = selectionCollision.traceCollisionForBounds(block, world, x, y, z, start, end);
         }
 
-        int[] aint2 = aint;
-        int k2 = aint.length;
+        validateOctals(validOctals, bottom);
+        validateOctals(validOctals, front);
 
-        for (int k1 = 0; k1 < k2; ++k1)
-        {
-            int l1 = aint2[k1];
-            amovingobjectposition[l1] = null;
-        }
-
-        MovingObjectPosition movingobjectposition1 = null;
-        double d1 = 0.0D;
-        MovingObjectPosition[] amovingobjectposition1 = amovingobjectposition;
+        MovingObjectPosition bestPosition = null;
+        double bestDistance = 0.0D;
 
         for (int j2 = 0; j2 < amovingobjectposition.length; ++j2)
         {
-            MovingObjectPosition movingobjectposition = amovingobjectposition1[j2];
+            MovingObjectPosition movingobjectposition = amovingobjectposition[j2];
 
-            if (movingobjectposition != null)
+            if (validOctals[j2] && movingobjectposition != null)
             {
-                double d0 = movingobjectposition.hitVec.squareDistanceTo(end);
+                double distance = movingobjectposition.hitVec.squareDistanceTo(end);
 
-                if (d0 > d1)
+                if (distance > bestDistance)
                 {
-                    movingobjectposition1 = movingobjectposition;
-                    d1 = d0;
+                    bestPosition = movingobjectposition;
+                    bestDistance = distance;
                 }
             }
         }
 
-        return movingobjectposition1;
+        return bestPosition;
     }
 
-    private ForgeDirection getConnectionFacing(ItemStack connection, boolean isOnFloor) {
+    private void validateOctals(boolean[] validOctals, ForgeDirection direction) {
+        switch(direction) {
+            case UP:
+                validOctals[2] = true;
+                validOctals[3] = true;
+                validOctals[6] = true;
+                validOctals[7] = true;
+                break;
+            case DOWN:
+                validOctals[0] = true;
+                validOctals[1] = true;
+                validOctals[4] = true;
+                validOctals[5] = true;
+                break;
+            case SOUTH:
+                validOctals[0] = true;
+                validOctals[1] = true;
+                validOctals[2] = true;
+                validOctals[3] = true;
+                break;
+            case NORTH:
+                validOctals[4] = true;
+                validOctals[5] = true;
+                validOctals[6] = true;
+                validOctals[7] = true;
+                break;
+            case EAST:
+                validOctals[0] = true;
+                validOctals[2] = true;
+                validOctals[4] = true;
+                validOctals[6] = true;
+                break;
+            case WEST:
+                validOctals[1] = true;
+                validOctals[3] = true;
+                validOctals[5] = true;
+                validOctals[7] = true;
+                break;
+        }
+    }
+
+    private ForgeDirection getConnectionFacing(ItemStack connection, ForgeDirection bottom) {
         Item item = connection.getItem();
         int metadata = connection.getItemDamage();
 
@@ -115,13 +134,13 @@ public class StairsCollision extends BlockCollision {
         Block block = itemBlock.field_150939_a;
 
         if (block instanceof DataDrivenBlock) {
-            if (isOnFloor != ((DataDrivenBlock)block).isOnFloor(metadata))
+            if (bottom != ((DataDrivenBlock)block).reverseTransformBlockFacing(metadata, ForgeDirection.DOWN))
                 return ForgeDirection.UNKNOWN;
 
             return ((DataDrivenBlock) block).reverseTransformBlockFacing(metadata, ForgeDirection.NORTH);
-        } else {
+        } else if (bottom == ForgeDirection.DOWN || bottom == ForgeDirection.UP) {
             //Assume it's a regular staircase?
-            if (isOnFloor != ((metadata & 4) == 0))
+            if ((bottom == ForgeDirection.DOWN) != ((metadata & 4) == 0))
                 return ForgeDirection.UNKNOWN;
 
             int dir = metadata & 3;
@@ -136,119 +155,83 @@ public class StairsCollision extends BlockCollision {
                 default:
                     return ForgeDirection.WEST;
             }
-        }
+        } else
+            return ForgeDirection.UNKNOWN;
     }
 
     @Override
     public void collectCollisionBoxes(DataDrivenBlock block, World world, int x, int y, int z, AxisAlignedBB mask, List list, Entity entity) {
         int metadata = world.getBlockMetadata(x,y,z);
-        boolean isOnCeiling = !block.isOnFloor(metadata);
+        ForgeDirection bottom = block.reverseTransformBlockFacing(metadata, ForgeDirection.DOWN);
+        ForgeDirection top = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[bottom.ordinal()]];
 
         WorldRenderContext context = new WorldRenderContext(block, block.getSubBlock(metadata), world, x, y, z);
 
         ForgeDirection front = block.reverseTransformBlockFacing(metadata, ForgeDirection.NORTH);
         ForgeDirection back = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[front.ordinal()]];
 
-        ForgeDirection leftSide = front.getRotation(ForgeDirection.UP);
-        ForgeDirection rightSide = front.getRotation(ForgeDirection.DOWN);
+        ForgeDirection leftSide = front.getRotation(ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[bottom.ordinal()]]);
+        ForgeDirection rightSide = front.getRotation(bottom);
 
         DataDrivenSubBlock subBlock = block.getSubBlock(metadata);
 
         //Basic slab
-        if (isOnCeiling)
-        {
-            block.setBlockBounds(0.0F, 0.5F, 0.0F, 1.0F, 1.0F, 1.0F);
-        }
-        else
-        {
-            block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.5F, 1.0F);
-        }
-        selectionCollision.collectCollisionBoxes(block, world, x, y, z, mask, list, entity);
+        setBasicSlabFromDir(bottom, block);
+        addCollisionBox(block, mask, world, x, y, z, list);
 
+        //Top quarter slab
         ItemStack northConnection = context.getConnectedBlock(back);
         if (northConnection != null) {
-            ForgeDirection connectionFacing = getConnectionFacing(northConnection, !isOnCeiling);
+            ForgeDirection connectionFacing = getConnectionFacing(northConnection, bottom);
 
             if (connectionFacing == leftSide || connectionFacing == rightSide) {
-                setQuarterTopBounds(block, front, connectionFacing, isOnCeiling);
-                selectionCollision.collectCollisionBoxes(block, world, x, y, z, mask, list, entity);
+                setQuarterTopBounds(block, back, ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[connectionFacing.ordinal()]], top);
+                addCollisionBox(block, mask, world, x, y, z, list);
+
                 block.getBlockModel().setBlockBounds(block, world, x, y, z);
                 return;
             }
         }
 
-        setHalfTopBounds(block, front, isOnCeiling);
-        selectionCollision.collectCollisionBoxes(block, world, x, y, z, mask, list, entity);
+        //Top half slab
+        setHalfTopBounds(block, back, top);
+        addCollisionBox(block, mask, world, x, y, z, list);
 
+        //Turn half slab into 3-quarter slab
         ItemStack southConnection = context.getConnectedBlock(front);
         if (southConnection != null) {
-            ForgeDirection connectionFacing = getConnectionFacing(southConnection, !isOnCeiling);
+            ForgeDirection connectionFacing = getConnectionFacing(southConnection, bottom);
 
             if (connectionFacing == leftSide || connectionFacing == rightSide) {
-                setQuarterTopBounds(block, back, connectionFacing, isOnCeiling);
-                selectionCollision.collectCollisionBoxes(block, world, x, y, z, mask, list, entity);
+                setQuarterTopBounds(block, back, connectionFacing, top);
+                addCollisionBox(block, mask, world, x, y, z, list);
             }
         }
 
         block.getBlockModel().setBlockBounds(block, world, x, y, z);
     }
 
-    private void setQuarterTopBounds(DataDrivenBlock block, ForgeDirection stairDirection, ForgeDirection connectionDirection, boolean isOnCeiling) {
-        setHalfTopBounds(block, stairDirection, isOnCeiling);
-
-        double startX = block.getBlockBoundsMinX();
-        double startY = block.getBlockBoundsMinY();
-        double startZ = block.getBlockBoundsMinZ();
-        double endX = block.getBlockBoundsMaxX();
-        double endY = block.getBlockBoundsMaxY();
-        double endZ = block.getBlockBoundsMaxZ();
-
-        switch(connectionDirection) {
-            case SOUTH:
-                endZ -= 0.5f;
-                break;
-            case NORTH:
-                startZ += 0.5f;
-                break;
-            case WEST:
-                startX += 0.5f;
-                break;
-            case EAST:
-                endX -= 0.5f;
-                break;
-        }
-
-        block.setBlockBounds((float)startX, (float)startY, (float)startZ, (float)endX, (float)endY, (float)endZ);
+    private void setBasicSlabFromDir(ForgeDirection bottomSide, DataDrivenBlock block) {
+        block.setBlockBounds(0, 0, 0, 1, 1, 1);
+        trimDirection(block, bottomSide);
     }
 
-    private void setHalfTopBounds(DataDrivenBlock block, ForgeDirection front, boolean isOnCeiling) {
-        float startX = 0;
-        float startY = 0;
-        float startZ = 0;
-        float endX = 1;
-        float endY = 1;
-        float endZ = 1;
+    private void setQuarterTopBounds(DataDrivenBlock block, ForgeDirection stairDirection, ForgeDirection connectionDirection, ForgeDirection bottom) {
+        setHalfTopBounds(block, stairDirection, bottom);
+        trimDirection(block, connectionDirection);
+    }
 
-        if (isOnCeiling)
-            endY -= 0.5f;
-        else
-            startY += 0.5f;
+    private void setHalfTopBounds(DataDrivenBlock block, ForgeDirection front, ForgeDirection bottom) {
+        setBasicSlabFromDir(bottom, block);
+        trimDirection(block, front);
+    }
 
-        switch (front) {
-            case SOUTH:
-                endZ -= 0.5f;
-                break;
-            case NORTH:
-                startZ += 0.5f;
-                break;
-            case WEST:
-                startX += 0.5f;
-                break;
-            case EAST:
-                endX -= 0.5f;
-                break;
+    private void addCollisionBox(DataDrivenBlock block, AxisAlignedBB mask, World world, int x, int y, int z, List list) {
+        AxisAlignedBB axisalignedbb1 = block.getCollisionBoundingBoxFromPool(world, x, y, z);
+
+        if (axisalignedbb1 != null && mask.intersectsWith(axisalignedbb1))
+        {
+            list.add(axisalignedbb1);
         }
-
-        block.setBlockBounds(startX, startY, startZ, endX, endY, endZ);
     }
 }

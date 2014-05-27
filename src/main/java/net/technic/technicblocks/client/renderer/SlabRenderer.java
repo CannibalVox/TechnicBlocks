@@ -35,29 +35,18 @@ public class SlabRenderer extends DataDrivenRenderer {
 
     @Override
     protected boolean tesselate(DataDrivenBlock block, int metadata, TessellatorInstance tessellatorInstance, IRenderContext connectionContext) {
-        boolean isOnFloor = block.isOnFloor(metadata);
+        ForgeDirection top = block.reverseTransformBlockFacing(metadata, ForgeDirection.UP);
+        ForgeDirection bottom = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[top.ordinal()]];
         DataDrivenSubBlock subBlock = block.getSubBlock(metadata);
+        ForgeDirection front = block.reverseTransformBlockFacing(metadata, ForgeDirection.NORTH);
 
-        if (isOnFloor) {
-            renderFaceIfVisible(ForgeDirection.DOWN, 0, 0, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
-            renderFace(ForgeDirection.UP, 0, 0, 1.0f, 1.0f, 0.5f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
-        } else {
-            renderFaceIfVisible(ForgeDirection.UP, 0, 0, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
-            renderFace(ForgeDirection.DOWN.DOWN, 0, 0, 1.0f, 1.0f, 0.5f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
+        renderFaceIfVisible(bottom, 0, 0, 1, 1, subBlock.getTextureScheme(), connectionContext, tessellatorInstance, front);
+        renderFace(top, 0, 0, 1, 1, 0.5f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance, front);
+
+        for (int i = 0; i < 4; i++) {
+            renderFaceIfVisible(front, 0, 0.5f, 1, 1, subBlock.getTextureScheme(), connectionContext, tessellatorInstance, top);
+            front = front.getRotation(top);
         }
-
-        float startY = 0.5f;
-        float endY = 1.0f;
-
-        if (!isOnFloor) {
-            startY -= 0.5f;
-            endY -= 0.5f;
-        }
-
-        renderFaceIfVisible(ForgeDirection.NORTH, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
-        renderFaceIfVisible(ForgeDirection.EAST, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
-        renderFaceIfVisible(ForgeDirection.WEST, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
-        renderFaceIfVisible(ForgeDirection.SOUTH, 0, startY, 1.0f, endY, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
 
         return true;
     }
@@ -90,15 +79,8 @@ public class SlabRenderer extends DataDrivenRenderer {
 
     @Override
     public boolean isSideSolid(DataDrivenBlock block, IBlockAccess world, int x, int y, int z, ForgeDirection side) {
-        if (side != ForgeDirection.DOWN && side != ForgeDirection.UP)
-            return false;
-
         int metadata = world.getBlockMetadata(x,y,z);
-        boolean isOnFloor = block.isOnFloor(metadata);
-
-        ForgeDirection solidSide = (isOnFloor)?ForgeDirection.DOWN:ForgeDirection.UP;
-
-        return side == solidSide;
+        return block.transformBlockFacing(metadata, side) == ForgeDirection.DOWN;
     }
 
     @Override

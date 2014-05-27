@@ -35,12 +35,20 @@ public class CubeRenderer extends DataDrivenRenderer {
     protected boolean tesselate(DataDrivenBlock block, int metadata, TessellatorInstance tessellatorInstance, IRenderContext connectionContext) {
         DataDrivenSubBlock subBlock = block.getSubBlock(metadata);
 
-        boolean result = renderFaceIfVisible(ForgeDirection.UP, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance);
-        result = renderFaceIfVisible(ForgeDirection.DOWN, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance) || result;
-        result = renderFaceIfVisible(ForgeDirection.NORTH, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance) || result;
-        result = renderFaceIfVisible(ForgeDirection.SOUTH, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance) || result;
-        result = renderFaceIfVisible(ForgeDirection.EAST, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance) || result;
-        result = renderFaceIfVisible(ForgeDirection.WEST, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance) || result;
+        ForgeDirection actualTop = block.reverseTransformBlockFacing(metadata, ForgeDirection.UP);
+        ForgeDirection actualBottom = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[actualTop.ordinal()]];
+        ForgeDirection actualNorth = block.reverseTransformBlockFacing(metadata, ForgeDirection.NORTH);
+        ForgeDirection actualSouth = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[actualNorth.ordinal()]];
+        ForgeDirection actualEast = block.reverseTransformBlockFacing(metadata, ForgeDirection.EAST);
+        ForgeDirection actualWest = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[actualEast.ordinal()]];
+
+        boolean result = renderFaceIfVisible(actualTop, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance, actualNorth);
+        result = renderFaceIfVisible(actualBottom, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance, actualNorth) || result;
+
+        result = renderFaceIfVisible(actualNorth, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance, actualTop) || result;
+        result = renderFaceIfVisible(actualSouth, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance, actualTop) || result;
+        result = renderFaceIfVisible(actualEast, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance, actualTop) || result;
+        result = renderFaceIfVisible(actualWest, 0.0f, 0.0f, 1.0f, 1.0f, subBlock.getTextureScheme(), connectionContext, tessellatorInstance, actualTop) || result;
         return result;
     }
 
