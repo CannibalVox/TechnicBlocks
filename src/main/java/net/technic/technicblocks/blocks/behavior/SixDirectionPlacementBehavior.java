@@ -56,10 +56,10 @@ public class SixDirectionPlacementBehavior extends BlockBehavior implements IBlo
         if (value == 0)
             return currentFacing;
 
-        currentFacing = currentFacing.getRotation(ForgeDirection.EAST);
+        currentFacing = currentFacing.getRotation(ForgeDirection.WEST);
 
         if ((value & 4) == 0) {
-            return currentFacing.getRotation(ForgeDirection.EAST);
+            return currentFacing.getRotation(ForgeDirection.WEST);
         }
 
         int topRotations = (value & 3);
