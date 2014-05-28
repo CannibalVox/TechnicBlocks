@@ -120,14 +120,14 @@ public class BlockTextureScheme {
         }
     }
 
-    public IIcon getTextureForSide(DataDrivenBlock block, IBlockAccess world, int x, int y, int z, ForgeDirection physicalSide, ForgeDirection virtualSide) {
+    public IIcon getTextureForSide(DataDrivenBlock block, IBlockAccess world, int x, int y, int z, ForgeDirection physicalSide, ForgeDirection virtualSide, int rotations) {
         TextureSelector selector = textureSelectorMap.get(virtualSide);
 
-        String resourcePath = selector.selectTexture(block, this, world, x, y, z, physicalSide, connectionConvention);
+        String resourcePath = selector.selectTexture(block, this, world, x, y, z, physicalSide, connectionConvention, rotations);
 
         while (decoratorMap.containsKey(resourcePath)) {
             selector = decoratorMap.get(resourcePath);
-            resourcePath = selector.selectTexture(block, this, world, x, y, z, physicalSide, connectionConvention);
+            resourcePath = selector.selectTexture(block, this, world, x, y, z, physicalSide, connectionConvention, rotations);
         }
 
         return registeredIcons.get(resourcePath);

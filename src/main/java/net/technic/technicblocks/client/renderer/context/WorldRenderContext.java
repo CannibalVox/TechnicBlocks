@@ -86,8 +86,8 @@ public class WorldRenderContext implements IRenderContext {
     }
 
     @Override
-    public IIcon getTexture(ForgeDirection face) {
-        return anchorBlock.getIcon(world, anchorX, anchorY, anchorZ, face.ordinal());
+    public IIcon getTexture(ForgeDirection face, int rotations) {
+        return anchorBlock.getIcon(world, anchorX, anchorY, anchorZ, face.ordinal(), rotations);
     }
 
     @Override

@@ -60,7 +60,7 @@ public class InventoryRenderContext implements IRenderContext {
     }
 
     @Override
-    public IIcon getTexture(ForgeDirection side) {
+    public IIcon getTexture(ForgeDirection side, int rotations) {
         return block.getIcon(side.ordinal(), metadata);
     }
 

@@ -53,11 +53,16 @@ public class FullCtmTextureSelector extends TextureSelector {
     }
 
     @Override
-    public String selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections) {
+    public String selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections, int rotations) {
         int thisBlockMetadata = world.getBlockMetadata(x,y,z);
 
         ForgeDirection east = textureScheme.getAxisSide(side, 1, 0);
         ForgeDirection south = textureScheme.getAxisSide(side, 0, 1);
+
+        for (int i = 0; i < rotations; i++) {
+            east = east.getRotation(side);
+            south = south.getRotation(side);
+        }
 
         short direction = 0;
         if (connections.testConnection(block, thisBlockMetadata, world.getBlock(x+east.offsetX, y+east.offsetY, z+east.offsetZ), world.getBlockMetadata(x+east.offsetX, y+east.offsetY, z+east.offsetZ)))

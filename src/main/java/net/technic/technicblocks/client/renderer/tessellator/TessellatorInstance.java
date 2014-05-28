@@ -41,8 +41,8 @@ public class TessellatorInstance {
         this.renderer = renderer;
     }
 
-    public void renderFace(ForgeDirection face, float startX, float startY, float endX, float endY, float depth, BlockTextureScheme textureScheme, IRenderContext posContext, ForgeDirection upDir) {
-        IIcon icon = posContext.getTexture(face);
+    public void renderFace(ForgeDirection face, float startX, float startY, float endX, float endY, float depth, BlockTextureScheme textureScheme, IRenderContext posContext, int rotations) {
+        IIcon icon = posContext.getTexture(face, rotations);
         Vector3f topLeft = posContext.getTopLeft(face);
 
         ForgeDirection xDir = textureScheme.getAxisSide(face, 1, 0);
@@ -53,16 +53,13 @@ public class TessellatorInstance {
         ForgeDirection intoDir = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[face.ordinal()]];
         Vector3f zVec = new Vector3f(intoDir.offsetX, intoDir.offsetY, intoDir.offsetZ);
 
-        ForgeDirection realUpDir = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[yDir.ordinal()]];
-
         List<Vector2f> uvList = new ArrayList<Vector2f>(4);
         uvList.add(new Vector2f(icon.getInterpolatedU(16.0f * startX), icon.getInterpolatedV(16.0f * startY)));
         uvList.add(new Vector2f(icon.getInterpolatedU(16.0f * startX), icon.getInterpolatedV(16.0f * endY)));
         uvList.add(new Vector2f(icon.getInterpolatedU(16.0f * endX), icon.getInterpolatedV(16.0f * endY)));
         uvList.add(new Vector2f(icon.getInterpolatedU(16.0f * endX), icon.getInterpolatedV(16.0f * startY)));
 
-        while (realUpDir != upDir) {
-
+        for (int i = 0; i < rotations; i++) {
             float sX = 1.0f - endY;
             float sY = startX;
             float eX = 1.0f - startY;
@@ -74,8 +71,6 @@ public class TessellatorInstance {
             endY = eY;
 
             rotateUvs(uvList);
-
-            realUpDir = realUpDir.getRotation(face);
         }
 
         tessellator.getPrePostHandler().preDrawFace(posContext, face, depth > 0.0001f, startX, startY, endX, endY, renderer, minecraftTessellator);

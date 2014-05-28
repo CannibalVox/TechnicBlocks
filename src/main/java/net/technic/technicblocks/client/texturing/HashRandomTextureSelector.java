@@ -60,7 +60,7 @@ public class HashRandomTextureSelector extends TextureSelector {
     }
 
     @Override
-    public String selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections) {
+    public String selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections, int rotations) {
         int faceInt = side.ordinal();
         long n = 0x1c3764a30115L * x * (x + 0xbL) + 0x227c1adccd1dL * y * (y + 0xbL) + 0xe0d251c03ba5L * z * (z + 0xbL) + 0xa2fb1377aeb3L * faceInt * (faceInt + 0xbL);
         n = 0x5deece66dL * (n + x + y + z + faceInt) + 0xbL;

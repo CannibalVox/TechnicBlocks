@@ -129,21 +129,24 @@ public class DataDrivenBlock extends Block {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIcon getIcon(int side, int meta)
-    {
+    public IIcon getIcon(int side, int meta) {
         ForgeDirection dir = transformBlockFacing(meta, ForgeDirection.VALID_DIRECTIONS[side]);
         return getSubBlock(meta).getTextureScheme().getTextureForSide(dir);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side)
+    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
+        return getIcon(world, x, y, z, side, 0);
+    }
+
+    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side, int rotations)
     {
         int meta = world.getBlockMetadata(x,y,z);
         ForgeDirection physicalSide = ForgeDirection.VALID_DIRECTIONS[side];
         ForgeDirection virtualSide = transformBlockFacing(meta, physicalSide);
 
-        return getSubBlock(meta).getTextureScheme().getTextureForSide(this, world, x, y, z, physicalSide, virtualSide);
+        return getSubBlock(meta).getTextureScheme().getTextureForSide(this, world, x, y, z, physicalSide, virtualSide, rotations);
     }
 
     public BlockModel getBlockModel() {

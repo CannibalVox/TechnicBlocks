@@ -48,7 +48,7 @@ public class StaticTextureSelector extends TextureSelector  {
     }
 
     @Override
-    public String selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections) {
+    public String selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections, int rotations) {
         return selectDefaultTexture();
     }
 

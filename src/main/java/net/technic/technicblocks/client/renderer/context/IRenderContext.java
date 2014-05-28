@@ -33,7 +33,7 @@ public interface IRenderContext {
     ItemStack getConnectedBlock(ForgeDirection side);
     boolean isTextureConnected(ForgeDirection side, int relativeX, int relativeY);
     boolean isFaceVisible(ForgeDirection side);
-    IIcon getTexture(ForgeDirection side);
+    IIcon getTexture(ForgeDirection side, int rotations);
     Vector3f getTopLeft(ForgeDirection side);
     BlockTextureScheme getTextureScheme();
 

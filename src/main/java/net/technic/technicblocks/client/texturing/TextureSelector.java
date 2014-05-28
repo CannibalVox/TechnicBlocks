@@ -30,6 +30,6 @@ public abstract class TextureSelector {
     public void registerIcons(BlockTextureScheme textureScheme, IIconRegister register) { registerIcons(textureScheme, register, null); }
     public abstract void registerIcons(BlockTextureScheme textureScheme, IIconRegister register, String decoratorTexture);
 
-    public abstract String selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections);
+    public abstract String selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections, int rotations);
     public abstract String selectDefaultTexture();
 }

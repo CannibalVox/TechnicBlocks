@@ -82,7 +82,16 @@ public abstract class DataDrivenRenderer implements ISimpleBlockRenderingHandler
     }
 
     protected void renderFace(ForgeDirection face, float startX, float startY, float endX, float endY, float depth, BlockTextureScheme textureScheme, IRenderContext posContext, TessellatorInstance tessellatorInstance, ForgeDirection upDir) {
-        tessellatorInstance.renderFace(face, startX, startY, endX, endY, depth, textureScheme, posContext, upDir);
+        ForgeDirection yNeg = textureScheme.getAxisSide(face, 0, -1);
+
+        int rotations = 0;
+
+        while (yNeg != upDir) {
+            rotations++;
+            yNeg = yNeg.getRotation(face);
+        }
+
+        tessellatorInstance.renderFace(face, startX, startY, endX, endY, depth, textureScheme, posContext, rotations);
     }
 
     @Override

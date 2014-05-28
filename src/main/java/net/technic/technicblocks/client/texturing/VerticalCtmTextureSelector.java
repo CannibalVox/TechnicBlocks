@@ -52,10 +52,14 @@ public class VerticalCtmTextureSelector extends TextureSelector {
     }
 
     @Override
-    public String selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections) {
+    public String selectTexture(DataDrivenBlock block, BlockTextureScheme textureScheme, IBlockAccess world, int x, int y, int z, ForgeDirection side, ConnectionConvention connections, int rotations) {
         int thisBlockMetadata = world.getBlockMetadata(x,y,z);
 
         ForgeDirection south = textureScheme.getAxisSide(side, 0, 1);
+
+        for (int i = 0; i < rotations; i++) {
+            south = south.getRotation(side);
+        }
 
         short direction = 0;
         if (connections.testConnection(block, thisBlockMetadata, world.getBlock(x+south.offsetX, y+south.offsetY, z+south.offsetZ), world.getBlockMetadata(x+south.offsetX, y+south.offsetY, z+south.offsetZ)))
