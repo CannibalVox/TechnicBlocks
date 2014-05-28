@@ -30,7 +30,7 @@ import org.lwjgl.util.vector.Vector3f;
 public class WorldLightingHandler implements IPrePostFaceHandler {
 
     @Override
-    public void preDrawFace(IRenderContext renderContext, ForgeDirection dir, boolean internal, float startX, float startY, float endX, float endY, RenderBlocks blocks, Tessellator tessellator) {
+    public void preDrawFace(IRenderContext renderContext, ForgeDirection dir, boolean internal, float startX, float startY, float endX, float endY, RenderBlocks blocks, Tessellator tessellator, int rotations) {
         int multiplierValue = renderContext.getColorMultiplier();
 
         float colorR = (float)(multiplierValue >> 16 & 255) / 255.0F;
@@ -48,7 +48,7 @@ public class WorldLightingHandler implements IPrePostFaceHandler {
         }
 
         if (Minecraft.isAmbientOcclusionEnabled() && renderContext.getLightValue() == 0)
-            this.ambientOcclusionPreDraw(renderContext, dir, internal, blocks, tessellator, startX, startY, endX, endY, colorR, colorG, colorB);
+            this.ambientOcclusionPreDraw(renderContext, dir, internal, blocks, tessellator, startX, startY, endX, endY, colorR, colorG, colorB, rotations);
         else
             this.colorMultiplierPreDraw(renderContext, dir, internal, blocks, tessellator, colorR, colorG, colorB);
     }
@@ -59,7 +59,7 @@ public class WorldLightingHandler implements IPrePostFaceHandler {
             blocks.enableAO = false;
     }
 
-    protected void ambientOcclusionPreDraw(IRenderContext renderContext, ForgeDirection face, boolean internal, RenderBlocks renderBlocks, Tessellator tessellator, float startX, float startY, float endX, float endY, float r, float g, float b) {
+    protected void ambientOcclusionPreDraw(IRenderContext renderContext, ForgeDirection face, boolean internal, RenderBlocks renderBlocks, Tessellator tessellator, float startX, float startY, float endX, float endY, float r, float g, float b, int rotations) {
         renderBlocks.enableAO = true;
         int mixedBrightness = renderContext.getMixedBrightness();
         tessellator.setBrightness(983055);
@@ -171,6 +171,33 @@ public class WorldLightingHandler implements IPrePostFaceHandler {
         renderBlocks.colorRedBottomRight = mixedSoutheastLight * color.x;
         renderBlocks.colorGreenBottomRight = mixedSoutheastLight * color.y;
         renderBlocks.colorBlueBottomRight = mixedSoutheastLight * color.z;
+
+        for (int i = 0; i < (rotations-4); i++) {
+            int topLeft = renderBlocks.brightnessTopLeft;
+            float redTopLeft = renderBlocks.colorRedTopLeft;
+            float greenTopLeft = renderBlocks.colorGreenTopLeft;
+            float blueTopLeft = renderBlocks.colorBlueTopLeft;
+
+            renderBlocks.brightnessTopLeft = renderBlocks.brightnessTopRight;
+            renderBlocks.colorRedTopLeft = renderBlocks.colorRedTopRight;
+            renderBlocks.colorGreenTopLeft = renderBlocks.colorGreenTopRight;
+            renderBlocks.colorBlueTopLeft = renderBlocks.colorBlueTopRight;
+
+            renderBlocks.brightnessTopRight = renderBlocks.brightnessBottomRight;
+            renderBlocks.colorRedTopRight = renderBlocks.colorRedBottomRight;
+            renderBlocks.colorGreenTopRight = renderBlocks.colorGreenBottomRight;
+            renderBlocks.colorBlueTopRight = renderBlocks.colorBlueBottomRight;
+
+            renderBlocks.brightnessBottomRight = renderBlocks.brightnessBottomLeft;
+            renderBlocks.colorRedBottomRight = renderBlocks.colorRedBottomLeft;
+            renderBlocks.colorGreenBottomRight = renderBlocks.colorGreenBottomLeft;
+            renderBlocks.colorBlueBottomRight = renderBlocks.colorBlueBottomLeft;
+
+            renderBlocks.brightnessBottomLeft = topLeft;
+            renderBlocks.colorRedBottomLeft = redTopLeft;
+            renderBlocks.colorGreenBottomLeft = greenTopLeft;
+            renderBlocks.colorBlueBottomLeft = blueTopLeft;
+        }
     }
 
     protected void colorMultiplierPreDraw(IRenderContext renderContext, ForgeDirection dir, boolean internal, RenderBlocks renderBlocks, Tessellator tessellator, float r, float g, float b) {

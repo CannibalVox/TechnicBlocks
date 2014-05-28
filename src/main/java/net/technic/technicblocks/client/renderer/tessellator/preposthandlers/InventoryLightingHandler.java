@@ -26,7 +26,7 @@ import net.technic.technicblocks.client.renderer.context.IRenderContext;
 
 public class InventoryLightingHandler implements IPrePostFaceHandler {
     @Override
-    public void preDrawFace(IRenderContext renderContext, ForgeDirection dir, boolean internal, float startX, float startY, float endX, float endY, RenderBlocks blocks, Tessellator tessellator) {
+    public void preDrawFace(IRenderContext renderContext, ForgeDirection dir, boolean internal, float startX, float startY, float endX, float endY, RenderBlocks blocks, Tessellator tessellator, int rotations) {
         tessellator.startDrawingQuads();
         tessellator.setNormal(dir.offsetX, dir.offsetY, dir.offsetZ);
         blocks.enableAO = false;

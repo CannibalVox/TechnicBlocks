@@ -27,7 +27,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class GlowLightingHandler implements IPrePostFaceHandler {
     @Override
-    public void preDrawFace(IRenderContext renderContext, ForgeDirection dir, boolean internal, float startX, float startY, float endX, float endY, RenderBlocks blocks, Tessellator tessellator) {
+    public void preDrawFace(IRenderContext renderContext, ForgeDirection dir, boolean internal, float startX, float startY, float endX, float endY, RenderBlocks blocks, Tessellator tessellator, int rotations) {
         blocks.enableAO = false;
 
         tessellator.setBrightness(0xF000F0);

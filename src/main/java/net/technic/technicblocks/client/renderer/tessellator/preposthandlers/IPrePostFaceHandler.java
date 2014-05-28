@@ -25,6 +25,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.client.renderer.context.IRenderContext;
 
 public interface IPrePostFaceHandler {
-    void preDrawFace(IRenderContext renderContext, ForgeDirection dir, boolean internal, float startX, float startY, float endX, float endY, RenderBlocks blocks, Tessellator tessellator);
+    void preDrawFace(IRenderContext renderContext, ForgeDirection dir, boolean internal, float startX, float startY, float endX, float endY, RenderBlocks blocks, Tessellator tessellator, int rotations);
     void postDrawFace(RenderBlocks blocks, Tessellator tessellator);
 }

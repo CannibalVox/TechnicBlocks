@@ -73,7 +73,7 @@ public class TessellatorInstance {
             rotateUvs(uvList);
         }
 
-        tessellator.getPrePostHandler().preDrawFace(posContext, face, depth > 0.0001f, startX, startY, endX, endY, renderer, minecraftTessellator);
+        tessellator.getPrePostHandler().preDrawFace(posContext, face, depth > 0.0001f, startX, startY, endX, endY, renderer, minecraftTessellator, rotations);
         tesselateFace(icon, topLeft, xVec, yVec, zVec, startX, startY, endX, endY, depth, uvList);
         tessellator.getPrePostHandler().postDrawFace(renderer, minecraftTessellator);
     }
