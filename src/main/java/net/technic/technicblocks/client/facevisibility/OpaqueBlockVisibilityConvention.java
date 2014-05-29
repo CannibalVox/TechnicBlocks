@@ -27,12 +27,12 @@ import net.technic.technicblocks.client.renderer.context.IRenderContext;
 
 public class OpaqueBlockVisibilityConvention extends FaceVisibilityConvention {
     @Override
-    public boolean isSideVisible(IBlockAccess world, int x, int y, int z, ForgeDirection direction, DataDrivenBlock thisBlock, Block otherBlock, IRenderContext connections) {
+    protected boolean isSideVisible(IBlockAccess world, int x, int y, int z, ForgeDirection direction, DataDrivenBlock thisBlock, Block otherBlock, IRenderContext connections) {
         return otherBlock == null || otherBlock.isAir(world, x, y, z) || !(otherBlock.isOpaqueCube() || otherBlock.isSideSolid(world,x,y,z,ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[direction.ordinal()]]));
     }
 
     @Override
-    public boolean isSideVisible(IBlockAccess world, int x, int y, int z, ForgeDirection direction, DataDrivenBlock thisBlock, DataDrivenBlock otherBlock, IRenderContext connections) {
+    protected boolean isSideVisible(IBlockAccess world, int x, int y, int z, ForgeDirection direction, DataDrivenBlock thisBlock, DataDrivenBlock otherBlock, IRenderContext connections) {
         return otherBlock == null || otherBlock.isAir(world, x, y, z) || !(otherBlock.isOpaqueCube() || otherBlock.isSideSolid(world,x,y,z,ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[direction.ordinal()]]));
     }
 }

@@ -35,6 +35,7 @@ import net.technic.technicblocks.blocks.selection.BlockSelectionFactory;
 import net.technic.technicblocks.blocks.selection.CubeSelection;
 import net.technic.technicblocks.blocks.selection.FenceSelection;
 import net.technic.technicblocks.blocks.selection.SlabSelection;
+import net.technic.technicblocks.client.facevisibility.DisconnectedBlockVisibilityConvention;
 import net.technic.technicblocks.client.facevisibility.FaceVisibilityFactory;
 import net.technic.technicblocks.client.facevisibility.OpaqueBlockVisibilityConvention;
 import net.technic.technicblocks.client.renderer.*;
@@ -122,6 +123,7 @@ public class TechnicBlocks {
 
         //Register face visibility factory
         faceVisibilityFactory.addConvention("normal", new OpaqueBlockVisibilityConvention());
+        faceVisibilityFactory.addConvention("disconnected", new DisconnectedBlockVisibilityConvention());
 
         //Register texture selectors
         textureSelectorFactory.addSelector("static", StaticTextureSelector.class);
