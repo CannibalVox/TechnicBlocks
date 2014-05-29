@@ -46,14 +46,16 @@ public class BlockModel {
     private BlockCollision collision;
     private BlockSelection selection;
     private Tessellator tessellator;
+    private boolean isTranslucent;
 
-    public BlockModel(DataDrivenRenderer renderer, ConnectionConvention modelConnectionsConvention, FaceVisibilityConvention faceVisibilityConvention, BlockCollision collision, BlockSelection selection, Tessellator tessellator) {
+    public BlockModel(DataDrivenRenderer renderer, ConnectionConvention modelConnectionsConvention, FaceVisibilityConvention faceVisibilityConvention, BlockCollision collision, BlockSelection selection, Tessellator tessellator, boolean isTrancelucent) {
         this.modelConnectionsConvention = modelConnectionsConvention;
         this.faceVisibilityConvention = faceVisibilityConvention;
         this.renderer = renderer;
         this.collision = collision;
         this.selection = selection;
         this.tessellator = tessellator;
+        this.isTranslucent = isTrancelucent;
     }
 
     public ConnectionConvention getModelConnectionsConvention() { return modelConnectionsConvention; }
@@ -71,6 +73,10 @@ public class BlockModel {
     }
     public void setBlockBounds(DataDrivenBlock block, IBlockAccess world, int x, int y, int z) {
         selection.setBlockBounds(block, world, x, y, z);
+    }
+
+    public int getPassIndex() {
+        return isTranslucent?1:0;
     }
 
     public MovingObjectPosition traceCollision(DataDrivenBlock block, World world, int x, int y, int z, Vec3 start, Vec3 end) {

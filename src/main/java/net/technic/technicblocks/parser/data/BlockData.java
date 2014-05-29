@@ -41,6 +41,7 @@ public class BlockData {
     private String collisionType;
     private String selectionType;
     private String tessellator;
+    private boolean translucent;
     private List<BehaviorData> behaviors = new ArrayList<BehaviorData>();
     private List<SubBlockData> subBlocks = new ArrayList<SubBlockData>();
 
@@ -63,4 +64,5 @@ public class BlockData {
     public String getTessellator() { return tessellator; }
     public List<BehaviorData> getBehaviors() { return behaviors; }
     public List<SubBlockData> getSubBlocks() { return subBlocks; }
+    public boolean isTranslucent() { return translucent; }
 }

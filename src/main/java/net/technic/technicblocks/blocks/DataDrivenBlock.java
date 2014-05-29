@@ -218,6 +218,12 @@ public class DataDrivenBlock extends Block {
         return getBlockModel().isOpaqueCube();
     }
 
+    @SideOnly(Side.CLIENT)
+    public int getRenderBlockPass()
+    {
+        return getBlockModel().getPassIndex();
+    }
+
     /**
      * How bright to render this block based on the light its receiving. Args: iBlockAccess, x, y, z
      */

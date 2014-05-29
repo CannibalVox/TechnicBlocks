@@ -177,7 +177,7 @@ public class ModDataParser {
         BlockSelection selection = selectionFactory.getSelection(selectionType);
         Tessellator tessellator = tessellatorFactory.getTessellatorByName(tessellatorType);
 
-        BlockModel model = new BlockModel(renderer, modelConvention, faceVisibility, collision, selection, tessellator);
+        BlockModel model = new BlockModel(renderer, modelConvention, faceVisibility, collision, selection, tessellator, block.isTranslucent());
 
         //Get block behaviors & get the bit index where subblock data starts
         List<BlockBehavior> behaviors = new LinkedList<BlockBehavior>();
