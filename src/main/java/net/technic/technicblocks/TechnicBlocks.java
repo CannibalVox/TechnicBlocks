@@ -227,6 +227,8 @@ public class TechnicBlocks {
     private static final Pattern bloxFilePattern = Pattern.compile("assets/([^/]*)/blox/(.*).blox");
     private Collection<String> examineFile(File bloxCandidate) {
         Collection<String> parsedModIds = new LinkedList<String>();
+        Collection<ModDataParser> parsers = new LinkedList<ModDataParser>();
+
         try {
             //Attempt to locate all the properly placed .blox files in the (ostensibly) jar file
             ZipFile zip = new ZipFile(bloxCandidate);
@@ -237,8 +239,8 @@ public class TechnicBlocks {
                 {
                     try {
                         ModDataParser parser = new ModDataParser(zip.getInputStream(ze), proxy);
-                        parser.RegisterAllBlocks(creativeTabFactory, materialFactory, soundTypeFactory, conventionFactory, rendererFactory, faceVisibilityFactory, collisionFactory, selectionFactory, blockBehaviorFactory, textureSelectorFactory, tessellatorFactory);
-                        proxy.verifyCreativeTabs(creativeTabFactory);
+                        parser.RegisterNonBlockStuff(creativeTabFactory, materialFactory, soundTypeFactory, conventionFactory, rendererFactory, faceVisibilityFactory, collisionFactory, selectionFactory, blockBehaviorFactory, textureSelectorFactory, tessellatorFactory);
+                        parsers.add(parser);
 
                         //If we found a valid blox file, then hold onto the mod ID
                         String modId = parser.getModId();
@@ -250,6 +252,12 @@ public class TechnicBlocks {
                     }
                 }
             }
+
+            for (ModDataParser parser : parsers) {
+                parser.RegisterAllBlocks(creativeTabFactory, materialFactory, soundTypeFactory, conventionFactory, rendererFactory, faceVisibilityFactory, collisionFactory, selectionFactory, blockBehaviorFactory, textureSelectorFactory, tessellatorFactory);
+            }
+
+            proxy.verifyCreativeTabs(creativeTabFactory);
         } catch (IOException ex)
         {
             //Just ignore this mod then

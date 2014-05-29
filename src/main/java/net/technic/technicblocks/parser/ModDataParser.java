@@ -102,7 +102,7 @@ public class ModDataParser {
 
     public String getModId() { return data.getModId(); }
 
-    public void RegisterAllBlocks(CreativeTabFactory creativeTabsFactory, MaterialFactory materialFactory, SoundTypeFactory soundFactory, ConnectionConventionFactory connectionConventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockCollisionFactory collisionFactory, BlockSelectionFactory selectionFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory, TessellatorFactory tessellatorFactory) {
+    public void RegisterNonBlockStuff(CreativeTabFactory creativeTabsFactory, MaterialFactory materialFactory, SoundTypeFactory soundFactory, ConnectionConventionFactory connectionConventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockCollisionFactory collisionFactory, BlockSelectionFactory selectionFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory, TessellatorFactory tessellatorFactory) {
         for (CreativeTabData tab : data.getCreativeTabs()) {
 
             if (tab == null)
@@ -126,7 +126,9 @@ public class ModDataParser {
 
             soundFactory.addSoundType(sound);
         }
+    }
 
+    public void RegisterAllBlocks(CreativeTabFactory creativeTabsFactory, MaterialFactory materialFactory, SoundTypeFactory soundFactory, ConnectionConventionFactory connectionConventionFactory, RendererFactory rendererFactory, FaceVisibilityFactory faceVisibilityFactory, BlockCollisionFactory collisionFactory, BlockSelectionFactory selectionFactory, BlockBehaviorFactory behaviorFactory, TextureSelectorFactory textureSelectorFactory, TessellatorFactory tessellatorFactory) {
         for (BlockData block : data.getBlocks()) {
             if (block == null)
                 continue;
