@@ -31,36 +31,42 @@ import net.technic.technicblocks.client.renderer.context.WorldRenderContext;
 import java.util.List;
 
 public class FenceCollision extends SelectionVolumeCollision {
+
+
+
     @Override
     public void collectCollisionBoxes(DataDrivenBlock block, World world, int x, int y, int z, AxisAlignedBB mask, List list, Entity entity) {
-
-        int metadata = world.getBlockMetadata(x, y, z);
-        WorldRenderContext context = new WorldRenderContext(block, block.getSubBlock(metadata), world, x, y, z);
-
-        block.setBlockBounds(0.375f, 0, 0.375f, 0.625f, 1.5f, 0.625f);
-        addCollisionBox(block, mask, world, x, y, z, list);
-
-        if (context.isModelConnected(ForgeDirection.NORTH)) {
-            block.setBlockBounds(0.375f, 0, 0, 0.625f, 1.5f, 0.375f);
-            addCollisionBox(block, mask, world, x, y, z, list);
-        }
-
-        if (context.isModelConnected(ForgeDirection.SOUTH)) {
-            block.setBlockBounds(0.375f, 0, 0.625f, 0.625f, 1.5f, 1.0f);
-            addCollisionBox(block, mask, world, x, y, z, list);
-        }
-
-        if (context.isModelConnected(ForgeDirection.EAST)) {
-            block.setBlockBounds(0.625f, 0, 0.375f, 1.0f, 1.5f, 0.625f);
-            addCollisionBox(block, mask, world, x, y, z, list);
-        }
-
-        if (context.isModelConnected(ForgeDirection.WEST)) {
-            block.setBlockBounds(0, 0, 0.375f, 0.375f, 1.5f, 0.625f);
-            addCollisionBox(block, mask, world, x, y, z, list);
-        }
-
         block.setBlockBoundsBasedOnState(world, x, y, z);
+        ForgeDirection up = block.reverseTransformBlockFacing(world.getBlockMetadata(x, y, z), ForgeDirection.UP);
+
+        float minX = (float)block.getBlockBoundsMinX();
+        float minY = (float)block.getBlockBoundsMinY();
+        float minZ = (float)block.getBlockBoundsMinZ();
+        float maxX = (float)block.getBlockBoundsMaxX();
+        float maxY = (float)block.getBlockBoundsMaxY();
+        float maxZ = (float)block.getBlockBoundsMaxZ();
+
+        float modX = up.offsetX * 0.5f;
+        float modY = up.offsetY * 0.5f;
+        float modZ = up.offsetZ * 0.5f;
+
+        if (modX < 0)
+            minX += modX;
+        else
+            maxX += modX;
+
+        if (modY < 0)
+            minY += modY;
+        else
+            maxY += modY;
+
+        if (modZ < 0)
+            minZ += modZ;
+        else
+            maxZ += modZ;
+
+        block.setBlockBounds(minX, minY, minZ, maxX, maxY, maxZ);
+        addCollisionBox(block, mask, world, x, y, z, list);
     }
 
     private void addCollisionBox(DataDrivenBlock block, AxisAlignedBB mask, World world, int x, int y, int z, List list) {

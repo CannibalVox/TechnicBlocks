@@ -21,43 +21,32 @@ package net.technic.technicblocks.blocks.selection;
 
 import net.minecraft.block.Block;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
 import net.technic.technicblocks.blocks.connections.ConnectionConvention;
 
 public class FenceSelection extends BlockSelection {
     @Override
     public void setBlockBounds(DataDrivenBlock block, IBlockAccess world, int x, int y, int z) {
-        float minX = 0.375f;
-        float minY = 0;
-        float minZ = 0.375f;
-        float maxX = 0.625f;
-        float maxY = 1;
-        float maxZ = 0.625f;
+
+        block.setBlockBounds(0, 0, 0, 1, 1, 1);
 
         ConnectionConvention connection = block.getBlockModel().getModelConnectionsConvention();
         int metadata = world.getBlockMetadata(x, y, z);
 
-        Block north = world.getBlock(x, y, z-1);
-        int northMetadata = world.getBlockMetadata(x, y, z-1);
+        ForgeDirection north = block.reverseTransformBlockFacing(metadata, ForgeDirection.NORTH);
+        ForgeDirection south = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[north.ordinal()]];
+        ForgeDirection up = block.reverseTransformBlockFacing(metadata, ForgeDirection.UP);
 
-        Block south = world.getBlock(x, y, z+1);
-        int southMetadata = world.getBlockMetadata(x, y, z+1);
+        for (int i = 0; i < 4; i++) {
+            Block connect = world.getBlock(x + north.offsetX, y + north.offsetY, z + north.offsetZ);
+            int connectMeta = world.getBlockMetadata(x + north.offsetX, y + north.offsetY, z + north.offsetZ);
 
-        Block east = world.getBlock(x+1, y, z);
-        int eastMetadata = world.getBlockMetadata(x+1, y, z);
+            if (!connection.testConnection(block, metadata, connect, connectMeta))
+                trimDirection(block, south, 0.375f);
 
-        Block west = world.getBlock(x-1, y, z);
-        int westMetadata = world.getBlockMetadata(x-1, y, z);
-
-        if (connection.testConnection(block, metadata, north, northMetadata))
-            minZ = 0;
-        if (connection.testConnection(block, metadata, south, southMetadata))
-            maxZ = 1;
-        if (connection.testConnection(block, metadata, east, eastMetadata))
-            maxX = 1;
-        if (connection.testConnection(block, metadata, west, westMetadata))
-            minX = 0;
-
-        block.setBlockBounds(minX, minY, minZ, maxX, maxY, maxZ);
+            north = north.getRotation(up);
+            south = south.getRotation(up);
+        }
     }
 }

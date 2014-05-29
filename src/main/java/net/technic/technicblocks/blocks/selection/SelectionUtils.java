@@ -4,7 +4,12 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.technic.technicblocks.blocks.DataDrivenBlock;
 
 public class SelectionUtils {
+
     protected void trimDirection(DataDrivenBlock block, ForgeDirection direction) {
+        trimDirection(block, direction, 0.5f);
+    }
+
+    protected void trimDirection(DataDrivenBlock block, ForgeDirection direction, float trimAmount) {
         float startX = (float)block.getBlockBoundsMinX();
         float startY = (float)block.getBlockBoundsMinY();
         float startZ = (float)block.getBlockBoundsMinZ();
@@ -12,9 +17,9 @@ public class SelectionUtils {
         float endY = (float)block.getBlockBoundsMaxY();
         float endZ = (float)block.getBlockBoundsMaxZ();
 
-        float modX = direction.offsetX * 0.5f;
-        float modY = direction.offsetY * 0.5f;
-        float modZ = direction.offsetZ * 0.5f;
+        float modX = direction.offsetX * trimAmount;
+        float modY = direction.offsetY * trimAmount;
+        float modZ = direction.offsetZ * trimAmount;
 
         if (modX > 0)
             startX += modX;

@@ -86,7 +86,7 @@ public abstract class DataDrivenRenderer implements ISimpleBlockRenderingHandler
 
         int rotations = 0;
 
-        while (yNeg != upDir) {
+        while (yNeg != upDir && rotations < 4) {
             rotations++;
             yNeg = yNeg.getRotation(face);
         }
