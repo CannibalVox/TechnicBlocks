@@ -97,6 +97,10 @@ public class TechnicBlocks {
         conventionFactory.addConvention("anyTags", AnyTagsConvention.class);
         conventionFactory.addConvention("or", LogicalOrConvention.class);
         conventionFactory.addConvention("sameVariant", VariantTagConvention.class);
+        conventionFactory.addConvention("sameAxis", SameAxisConvention.class);
+        conventionFactory.addConvention("sameUp", SameUpDirectionConvention.class);
+        conventionFactory.addConvention("sameFront", SameFrontDirectionConvention.class);
+        conventionFactory.addConvention("sameOrientation", SameOrientationConvention.class);
 
         //Create renderers
         DataDrivenRenderer cube = new CubeRenderer(RenderingRegistry.getNextAvailableRenderId());
