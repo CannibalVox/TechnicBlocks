@@ -24,6 +24,7 @@ import com.google.common.collect.Lists;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.technic.technicblocks.blocks.behavior.*;
 import net.technic.technicblocks.blocks.collision.BlockCollisionFactory;
@@ -168,6 +169,11 @@ public class TechnicBlocks {
         findBloxFiles();
     }
 
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        proxy.verifyCreativeTabs(creativeTabFactory);
+    }
+
     private void findBloxFiles() {
         Collection<File> modFiles = new LinkedList<File>();
 
@@ -258,8 +264,6 @@ public class TechnicBlocks {
             for (ModDataParser parser : parsers) {
                 parser.RegisterAllBlocks(creativeTabFactory, materialFactory, soundTypeFactory, conventionFactory, rendererFactory, faceVisibilityFactory, collisionFactory, selectionFactory, blockBehaviorFactory, textureSelectorFactory, tessellatorFactory);
             }
-
-            proxy.verifyCreativeTabs(creativeTabFactory);
         } catch (IOException ex)
         {
             //Just ignore this mod then
