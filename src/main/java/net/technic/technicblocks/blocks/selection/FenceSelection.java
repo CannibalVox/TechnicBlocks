@@ -26,6 +26,13 @@ import net.technic.technicblocks.blocks.DataDrivenBlock;
 import net.technic.technicblocks.blocks.connections.ConnectionConvention;
 
 public class FenceSelection extends BlockSelection {
+
+    protected float getTrimAmount() {
+        return 0.375f;
+    }
+    protected float getVerticalTrimAmount() { return 0; }
+    protected float getNoPostTrimAmount() { return 0; }
+
     @Override
     public void setBlockBounds(DataDrivenBlock block, IBlockAccess world, int x, int y, int z) {
 
@@ -38,15 +45,30 @@ public class FenceSelection extends BlockSelection {
         ForgeDirection south = ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[north.ordinal()]];
         ForgeDirection up = block.reverseTransformBlockFacing(metadata, ForgeDirection.UP);
 
+        boolean[] directions = new boolean[4];
+
         for (int i = 0; i < 4; i++) {
             Block connect = world.getBlock(x + north.offsetX, y + north.offsetY, z + north.offsetZ);
             int connectMeta = world.getBlockMetadata(x + north.offsetX, y + north.offsetY, z + north.offsetZ);
 
-            if (!connection.testConnection(block, metadata, connect, connectMeta))
-                trimDirection(block, south, 0.375f);
+           directions[i] = connection.testConnection(block, metadata, connect, connectMeta);
+
+            if (!directions[i])
+                trimDirection(block, south, getTrimAmount());
 
             north = north.getRotation(up);
             south = south.getRotation(up);
+        }
+
+        if ((directions[0] == directions[2] && directions[1] == directions[3] && directions[0] != directions[1]) && (directions[0] || directions[1] || directions[2] || directions[3])) {
+            trimDirection(block, ForgeDirection.VALID_DIRECTIONS[ForgeDirection.OPPOSITES[up.ordinal()]], getVerticalTrimAmount());
+
+            if (!directions[1]) {
+                south = south.getRotation(up);
+                north = north.getRotation(up);
+            }
+            trimDirection(block, south, getNoPostTrimAmount());
+            trimDirection(block, north, getNoPostTrimAmount());
         }
     }
 }

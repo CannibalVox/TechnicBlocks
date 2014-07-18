@@ -32,10 +32,7 @@ import net.technic.technicblocks.blocks.collision.FenceCollision;
 import net.technic.technicblocks.blocks.collision.SelectionVolumeCollision;
 import net.technic.technicblocks.blocks.collision.StairsCollision;
 import net.technic.technicblocks.blocks.connections.*;
-import net.technic.technicblocks.blocks.selection.BlockSelectionFactory;
-import net.technic.technicblocks.blocks.selection.CubeSelection;
-import net.technic.technicblocks.blocks.selection.FenceSelection;
-import net.technic.technicblocks.blocks.selection.SlabSelection;
+import net.technic.technicblocks.blocks.selection.*;
 import net.technic.technicblocks.client.facevisibility.DisconnectedBlockVisibilityConvention;
 import net.technic.technicblocks.client.facevisibility.FaceVisibilityFactory;
 import net.technic.technicblocks.client.facevisibility.OpaqueBlockVisibilityConvention;
@@ -109,18 +106,21 @@ public class TechnicBlocks {
         DataDrivenRenderer slab = new SlabRenderer(RenderingRegistry.getNextAvailableRenderId());
         DataDrivenRenderer stairs = new StairRenderer(RenderingRegistry.getNextAvailableRenderId());
         DataDrivenRenderer fence = new FenceRenderer(RenderingRegistry.getNextAvailableRenderId());
+        DataDrivenRenderer wall = new WallRenderer(RenderingRegistry.getNextAvailableRenderId());
 
         //Register renderers
         RenderingRegistry.registerBlockHandler(cube);
         RenderingRegistry.registerBlockHandler(slab);
         RenderingRegistry.registerBlockHandler(stairs);
         RenderingRegistry.registerBlockHandler(fence);
+        RenderingRegistry.registerBlockHandler(wall);
 
         //Set up renderer factory
         rendererFactory.addRenderer("cube", cube);
         rendererFactory.addRenderer("slab", slab);
         rendererFactory.addRenderer("stairs", stairs);
         rendererFactory.addRenderer("fence", fence);
+        rendererFactory.addRenderer("wall", wall);
 
         //Register face visibility factory
         faceVisibilityFactory.addConvention("normal", new OpaqueBlockVisibilityConvention());
@@ -154,6 +154,7 @@ public class TechnicBlocks {
         selectionFactory.addSelection("cube", new CubeSelection());
         selectionFactory.addSelection("slab", new SlabSelection());
         selectionFactory.addSelection("fence", new FenceSelection());
+        selectionFactory.addSelection("wall", new WallSelection());
 
         //Register tessellators
         tessellatorFactory.addTessellator("basic", new Tessellator(new WorldLightingHandler(), new SingleSidedHandler()));
